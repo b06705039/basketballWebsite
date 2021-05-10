@@ -48,7 +48,11 @@ function NavBar(){
                         {page}
                     </Link>
                 </Menu.Item>)}
-                
+                <Menu.Item key={"scheduler"}>
+                    <Link to={"/scheduler"}>
+                        {"scheduler"}
+                    </Link>
+                </Menu.Item>
                 <Menu.Item >
                     <Avatar
                         style={{ backgroundColor: '#87d068', }} 

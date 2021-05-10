@@ -4,7 +4,10 @@ const response = require(global.__MODULE_BASE__ + "response")
 const User  = require(global.__MODEL_BASE__ + "User")
 const httpStatus = require('http-status-codes');
 const aurthor = require('./Aurthorize');
+var router = express.Router();
 
 router.post('post/create', async (req, res)=>{
     const title = req.body.title || "";
 })
+
+module.exports = router;

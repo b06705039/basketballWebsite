@@ -5,6 +5,8 @@ import NavBar from '../components/nav';
 import ContentHeader from '../components/header';
 import { Menu, Layout } from 'antd';
 import { useData } from '../data/context';
+import Scheduler from '../components/scheduler'
+
 const { Header, Content, Footer } = Layout;
 
 
@@ -32,9 +34,9 @@ function Temp(){
                 </Header>
                 
                 <Switch>
-                    <Route exact path="/" component={<ContentHeader/>} />
-                    {zhPageList.map((page)=>
-                        <Route path={"/"+page} component={ContentHeader} />)}
+                    <Route exact path="/" component={ContentHeader} />
+                    {zhPageList.map((page)=><Route path={"/"+page} component={ContentHeader} />)}
+                    <Route path={"/scheduler"} component={Scheduler} />
                 </Switch>
                 <Footer style={{ textAlign: 'center' }}>Online Basketball Web design by </Footer>
             </Layout>
