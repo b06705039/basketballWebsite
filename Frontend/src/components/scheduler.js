@@ -1,5 +1,5 @@
 import React from 'react';
-
+import TileView from 'devextreme-react/tile-view'
 import Scheduler, { AppointmentDragging, Resource, View } from 'devextreme-react/scheduler';
 import Draggable from 'devextreme-react/draggable';
 import ScrollView from 'devextreme-react/scroll-view';
@@ -42,73 +42,76 @@ class App extends React.Component {
     const { appointments } = this.state;
     console.log(appointments)
     return (
-    <React.Fragment>
-        <ScrollView id="scroll">
-        <Draggable
-            id="list"
-            data="dropArea"
-            group={draggingGroupName}
-            onDragStart={this.onListDragStart}>
-            {this.state.appointments.filter(x => (x.arranged === false)).map((task) => {
-            return <Draggable
-                key={task.text}
-                className="item dx-card dx-theme-text-color dx-theme-background-color"
-                clone={true}
-                group={draggingGroupName}
-                data={task}
-                onDragStart={this.onItemDragStart}
-                onDragEnd={this.onItemDragEnd}>
-                {task.text}
-            </Draggable>;
-            })}
-        </Draggable>
-        </ScrollView>
+      <React.Fragment id="schedule">
         <Scheduler
-        adaptivityEnabled={true}
-        timeZone="Asia/Taipei"
-        id="scheduler"
-        dataSource={appointments.filter(x => (x.arranged === true))}
-        defaultCurrentDate={currentDate}
-        height={'100%'}
-        startDayHour={1}
-        endDayHour={4}
-        cellDuration={60}
-        editing={{
+          adaptivityEnabled={true}
+          timeZone="Asia/Taipei"
+          id="scheduler"
+          dataSource={appointments.filter(x => (x.arranged === true))}
+          defaultCurrentDate={currentDate}
+          height={'100%'}
+          startDayHour={1}
+          endDayHour={4}
+          cellDuration={60}
+          editing={{
             allowAdding: true,
             allowDeleting: true,
             allowResizing: false,
             allowDragging: true,
             allowUpdating: true
-        }}
-        groupByDate={true}
-        groups={['field']}
-        views={views}
-        defaultCurrentView={views[0]}
-        appointmentComponent={AppointmentFormat}
-        appointmentTooltipComponent={AppointmentTooltip}
-        onAppointmentFormOpening={this.onAppointmentFormOpening}
-        onAppointmentUpdating={this.onAppointmentUpdating}
-        onAppointmentAdded={this.onAppointmentAdd}
+          }}
+          groupByDate={true}
+          groups={['field']}
+          views={views}
+          defaultCurrentView={views[0]}
+          appointmentComponent={AppointmentFormat}
+          appointmentTooltipComponent={AppointmentTooltip}
+          onAppointmentFormOpening={this.onAppointmentFormOpening}
+          onAppointmentUpdating={this.onAppointmentUpdating}
+          onAppointmentAdded={this.onAppointmentAdd}
         >
-        <Resource
+          <Resource
             fieldExpr="field"
             allowMultiple={false}
             dataSource={FieldData}
             label="Field"
-        />
-        <View
+          />
+          <View
             type="timelineWeek"
             name="Timeline Week"
             groupOrientation="horizontal"
             maxAppointmentsPerCell={1}
-        />
-        <AppointmentDragging
+          />
+          <AppointmentDragging
             group={draggingGroupName}
             onRemove={this.onAppointmentRemove}
             onAdd={this.onAppointmentAdd}
-        />
+            onDragEnd={this.onAppointmentDragEnd}
+          />
         </Scheduler>
-    </React.Fragment>
+        <h1 style={{ marginLeft: 50 }}>賽程</h1>
+        <ScrollView id="scroll" direction='both' height={50} width={'100%'} style={{ marginLeft: 50 }}>
+          <Draggable
+            id="DragList"
+            data="dropArea"
+            height={50}
+            group={draggingGroupName}
+            onDragStart={this.onListDragStart}>
+            {this.state.appointments.filter(x => (x.arranged === false)).map((task) => {
+              return <Draggable
+                key={task.text}
+                className="item dx-card dx-theme-text-color dx-theme-background-color"
+                clone={true}
+                group={draggingGroupName}
+                data={task}
+                width={120}
+                onDragStart={this.onItemDragStart}
+                onDragEnd={this.onItemDragEnd}>
+                <div style={{ textAlign: "center" }}>{task.text}</div></Draggable>;
+            })}
+          </Draggable>
+        </ScrollView>
+      </React.Fragment>
     );
   }
 
@@ -132,6 +135,7 @@ class App extends React.Component {
     }
     return true
   }
+  onAppointmentDragEnd = e => { console.log(e) }
 
   onAppointmentRemove = e => {
     if (e.itemData.arranged === true) {
@@ -148,6 +152,11 @@ class App extends React.Component {
 
   onAppointmentAdd = e => {
     if (e.itemData !== undefined) {
+      if (e.itemData.startDate.getHours() === 0) {
+        console.log("Canceled")
+        e.cancel = true;
+        return;
+      }
       e.itemData.endDate = new Date(e.itemData.startDate.getTime() + 3600 * 1000);
       if (e.fromData.arranged === false && this.checkAppointmentAvailable(e.itemData)) {
         const index = this.state.appointments.indexOf(e.fromData);
