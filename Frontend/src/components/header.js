@@ -1,5 +1,5 @@
 import React from 'react';
-import {CurPage} from '../data/context';
+import { useData } from '../data/context';
 import { Menu, Layout } from 'antd';
 import styled from 'styled-components';
 
@@ -17,7 +17,8 @@ const Background = styled.div`
 
 
 function ContentHeader(){
-    const curPage= CurPage();
+    // const curPage= CurPage();
+    const { curPage } = useData()
 
 
     console.log("in contentHeader", curPage);
