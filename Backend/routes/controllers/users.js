@@ -7,7 +7,8 @@ const aurthor = require('./Aurthorize');
 var router = express.Router();
 
 /* GET users listing. */
-router.use('*', aurthor.doAuthAction);
+// router.use('*', aurthor.doAuthAction);
+
 router.post('/create', async (req, res) => {
     const account = req.body.account || "";
     const username = req.body.username || "";

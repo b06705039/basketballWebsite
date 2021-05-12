@@ -14,29 +14,23 @@ const currentDate = new Date(2021, 4, 24);
 const views = ['workWeek', 'month'];
 const draggingGroupName = 'appointmentsGroup';
 const TimeRange = ['12:30', '18:30', '19:30']
+const TimeRangeObject = { 1: '12:30', 2: '18:30', 3: '19:30' }
+
+const TimeCell = ({ date }) => {
+  let text = TimeRangeObject[date.getHours()]
+  return (
+    <div style={{ margin: "0 auto" }}>{text}</div>
+  );
+}
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      pagechange: 0,
       appointments: appointments
     };
   }
-
-  componentDidMount() {
-    let rows = document.getElementsByClassName('dx-scheduler-time-panel-cell dx-scheduler-cell-sizes-vertical');
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].innerHTML = `<div style="margin: auto 0">${TimeRange[i]}</div>`
-    }
-  }
-
-  componentDidUpdate() {
-    let rows = document.getElementsByClassName('dx-scheduler-time-panel-cell dx-scheduler-cell-sizes-vertical');
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].innerHTML = `<div style="margin: auto 0">${TimeRange[i]}</div>`
-    }
-  }
-
 
   render() {
     const { appointments } = this.state;
@@ -69,6 +63,7 @@ class App extends React.Component {
           onAppointmentFormOpening={this.onAppointmentFormOpening}
           onAppointmentUpdating={this.onAppointmentUpdating}
           onAppointmentAdded={this.onAppointmentAdd}
+          timeCellRender={TimeCell}
         >
           <Resource
             fieldExpr="field"
@@ -111,7 +106,7 @@ class App extends React.Component {
             })}
           </Draggable>
         </ScrollView>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 
