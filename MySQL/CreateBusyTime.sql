@@ -1,11 +1,9 @@
-CREATE TABLE team_busytime(
-	id INT NOT NULL,
-    startDate DATE NOT NULL,
-    endDate DATE NOT NULL
+CREATE TABLE teamTime(
+	team_id INT NOT NULL,
+    timeString TEXT NOT NULL
 );
 
-CREATE TABLE recorder_busytime(
-	id INT NOT NULL,
-    startDate DATE NOT NULL,
-    endDate DATE NOT NULL
+CREATE TABLE recorderTime(
+	reacorder_id INT NOT NULL,
+    timeString TEXT NOT NULL
 );

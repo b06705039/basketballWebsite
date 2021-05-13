@@ -34,6 +34,16 @@ router.post('/active', async (req, res) => {
     } catch (err) {
         return response.fail(res, err);
     }
+});
+
+router.delete('/delete', async (req, res) => {
+    const user_id = req.body.user_id || "";
+    try {
+        const result = await new User(req.body.token).delete(user_id);
+        return response.succ(res, result);
+    } catch (err) {
+        return response.fail(res, err);
+    }
 })
 
 router.get('/data', async (req, res) => {

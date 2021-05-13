@@ -35,6 +35,7 @@ class User {
 
         return result[0];
     }
+
     static generateToken(userObj) {
         // gen token
         const iat = Math.floor(Date.now() / 1000);
@@ -113,7 +114,6 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
             })()
         ]
     )
-    console.log([isUniqueAccount, isUniqueUserName, isUniqueEmail]);
     if (!isUniqueAccount) {
         logger.error(TAG, `Invalid account : ${account} already existed.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
@@ -136,17 +136,51 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
             adim, createtime, active, email, department)
             VALUE (${user_id}, "${account}", "${username}", "${password}", 
             "${adim}", NOW(), false, "${email}", "${deparment}");`
-    db.execute(SQL, {});
+    try {
+        await db.execute(SQL, {});
+        return { info: `Insert Data (${user_id}, "${account}", "${username}", "${password}", "${adim}", NOW(), false, "${email}", "${deparment}") to userInfo Success` };
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
 }
 
 User.prototype.active = async (user_id) => {
+    const TAG = '[UserActive]';
+    const logger = new Logger();
+
     let check = await db.execute(`SELECT user_id FROM userInfo WHERE user_id = ${user_id}`);
     if (check.length === 0) {
         logger.error(TAG, `Invalid user_id : ${user_id} does not existed.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
     const SQL = `UPDATE userInfo SET active = true WHERE user_id=${user_id}`;
-    await db.execute(SQL);
+    try {
+        await db.execute(SQL, {});
+        return { info: `UPDATE user actived Success` };
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+}
+
+User.prototype.delete = async (user_id) => {
+    const TAG = '[UserDelete]';
+    const logger = new Logger();
+
+    let check = await db.execute(`SELECT user_id FROM userInfo WHERE user_id = ${user_id}`);
+    if (check.length === 0) {
+        logger.error(TAG, `Invalid user_id : ${user_id} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    }
+    const SQL = `DELETE userInfo WHERE user_id=${user_id}`;
+    try {
+        await db.execute(SQL, {});
+        return { info: `DELETE user (ID: ${user_id}) Success` };
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
 }
 
 User.prototype.login = async function (account, password) {
@@ -181,9 +215,8 @@ User.prototype.login = async function (account, password) {
 };
 
 User.prototype.getUserbyId = async function (id) {
-    const TAG = '[GETUSERBYID]'
+    const TAG = '[GETUSERBYID]';
     const logger = new Logger();
-    console.log(this.token)
     if (!tool.isPositiveInteger(id)) {
         logger.error(TAG, `ID: ${id} is not an integer.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
@@ -205,7 +238,10 @@ User.prototype.getUserbyId = async function (id) {
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
     const SQL = `SELECT * FROM userInfo WHERE user_id=${id}`;
-    return await db.execute(SQL, {});
+    try { return await db.execute(SQL, {}); } catch (err) {
+        logger.error(TAG, `Execute MySQL Failed.`);
+        throw exception.BadRequestError('MySQL Server Error', '' + err);
+    }
 }
 
 module.exports = User;

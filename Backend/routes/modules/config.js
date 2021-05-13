@@ -1,13 +1,13 @@
 const databaseInfo = {
-    user:{
-        connectionLimit : 10,
-        queueLimit      : 0,
-        host            : 'remotemysql.com',
-        port            : 3306,
-        user            : 't5yKOl57F6',
-        password        : 'W0WVfD5ZN4',
-        database        : 't5yKOl57F6',
-        supportBigNumbers : true
+    user: {
+        connectionLimit: 10,
+        queueLimit: 0,
+        host: 'remotemysql.com',
+        port: 3306,
+        user: 't5yKOl57F6',
+        password: 'W0WVfD5ZN4',
+        database: 't5yKOl57F6',
+        supportBigNumbers: true
     }
 }
 const config = {};
@@ -24,10 +24,10 @@ config.MAIL_FORMAT = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.
 config.USERNAME_FORMAT = '^.{1,50}$';
 
 config.databases = databaseInfo;
-config.adim = {administer:0, recorder:1, team:2, public:3};
-config.department = {
-    ME:{},
-    EE:{},
-    DFLL:{}
-}
+config.AdimLevel = { administer: 2, recorder: 1, team: 1, public: 0 };
+
+
+config.department = ['ME', "EE", "DFLL", "FIN", "CHE"];
+config.teamStatus = ['已報名', '已繳費', '審核中', '未報名', '未繳費']
+
 module.exports = config;

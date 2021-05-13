@@ -9,11 +9,11 @@ import AppointmentFormat from './Appointment'
 import AppointmentTooltip from './AppointmentTooltip'
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-
+import Timer from './Timer';
+import '../css/scheduler.css'
 const currentDate = new Date(2021, 4, 24);
-const views = ['workWeek', 'month'];
+const views = ['workWeek'];
 const draggingGroupName = 'appointmentsGroup';
-const TimeRange = ['12:30', '18:30', '19:30']
 const TimeRangeObject = { 1: '12:30', 2: '18:30', 3: '19:30' }
 
 const TimeCell = ({ date }) => {
@@ -36,7 +36,7 @@ class App extends React.Component {
     const { appointments } = this.state;
     console.log(appointments)
     return (
-      <React.Fragment id="schedule">
+      <React.Fragment>
         <Scheduler
           adaptivityEnabled={true}
           timeZone="Asia/Taipei"
@@ -57,6 +57,7 @@ class App extends React.Component {
           groupByDate={true}
           groups={['field']}
           views={views}
+          dataCellComponent={this.DataCell}
           defaultCurrentView={views[0]}
           appointmentComponent={AppointmentFormat}
           appointmentTooltipComponent={AppointmentTooltip}
@@ -85,7 +86,7 @@ class App extends React.Component {
           />
         </Scheduler>
         <h1 style={{ marginLeft: 50 }}>賽程</h1>
-        <ScrollView id="scroll" direction='both' height={50} width={'100%'} style={{ marginLeft: 50 }}>
+        <ScrollView id="scroll" direction='both' height={50} width={'100%'} style={{ marginLeft: 50 }} bounceEnabled={true}>
           <Draggable
             id="DragList"
             data="dropArea"
@@ -106,17 +107,31 @@ class App extends React.Component {
             })}
           </Draggable>
         </ScrollView>
+        <Timer />
       </React.Fragment >
     );
   }
 
+  checkIfNoGame(startDate) {
+    const WeekDay = startDate.getDay();
+    if (startDate.getHours() === 1 && (WeekDay === 2 || WeekDay === 4)) {
+      notify(`Games can not be arrange at Tuesday's and Thursday's noon.`);
+      return true;
+    }
+    return false
+  }
+
   checkAppointmentAvailable = appointment => {
+    if (this.checkIfNoGame(appointment.startDate))
+      return false;
     let allcontest = this.state.appointments.filter(
       x => (x.arranged === true &&
         x.startDate.getDay() === appointment.startDate.getDay() &&
+        x.startDate.getDate() === appointment.startDate.getDate() &&
         x.field === appointment.field &&
         x.id !== appointment.id
       ));
+
     for (let i = 0; i < allcontest.length; i++) {
       let contest = allcontest[i];
       if (appointment.startDate >= contest.endDate || appointment.endDate <= contest.startDate) {
@@ -124,7 +139,6 @@ class App extends React.Component {
       }
       else {
         notify(`Time is not avaiable with match ${appointment.text} and Team ${contest.text}`)
-        console.log(contest, appointment)
         return false;
       }
     }
@@ -190,6 +204,11 @@ class App extends React.Component {
   }
 
   onAppointmentFormOpening = (data) => {
+
+    if (this.checkIfNoGame(data.appointmentData.startDate)) {
+      data.cancel = true;
+      return;
+    }
     let form = data.form;
     let text = data.appointmentData.text;
     form.option('items', [{
@@ -215,6 +234,20 @@ class App extends React.Component {
         }
       }
     }]);
+  }
+
+  DataCell = (props) => {
+    let cellName = "", text = "";
+    const WeekDay = props.data.startDate.getDay();
+    if (props.data.startDate.getHours() === 1 && (WeekDay === 2 || WeekDay === 4)) {
+      cellName = 'disable-date';
+      text = "No Game"
+    }
+    return (
+      <div className={cellName}>
+        {text}
+      </div>
+    );
   }
 }
 
