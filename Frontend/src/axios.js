@@ -2,8 +2,7 @@ import axios from 'axios'
 
 const serverURL = 'http://localhost:4000/';
 
-let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJhY2NvdW50IjoiY2h1bmdjdCIsInVzZXJuYW1lIjoiQ2h1bmdjdCIsImVtYWlsIjoicjA5NTIyNjI0QG51dC5lZHUudHciLCJhY3RpdmUiOjEsImFkaW0iOiJ0ZWFtIiwiaWF0IjoxNjIxMDQ1NzU0LCJleHAiOjE2MjEwNjM3NTR9.w2apKUEDSKGj2jl-qOt0EMwVKLp5r4gDMqBuJJTjVWg"
-
+let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJhY2NvdW50IjoiY2h1bmdjdCIsInVzZXJuYW1lIjoiQ2h1bmdjdCIsImVtYWlsIjoicjA5NTIyNjI0QG51dC5lZHUudHciLCJhY3RpdmUiOjEsImFkaW0iOiJ0ZWFtIiwiaWF0IjoxNjIxMDY0MzI1LCJleHAiOjE2MjEwODIzMjV9.qEn87PV_OW8SnMJk77_138YzT0sfVewoYhKgv5uWCbo"
 
 export const isLogin = async () => { return undefined }
 

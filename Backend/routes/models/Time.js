@@ -63,18 +63,29 @@ Time.prototype.getTime = async function () {
     }
     let SQL =
         `SELECT 
-        ${timetable}.timeString AS timeString 
-    FROM userInfo
-    LEFT JOIN ${table}
-        ON  ${table}.user_id=userInfo.user_id
-    LEFT JOIN ${timetable} 
-        ON ${timetable}.${Idform}=${table}.${Idform}
-    WHERE userInfo.user_id=${this.token.user_id}`;
+            ${timetable}.timeString AS timeString 
+        FROM userInfo
+        LEFT JOIN ${table}
+            ON  ${table}.user_id=userInfo.user_id
+        LEFT JOIN ${timetable} 
+            ON ${timetable}.${Idform}=${table}.${Idform}
+        WHERE userInfo.user_id=${this.token.user_id}`;
 
     try {
         let result = await db.execute(SQL);
-        console.log(result);
-        return result;
+        let output = [];
+        if (result.length !== 0 && result[0]['timeString'] !== null) {
+            let timeItems = result[0]['timeString'].split(',');
+            for (let i = 0; i < timeItems.length; i++) {
+                if (!tool.isDate(timeItems[i]))
+                    continue;
+                const startDate = new Date(timeItems[i]);
+                const endDate = new Date(timeItems[i]);
+                endDate.setHours(startDate.getHours() + 1);
+                output.push({ startDate, endDate });
+            }
+        };
+        return output;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);

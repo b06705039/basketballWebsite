@@ -38,9 +38,10 @@ function DataCell(props) {
 }
 
 
-function App(props) {
+function App() {
   const scheduler = useRef(null);
-  const [appointments, setappointments] = useState([]);
+  let [timeString] = useState("No Update");
+  const [appointments, setAppointments] = useState([]);
 
   const AddbusyTime = data => {
     let newappointments = {
@@ -50,32 +51,45 @@ function App(props) {
     const WeekDay = newappointments.startDate.getDay();
     if (newappointments.startDate.getHours() === 1 && (WeekDay === 2 || WeekDay === 4))
       return;
-    if (scheduler.current.props.dataSource.find(x => (String(x.startDate) === String(newappointments.startDate))) === undefined)
+    if (scheduler.current.props.dataSource.find(x => ((new Date(x.startDate)).toUTCString() === newappointments.startDate.toUTCString())) === undefined)
       scheduler.current.instance.addAppointment(newappointments);
+    SetTimeString();
   }
 
   const DeleteAppointment = (event) => {
     scheduler.current.instance.deleteAppointment(event.appointmentData);
+    SetTimeString();
   }
 
+  const SetTimeString = () => {
+    let timeListes = [...scheduler.current.props.dataSource].map(x => x.startDate);
+    timeString = timeListes.join(',');
+    console.log(timeString);
+  }
 
-
-  const componentWillUnmount = async () => {
-    let timeString = [...scheduler.current.props.dataSource].map(x => String(x.startDate));
-    await Time.Update(timeString.join(','))
-  };
-
-  const componentWillMount = async () => { console.log(await Time.GetTime()); };
-
-  let Data;
   useEffect(() => {
     const GetData = async () => {
-      Data = await Promise.all([Time.GetTime()]);
+      const timeResponse = await Time.GetTime();
+      timeResponse.map(time => {
+        scheduler.current.instance.addAppointment(time);
+      })
     }
-    console.log(Data);
-    return (() => { console.log("ComponentUnMount") })
-  }
-  )
+    GetData();
+    return () => {
+      if (timeString !== "No Update") {
+        (async () => {
+          await Time.Update(timeString)
+        })()
+      }
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (timeString !== "NO UPDATES")
+  //       await Time.Update(timeString)
+  //   })()
+  // }, [timeString])
 
 
 
