@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState, useRef, useCo } from 'react';
 import Scheduler, { View } from 'devextreme-react/scheduler';
-
+import { Time } from '../axios'
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import '../css/scheduler.css'
@@ -38,15 +38,11 @@ function DataCell(props) {
 }
 
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.scheduler = React.createRef();
-    this.state = {
-      appointments: []
-    };
-  }
-  AddbusyTime = data => {
+function App(props) {
+  const scheduler = useRef(null);
+  const [appointments, setappointments] = useState([]);
+
+  const AddbusyTime = data => {
     let newappointments = {
       startDate: data.cellData.startDate,
       endDate: data.cellData.endDate
@@ -54,57 +50,72 @@ class App extends React.Component {
     const WeekDay = newappointments.startDate.getDay();
     if (newappointments.startDate.getHours() === 1 && (WeekDay === 2 || WeekDay === 4))
       return;
-    if (this.scheduler.current.props.dataSource.find(x => (String(x.startDate) === String(newappointments.startDate))) === undefined)
-      this.scheduler.current.instance.addAppointment(newappointments);
+    if (scheduler.current.props.dataSource.find(x => (String(x.startDate) === String(newappointments.startDate))) === undefined)
+      scheduler.current.instance.addAppointment(newappointments);
   }
 
-  DeleteAppointment = (event) => {
-    this.scheduler.current.instance.deleteAppointment(event.appointmentData);
+  const DeleteAppointment = (event) => {
+    scheduler.current.instance.deleteAppointment(event.appointmentData);
   }
 
-  componentWillUnmount = () => {
-    console.log("Save Data");
+
+
+  const componentWillUnmount = async () => {
+    let timeString = [...scheduler.current.props.dataSource].map(x => String(x.startDate));
+    await Time.Update(timeString.join(','))
+  };
+
+  const componentWillMount = async () => { console.log(await Time.GetTime()); };
+
+  let Data;
+  useEffect(() => {
+    const GetData = async () => {
+      Data = await Promise.all([Time.GetTime()]);
+    }
+    console.log(Data);
+    return (() => { console.log("ComponentUnMount") })
   }
-  render() {
-    const { appointments } = this.state;
-    return (
-      <React.Fragment>
-        <Scheduler
-          appointmentComponent={Appointment}
-          onAppointmentClick={this.DeleteAppointment}
-          ref={this.scheduler}
-          dataSource={appointments}
-          timeZone="Asia/Taipei"
-          id="scheduler"
-          defaultCurrentDate={currentDate}
-          startDayHour={1}
-          endDayHour={4}
-          cellDuration={60}
-          dataCellComponent={DataCell}
-          views={views}
-          onCellClick={this.AddbusyTime}
-          defaultCurrentView={views[0]}
-          timeCellRender={TimeCell}
-          editing={
-            {
-              allowAdding: false,
-              allowDeleting: false,
-              allowResizing: false,
-              allowDragging: false,
-              allowUpdating: false
-            }
+  )
+
+
+
+  return (
+    <React.Fragment>
+      <Scheduler
+        appointmentComponent={Appointment}
+        onAppointmentClick={DeleteAppointment}
+        ref={scheduler}
+        dataSource={appointments}
+        timeZone="Asia/Taipei"
+        id="scheduler"
+        defaultCurrentDate={currentDate}
+        startDayHour={1}
+        endDayHour={4}
+        cellDuration={60}
+        dataCellComponent={DataCell}
+        views={views}
+        onCellClick={AddbusyTime}
+        defaultCurrentView={views[0]}
+        timeCellRender={TimeCell}
+        editing={
+          {
+            allowAdding: false,
+            allowDeleting: false,
+            allowResizing: false,
+            allowDragging: false,
+            allowUpdating: false
           }
-        >
-          <View
-            type="timelineWeek"
-            name="Timeline Week"
-            groupOrientation="horizontal"
-            maxAppointmentsPerCell={1}
-          />
-        </Scheduler>
-      </React.Fragment >
-    );
-  }
+        }
+      >
+        <View
+          type="timelineWeek"
+          name="Timeline Week"
+          groupOrientation="horizontal"
+          maxAppointmentsPerCell={1}
+        />
+      </Scheduler>
+    </React.Fragment >
+  );
 }
 
 export default App;

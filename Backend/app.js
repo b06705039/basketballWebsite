@@ -14,12 +14,15 @@ var usersRouter = require(global.__CONTROLLER_BASE__ + 'users');
 var postRouter = require(global.__CONTROLLER_BASE__ + 'posts');
 var teamRouter = require(global.__CONTROLLER_BASE__ + 'teams');
 var matchRouter = require(global.__CONTROLLER_BASE__ + 'matches');
+var timeRouter = require(global.__CONTROLLER_BASE__ + 'times');
+var cors = require('cors');
 
 var app = express();
 db.createPool();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(cors())
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -32,6 +35,7 @@ app.use('/users', usersRouter);
 app.use('/posts', postRouter);
 app.use('/teams', teamRouter);
 app.use('/matches', matchRouter);
+app.use('/time', timeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

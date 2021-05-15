@@ -8,7 +8,8 @@ const tool = require(global.__MODULE_BASE__ + 'tool');
 
 const whiteList = [
     { url: '/users/login', method: 'PUT' },
-    { url: '/users/create', method: 'POST' }
+    { url: '/users/create', method: 'POST' },
+    { url: '/users/remind', method: 'PUT' }
 ];
 function doAuthAction(req, resp, next) {
     const logger = new Logger();

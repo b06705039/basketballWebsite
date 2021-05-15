@@ -2,7 +2,7 @@ var express = require('express');
 const response = require(global.__MODULE_BASE__ + "response")
 const Team = require(global.__MODEL_BASE__ + "Team")
 const aurthor = require('./Aurthorize');
-const timeRouter = require('./times');
+
 
 var router = express.Router();
 
@@ -54,6 +54,27 @@ router.get('/data', async (req, resp) => {
     }
 });
 
-router.use('/time', timeRouter);
+router.get('/getALL', async (req, resp) => {
+    const token = req.body.token;
+    try {
+        const result = await new Team(token).getALL();
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
+router.post('/update', async (req, resp) => {
+    const token = req.body.token;
+    const { id, name } = req.body;
+    try {
+        const result = await new Team(token).update(id, name);
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
+
 
 module.exports = router;

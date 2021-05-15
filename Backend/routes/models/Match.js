@@ -3,7 +3,6 @@ const Logger = require(global.__MODULE_BASE__ + 'logger');
 const exception = require(global.__MODULE_BASE__ + 'exception');
 const tool = require(global.__MODULE_BASE__ + 'tool');
 const config = require(global.__MODULE_BASE__ + 'config');
-const { object } = require('underscore');
 const Team = require('./Team')
 
 class Match {
@@ -20,6 +19,11 @@ class Match {
 Match.prototype.create = async function (home_id, away_id) {
     const TAG = '[MatchCreate]';
     const logger = new Logger();
+    console.log(this.token);
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
 
     if (!(await Team.IsVaildTeamID(home_id))) {
         logger.error(TAG, `Invalid Home ID (${home_id}).`);
@@ -52,6 +56,11 @@ Match.prototype.delete = async function (match_id) {
     const TAG = '[MatchDelete]';
     const logger = new Logger();
 
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
     if (!(await Match.IsVaildMatchID(match_id))) {
         logger.error(TAG, `Invalid Match ID ${match_id}.`);
         throw exception.BadRequestError('BAD_REQUEST', `Match ID (${match_id}) is invalid.`);
@@ -71,12 +80,35 @@ Match.prototype.getInfoByID = async function (match_id) {
     const TAG = '[MatchGetInfoByID]';
     const logger = new Logger();
 
+    if (config.AdimLevel[this.token.adim] < 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
     if (!(await Match.IsVaildMatchID(match_id))) {
         logger.error(TAG, `Invalid Match ID ${match_id}.`);
         throw exception.BadRequestError('BAD_REQUEST', `Match ID (${match_id}) is invalid.`);
     }
 
-    const SQL = `SELECT * FROM matchInfo WHERE match_id = ${match_id};`;
+    const SQL =
+        `SELECT 
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "matchInfo.match_id AS id," : ""}
+            Home.name AS home,
+            Home.department As homeDepartment,
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "Home.status As homeStatus," : ""}
+            Away.name AS away,
+            Away.department AS awayDepartment,
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "Away.status As awayStatus," : ""}
+            matchInfo.startDate AS startDate, 
+            matchInfo.field AS field, 
+            matchInfo.recorder AS recorder,
+            matchInfo.winner AS winner
+            FROM matchInfo
+        LEFT JOIN teamInfo AS Home ON 
+            Home.team_id = matchInfo.home
+        LEFT JOIN teamInfo AS Away ON 
+            Away.team_id = matchInfo.away
+        WHERE matchInfo.match_id = ${match_id};`;
 
     try {
         return (await db.execute(SQL, {}))[0];
@@ -90,16 +122,20 @@ Match.prototype.getALL = async function () {
     const TAG = '[MatchGetALLInfo]';
     const logger = new Logger();
 
-    if (config.AdimLevel[this.token.adim] < 2) {
+    if (config.AdimLevel[this.token.adim] < 1) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return response.fail(resp, exception.PermissionError('Permission Deny', 'have no access'));
+        return exception.PermissionError('Permission Deny', 'have no access');
     }
+
     const SQL =
-        `SELECT matchInfo.match_id AS id,
+        `SELECT 
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "matchInfo.match_id AS id," : ""}
             Home.name AS home,
             Home.department As homeDepartment,
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "Home.status As homeStatus," : ""}
             Away.name AS away,
             Away.department As awayDepartment,
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "Away.status As awayStatus," : ""}
             matchInfo.startDate AS startDate, 
             matchInfo.field AS field, 
             matchInfo.recorder AS recorder,
@@ -114,7 +150,9 @@ Match.prototype.getALL = async function () {
         let results = (await db.execute(SQL, {}));
         results.forEach(match => {
             if (!tool.isNull(match.startDate)) {
-                match.endDate(Date(match.startDate).setHours(match.startDate.getHours() + 1));
+                match.endDate = new Date(match.startDate)
+                match.startDate = new Date(match.startDate)
+                match.endDate.setHours(match.startDate.getHours() + 1);
                 match.arranged = true;
             }
             else {
@@ -132,6 +170,11 @@ Match.prototype.getALL = async function () {
 Match.prototype.update = async function (match_id, startDate, field, recorder) {
     const TAG = '[MatchUpdate]';
     const logger = new Logger();
+
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
 
     if (!(await Match.IsVaildMatchID(match_id))) {
         logger.error(TAG, `Invalid Match ID ${match_id}.`);

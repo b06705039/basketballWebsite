@@ -17,8 +17,8 @@ config.TOKEN_EXPIRE_TIME = 18000;
 
 //使用者帳號需少於50數字
 config.ACCOUNT_FORMAT = '^.{1,50}$';
-//密碼需含有一小寫一大寫以及一個數字
-config.PWD_FORMAT = '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})';
+//密碼需少於50數字
+config.PWD_FORMAT = '^.{1,50}$';
 config.MAIL_FORMAT = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
 //使用者名稱需少於50數字
 config.USERNAME_FORMAT = '^.{1,50}$';
@@ -28,6 +28,11 @@ config.AdimLevel = { administer: 2, recorder: 1, team: 1, public: 0 };
 
 
 config.department = ['ME', "EE", "DFLL", "FIN", "CHE"];
-config.teamStatus = ['已報名', '已繳費', '審核中', '未報名', '未繳費']
+config.teamStatus = ['已報名', '已繳費', '審核中', '未報名', '未繳費'];
+
+config.AdministerEmail = {
+    user: 'thomson861106@gmail.com',
+    pass: 'qqqq10134037' // 台大女籃 (用英文打)
+};
 
 module.exports = config;

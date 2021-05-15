@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const db = require(global.__MODULE_BASE__ + 'database');
 const Logger = require(global.__MODULE_BASE__ + 'logger');
 const exception = require(global.__MODULE_BASE__ + 'exception');
+const emailer = require(global.__MODULE_BASE__ + 'emailer');
 const tool = require(global.__MODULE_BASE__ + 'tool');
 const config = require(global.__MODULE_BASE__ + 'config');
 
@@ -22,6 +23,7 @@ class User {
                 active,
                 username,
                 email,
+                department,
                 adim
             FROM userInfo
             WHERE account = ${db.escape(account)}
@@ -59,7 +61,7 @@ class User {
         return signedToken;
     }
 
-}
+};
 
 User.prototype.create = async (account, username, password, passwordConfirmed, adim, email, deparment) => {
     const TAG = '[UserCreate]';
@@ -76,7 +78,14 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
     } else if (!tool.isValidUserName(username)) {
         logger.error(TAG, `Invalid username : ${username}`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!(adim in config.AdimLevel)) {
+        logger.error(TAG, `Invalid adimister : ${adim} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!(config.department.find(x => (x === deparment)) !== undefined)) {
+        logger.error(TAG, `Invalid department : ${deparment} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
+
     const [isUniqueAccount, isUniqueUserName, isUniqueEmail] = await Promise.all(
         [
             (async () => {
@@ -108,6 +117,7 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
                     FROM userInfo
                     WHERE 1 = 1
                     AND email = ${db.escape(email)}
+                    AND adim = ${db.escape(adim)}
                 `;
                 const result = await db.execute(SQL, {});
                 return result[0]['COUNT(1)'] > 0 ? false : true;
@@ -123,13 +133,8 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
     } else if (!isUniqueEmail) {
         logger.error(TAG, `Invalid email : ${email} already existed.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
-    } else if (!(adim in config.adim)) {
-        logger.error(TAG, `Invalid adimister : ${adim} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
-    } else if (!(deparment in config.department)) {
-        logger.error(TAG, `Invalid department : ${deparment} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
+
     let user_id = await db.execute("SELECT MAX(user_id) FROM userInfo");
     user_id = user_id[0]['MAX(user_id)'] + 1;
     let SQL = `INSERT INTO userInfo (user_id, account, username, password, 
@@ -138,17 +143,20 @@ User.prototype.create = async (account, username, password, passwordConfirmed, a
             "${adim}", NOW(), false, "${email}", "${deparment}");`
     try {
         await db.execute(SQL, {});
-        return { info: `Insert Data (${user_id}, "${account}", "${username}", "${password}", "${adim}", NOW(), false, "${email}", "${deparment}") to userInfo Success` };
+        return { info: `Insert Data (${user_id}, ${account}, ${username}, ${email}, ${deparment}) to userInfo Success` };
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
-}
+};
 
-User.prototype.active = async (user_id) => {
+User.prototype.active = async function (user_id) {
     const TAG = '[UserActive]';
     const logger = new Logger();
-
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
     let check = await db.execute(`SELECT user_id FROM userInfo WHERE user_id = ${user_id}`);
     if (check.length === 0) {
         logger.error(TAG, `Invalid user_id : ${user_id} does not existed.`);
@@ -162,18 +170,21 @@ User.prototype.active = async (user_id) => {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
-}
+};
 
-User.prototype.delete = async (user_id) => {
+User.prototype.delete = async function (user_id) {
     const TAG = '[UserDelete]';
     const logger = new Logger();
-
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
     let check = await db.execute(`SELECT user_id FROM userInfo WHERE user_id = ${user_id}`);
     if (check.length === 0) {
         logger.error(TAG, `Invalid user_id : ${user_id} does not existed.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
-    const SQL = `DELETE userInfo WHERE user_id=${user_id}`;
+    const SQL = `DELETE FROM userInfo WHERE user_id=${user_id};`;
     try {
         await db.execute(SQL, {});
         return { info: `DELETE user (ID: ${user_id}) Success` };
@@ -181,7 +192,7 @@ User.prototype.delete = async (user_id) => {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
-}
+};
 
 User.prototype.login = async function (account, password) {
     const TAG = '[UserLogin]';
@@ -200,9 +211,8 @@ User.prototype.login = async function (account, password) {
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid account or password.');
     }
 
-
     const response = {
-        user_id: userObj.id,
+        user_id: userObj.user_id,
         account: userObj.account,
         email: userObj.email,
         username: userObj.username,
@@ -210,6 +220,39 @@ User.prototype.login = async function (account, password) {
         adim: userObj.adim,
         token: User.generateToken(userObj)
     };
+    if (userObj.adim === 'team') {
+        let SQL = `SELECT team_id, name, department FROM teamInfo WHERE user_id=${userObj.user_id};`;
+        try {
+            response.team = await db.execute(SQL, {});
+        } catch (err) {
+            logger.error(TAG, `Execute MySQL Failed.`);
+            throw exception.BadRequestError('MySQL Server Error', '' + err);
+        }
+        if (response.team.length !== 0) {
+            SQL =
+                `SELECT 
+                    Home.name AS homeName,
+                    Home.department As homeDepartment,
+                    Away.name AS awayName,
+                    Away.department AS awayDepartment,
+                    matchInfo.startDate AS startDate,
+                    matchInfo.field AS field,
+                    matchInfo.recorder AS recorder,
+                    matchInfo.winner AS winner
+                FROM matchInfo
+                LEFT JOIN teamInfo AS Home ON
+                    Home.team_id = matchInfo.home
+                LEFT JOIN teamInfo AS Away ON
+                    Away.team_id = matchInfo.away
+                WHERE matchInfo.home=${response.team[0].team_id} OR matchInfo.away=${response.team[0].team_id};`;
+            try {
+                response.matches = await db.execute(SQL, {});
+            } catch (err) {
+                logger.error(TAG, `Execute MySQL Failed.`);
+                throw exception.BadRequestError('MySQL Server Error', '' + err);
+            }
+        }
+    }
     logger.info(TAG, `User: ${account} login successfully.`);
     return response;
 };
@@ -217,6 +260,12 @@ User.prototype.login = async function (account, password) {
 User.prototype.getUserbyId = async function (id) {
     const TAG = '[GETUSERBYID]';
     const logger = new Logger();
+
+    if (config.AdimLevel[this.token.adim] >= 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
     if (!tool.isPositiveInteger(id)) {
         logger.error(TAG, `ID: ${id} is not an integer.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
@@ -237,11 +286,150 @@ User.prototype.getUserbyId = async function (id) {
         logger.error(TAG, `ID: ${id} doesn't exist.`);
         throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
     }
-    const SQL = `SELECT * FROM userInfo WHERE user_id=${id}`;
+
+    const target = (config.AdimLevel[this.token.adim] === 2) ?
+        "user_id, account,  username, adim, createtime, active, email, department" :
+        "username, adim, email, department";
+
+    const SQL = `SELECT ${target} FROM userInfo WHERE user_id=${id}`;
     try { return await db.execute(SQL, {}); } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);
     }
+};
+
+User.prototype.getALL = async function () {
+    const TAG = '[GetALLUser]';
+    const logger = new Logger();
+
+    const target = (config.AdimLevel[this.token.adim] === 2) ?
+        "user_id, account,  username, adim, createtime, active, email, department" :
+        "username, adim, email, department";
+
+    const SQL = `SELECT ${target} FROM userInfo;`
+
+    try {
+        return (await db.execute(SQL, {}));
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+};
+
+User.prototype.remindInfo = async function (email) {
+    const TAG = "[SendReminder]";
+    const logger = new Logger();
+    if (!tool.isValidMail(email)) {
+        logger.error(TAG, `Invalid email : ${email}`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    }
+
+    const SQL = `
+            SELECT 
+                account
+            FROM userInfo
+            WHERE 1 = 1
+            AND email = ${db.escape(email)}
+        `;
+    const result = await db.execute(SQL, {});
+
+    if (result.length === 0) {
+        logger.error(TAG, `Email not found.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Email not found');
+    }
+    const account = result[0]['account'];
+    try {
+        await emailer.SendRemindEmail(await User.getUserInfo(account));
+        return `Send reminder to ${email} success.`;
+    } catch (err) {
+        logger.error(TAG, `Sent Reminder email Failed.`);
+        throw exception.BadRequestError('Email Error', '' + err);
+    }
+}
+
+User.prototype.update = async function (account, username, email, deparment) {
+    const TAG = '[UpdateUser]';
+    const logger = new Logger();
+    if (!tool.isValidAccount(account)) {
+        logger.error(TAG, `Invalid account : ${account}`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!tool.isValidMail(email)) {
+        logger.error(TAG, `Invalid email : ${email}`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!tool.isValidUserName(username)) {
+        logger.error(TAG, `Invalid username : ${username}`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!tool.isVaildDepartment(deparment)) {
+        logger.error(TAG, `Invalid department : ${deparment} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    }
+
+    const [isUniqueAccount, isUniqueUserName, isUniqueEmail] = await Promise.all(
+        [
+            (async () => {
+                const SQL = `
+                    SELECT 
+                        COUNT(1)
+                    FROM userInfo
+                    WHERE 1 = 1
+                    AND account = ${db.escape(account)}
+                    AND user_id != ${this.token.user_id};
+                `;
+                const result = await db.execute(SQL, {});
+                return result[0]['COUNT(1)'] > 0 ? false : true;
+            })(),
+            (async () => {
+                const SQL = `
+                    SELECT 
+                        COUNT(1)
+                    FROM userInfo
+                    WHERE 1 = 1
+                    AND username = ${db.escape(username)}
+                    AND user_id != ${this.token.user_id};
+                `;
+                const result = await db.execute(SQL, {});
+                return result[0]['COUNT(1)'] > 0 ? false : true;
+            })(),
+            (async () => {
+                const SQL = `
+                    SELECT 
+                        COUNT(1)
+                    FROM userInfo
+                    WHERE 1 = 1
+                    AND email = ${db.escape(email)}
+                    AND user_id != ${this.token.user_id};
+                `;
+                const result = await db.execute(SQL, {});
+                return result[0]['COUNT(1)'] > 0 ? false : true;
+            })()
+        ]
+    )
+    if (!isUniqueAccount) {
+        logger.error(TAG, `Invalid account : ${account} already existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!isUniqueUserName) {
+        logger.error(TAG, `Invalid username : ${username} already existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    } else if (!isUniqueEmail) {
+        logger.error(TAG, `Invalid email : ${email} already existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Invalid parameter.');
+    }
+
+    const SQL =
+        `Update userInfo SET 
+            account=${db.escape(account)},
+            username=${db.escape(username)},
+            email="${email}"
+        WHERE user_id = ${this.token.user_id};`
+
+    try {
+        await db.execute(SQL, {});
+        return `Update user(ID:${this.token.user_id})  success.`;
+    } catch (err) {
+        logger.error(TAG, `Sent Reminder email Failed.`);
+        throw exception.BadRequestError('Email Error', '' + err);
+    }
+
 }
 
 module.exports = User;

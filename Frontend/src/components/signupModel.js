@@ -23,47 +23,47 @@ const formItemLayout = {
   },
 };
 
-export default function SignupModel(props){
+export default function SignupModel(props) {
 
   const departmentRef = useRef()
   const usernameRef = useRef()
   const identityRef = useRef()
   const passwordRef = useRef()
 
-  
+
   const handleOK = () => {
     props.setVisible(false)
-    const msg = isSignup(departmentRef.current.value, usernameRef.current.value, identityRef.current.value, passwordRef.current.value );
+    const msg = isSignup(departmentRef.current.value, usernameRef.current.value, identityRef.current.value, passwordRef.current.value);
     console.log("in handle ok", props.visible, msg)
   }
 
-  const handleCancel = () =>{
+  const handleCancel = () => {
     props.setVisible(false)
   }
 
 
   return (
 
-    <Modal 
-      visible = { props.visible }
-      onOk = { handleOK }
-      onCancel = { handleCancel } 
-      >
+    <Modal
+      visible={props.visible}
+      onOk={handleOK}
+      onCancel={handleCancel}
+    >
       <Form
         {...formItemLayout}
         name="register"
       >
 
-        <h2 style={{textAlign:"center"}}>註冊</h2>
+        <h2 style={{ textAlign: "center" }}>註冊</h2>
 
         <Form.Item
-        name="department"
-        label="Department"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+          name="department"
+          label="Department"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
         >
           <Select
             placeholder="Select your department"
@@ -85,17 +85,17 @@ export default function SignupModel(props){
             },
           ]}
         >
-          <Input ref={usernameRef}/>
+          <Input ref={usernameRef} />
         </Form.Item>
 
         <Form.Item
-        name="identity"
-        label="Identity"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+          name="identity"
+          label="Identity"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
         >
           <Select
             placeholder="Select your identity"
@@ -118,7 +118,7 @@ export default function SignupModel(props){
           ]}
           hasFeedback
         >
-          <Input.Password ref={passwordRef}/>
+          <Input.Password ref={passwordRef} />
         </Form.Item>
 
         <Form.Item
@@ -145,7 +145,7 @@ export default function SignupModel(props){
           <Input.Password />
         </Form.Item>
 
-      
+
       </Form>
 
     </Modal>

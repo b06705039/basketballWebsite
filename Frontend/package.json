@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "antd": "^4.15.4",
+    "axios": "^0.21.1",
     "devextreme": "20.2.7",
     "devextreme-react": "20.2.7",
     "react": "^17.0.2",

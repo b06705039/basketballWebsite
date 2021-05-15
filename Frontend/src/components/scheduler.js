@@ -30,14 +30,19 @@ class App extends React.Component {
       pagechange: 0,
       appointments: appointments
     };
+    this.scheduler = React.createRef();
+  }
+
+  componentWillUnmount = () => {
+    console.log(this.scheduler.current.props.dataSource);
   }
 
   render() {
     const { appointments } = this.state;
-    console.log(appointments)
     return (
       <React.Fragment>
         <Scheduler
+          ref={this.scheduler}
           adaptivityEnabled={true}
           timeZone="Asia/Taipei"
           id="scheduler"
@@ -144,7 +149,7 @@ class App extends React.Component {
     }
     return true
   }
-  onAppointmentDragEnd = e => { console.log(e) }
+  onAppointmentDragEnd = e => { }
 
   onAppointmentRemove = e => {
     if (e.itemData.arranged === true) {
@@ -162,7 +167,6 @@ class App extends React.Component {
   onAppointmentAdd = e => {
     if (e.itemData !== undefined) {
       if (e.itemData.startDate.getHours() === 0) {
-        console.log("Canceled")
         e.cancel = true;
         return;
       }

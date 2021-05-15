@@ -11,27 +11,70 @@ class Time {
     }
 }
 
-Time.prototype.update = async function (id, timeString) {
+Time.prototype.update = async function (timeString) {
     const TAG = '[TimeUpdate]';
     const logger = new Logger();
-    if (config.AdimLevel[this.token.adim] !== 2) {
+
+    if (config.AdimLevel[this.token.adim] !== 1) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return response.fail(resp, exception.PermissionError('Permission Deny', 'have no access'));
+        return exception.PermissionError('Permission Deny', 'have no access');
     }
     const tabel = this.token.adim + "Info";
     const timetable = this.token.adim + "Time";
     const Idform = this.token.adim + "_id";
-    let SQL = '';
-    let check = await db.execute(`SELECT ${Idform} FROM ${tabel} WHERE ${Idform} = ${id}`);
-    if (check.length === 0) {
-        SQL = `INSERT INTO ${timetable} (${Idform}, timeString) VALUE (${id}, ${timeString})`
-    } else {
-        SQL = `Update ${timetable} SET timeString="${timeString}" WHERE ${Idform}=${id};`
-    }
 
+    let check = await db.execute(`SELECT ${Idform} FROM ${tabel} WHERE user_id = ${this.token.user_id}`);
+    if (check.length === 0) {
+        logger.error(TAG, `User ID:${this.token.user_id} has not team`);
+        throw exception.BadRequestError('BAD_REQUEST', 'Name can not be empty.');
+    }
+    let SQL = `SELECT timeString FROM ${timetable} WHERE ${Idform} = ${check[0][Idform]}`;
+    let checkTime = await db.execute(SQL);
+    if (checkTime.length !== 0)
+        SQL = `Update ${timetable} SET timeString="${timeString}" WHERE ${Idform}=${check[0][Idform]};`
+    else
+        SQL = `Insert into ${timetable} (${Idform}, timeString) VALUE (${check[0][Idform]}, "${timeString}");`
     try {
         await db.execute(SQL);
-        return `${timetable} (${Idform}:${id}) updates timeString success`;
+        return `${timetable} (${Idform}:${check[0][Idform]}) updates timeString success`;
+    } catch (err) {
+        logger.error(TAG, `Execute MySQL Failed.`);
+        throw exception.BadRequestError('MySQL Server Error', '' + err);
+    }
+
+}
+
+Time.prototype.getTime = async function () {
+    const TAG = '[TimeUpdate]';
+    const logger = new Logger();
+
+    if (config.AdimLevel[this.token.adim] !== 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+    const table = this.token.adim + "Info";
+    const timetable = this.token.adim + "Time";
+    const Idform = this.token.adim + "_id";
+
+    let check = await db.execute(`SELECT ${Idform} FROM ${table} WHERE user_id = ${this.token.user_id}`);
+    if (check.length === 0) {
+        logger.error(TAG, `User ID:${this.token.user_id} has not team`);
+        throw exception.BadRequestError('BAD_REQUEST', `User ID:${this.token.user_id} has no team.`);
+    }
+    let SQL =
+        `SELECT 
+        ${timetable}.timeString AS timeString 
+    FROM userInfo
+    LEFT JOIN ${table}
+        ON  ${table}.user_id=userInfo.user_id
+    LEFT JOIN ${timetable} 
+        ON ${timetable}.${Idform}=${table}.${Idform}
+    WHERE userInfo.user_id=${this.token.user_id}`;
+
+    try {
+        let result = await db.execute(SQL);
+        console.log(result);
+        return result;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);
@@ -41,9 +84,9 @@ Time.prototype.update = async function (id, timeString) {
 
 Time.prototype.delete = async function (id) {
     const TAG = '[TimeDelete]';
-    if (config.AdimLevel[this.token.adim] !== 2) {
+    if (config.AdimLevel[this.token.adim] !== 1) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return response.fail(resp, exception.PermissionError('Permission Deny', 'have no access'));
+        return exception.PermissionError('Permission Deny', 'have no access');
     }
 
     const tabel = this.token.adim + "Info";
@@ -71,7 +114,7 @@ Time.prototype.getALL = async function () {
     const logger = new Logger();
     if (config.AdimLevel[this.token.adim] < 2) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return response.fail(resp, exception.PermissionError('Permission Deny', 'have no access'));
+        return exception.PermissionError('Permission Deny', 'have no access');
     }
     try {
         let output = {}

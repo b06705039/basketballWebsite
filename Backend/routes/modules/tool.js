@@ -2,6 +2,13 @@ const logger = require(global.__MODULE_BASE__ + 'logger');
 const _ = require('underscore');
 const config = require(global.__MODULE_BASE__ + 'config');
 
+function isVaildDepartment(department) {
+    if (config.department.find(x => (x === department)) !== undefined) {
+        return true;
+    }
+    return false;
+}
+
 function isNull() {
     if (!arguments || arguments.length == 0) {
         return true;
@@ -149,3 +156,4 @@ module.exports.isNumber = isNumber;
 module.exports.isInteger = isInteger;
 module.exports.isPositiveInteger = isPositiveInteger;
 module.exports.isDate = isDate;
+module.exports.isVaildDepartment = isVaildDepartment;
