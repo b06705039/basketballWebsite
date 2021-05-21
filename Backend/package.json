@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "devstart": "nodemon ./bin/www",
+    "server": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -14,7 +14,7 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "http-status-codes": "^2.1.4",
-    "jade": "~1.11.0",
+    "jade": "^1.9.2",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1",
     "mysql": "github:mysqljs/mysql",
