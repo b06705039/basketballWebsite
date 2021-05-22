@@ -134,12 +134,11 @@ function isPositiveInteger() {
 }
 
 function isDate(target) {
-    try {
-        Date(target);
-        return true;
-    } catch {
+    let date = Date.parse(target);
+    if (isNaN(date))
         return false;
-    }
+    else
+        return true;
 }
 
 module.exports.isNull = isNull;

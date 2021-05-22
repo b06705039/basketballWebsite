@@ -79,10 +79,12 @@ Time.prototype.getTime = async function () {
             for (let i = 0; i < timeItems.length; i++) {
                 if (!tool.isDate(timeItems[i]))
                     continue;
-                const startDate = new Date(timeItems[i]);
-                const endDate = new Date(timeItems[i]);
-                endDate.setHours(startDate.getHours() + 1);
-                output.push({ startDate, endDate });
+                if (tool.isDate(timeItems[i])) {
+                    const startDate = new Date(timeItems[i]);
+                    const endDate = new Date(timeItems[i]);
+                    endDate.setHours(startDate.getHours() + 1);
+                    output.push({ startDate, endDate });
+                }
             }
         };
         return output;
@@ -138,7 +140,7 @@ Time.prototype.getALL = async function () {
             LEFT JOIN teamInfo ON
                 teamTime.team_id = teamInfo.team_id;
                 `
-        output.teamTimes = await db.exception(SQL, {});
+        output.teamTimes = await db.execute(SQL, {});
         SQL =
             `SELECT 
             recorderTime.timeString AS times,
@@ -148,12 +150,12 @@ Time.prototype.getALL = async function () {
         LEFT JOIN recorderInfo ON
             recorderTime.recorder_id = recorderInfo.recorder_id;
             `
-        output.recorderTimes = await db.exception(SQL, {});
+        output.recorderTimes = await db.execute(SQL, {});
 
-        output.teamTimes.times = output.teamTimes.times.split(',').map(time => Date(time))
-        output.recorderTimes.times = output.recorderTimes.times.split(',').map(time => Date(time))
+        output.teamTimes.forEach(x => { x.times = x.times.split(',') })
+        output.recorderTimes.forEach(x => { x.times = x.times.split(',') })
         return output;
-    } catch {
+    } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }

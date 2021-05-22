@@ -1,6 +1,6 @@
 var express = require('express');
 const response = require(global.__MODULE_BASE__ + "response")
-const Team = require(global.__MODEL_BASE__ + "Team")
+const Recorder = require(global.__MODEL_BASE__ + "Recorder")
 const aurthor = require('./Aurthorize');
 
 
@@ -13,7 +13,7 @@ router.post('/create', async (req, resp) => {
     const name = req.body.name || "";
     const department = req.body.department;
     try {
-        const result = await new Team(token).create(name, department);
+        const result = await new Recorder(token).create(name, department);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -22,10 +22,10 @@ router.post('/create', async (req, resp) => {
 
 router.post('/status', async (req, resp) => {
     const token = req.body.token;
-    const team_id = req.body.id || "";
+    const recorder_id = req.body.id || "";
     const status = req.body.status || "";
     try {
-        const result = await new Team(token).status(team_id, status);
+        const result = await new Recorder(token).status(recorder_id, status);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -34,9 +34,9 @@ router.post('/status', async (req, resp) => {
 
 router.delete('/delete', async (req, resp) => {
     const token = req.body.token;
-    const team_id = req.body.id || "";
+    const recorder_id = req.body.id || "";
     try {
-        const result = await new Team(token).delete(team_id);
+        const result = await new Recorder(token).delete(recorder_id);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -45,9 +45,9 @@ router.delete('/delete', async (req, resp) => {
 
 router.get('/data', async (req, resp) => {
     const token = req.body.token;
-    const team_id = req.query.id || "";
+    const recorder_id = req.query.id || "";
     try {
-        const result = await new Team(token).getInfoByID(team_id);
+        const result = await new Recorder(token).getInfoByID(recorder_id);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -57,7 +57,7 @@ router.get('/data', async (req, resp) => {
 router.get('/getALL', async (req, resp) => {
     const token = req.body.token;
     try {
-        const result = await new Team(token).getALL();
+        const result = await new Recorder(token).getALL();
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -68,7 +68,7 @@ router.post('/update', async (req, resp) => {
     const token = req.body.token;
     const { name, department } = req.body;
     try {
-        const result = await new Team(token).update(name, department);
+        const result = await new Recorder(token).update(name, department);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);

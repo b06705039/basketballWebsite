@@ -41,7 +41,7 @@ class User {
     static generateToken(userObj) {
         // gen token
         const iat = Math.floor(Date.now() / 1000);
-        const expTime = 5 * 60 * 60; // 5 hours = 60 (seconds) * 60 * (min) = 3600 * 5
+        const expTime = 5000 * 60 * 60; // 5 hours = 60 (seconds) * 60 * (min) = 3600 * 5
         const payload = {
             user_id: userObj.user_id,
             account: userObj.account,

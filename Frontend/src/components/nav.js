@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {BrowserRouter as Router, Route, Link,Switch} from 'react-router-dom';
-import { Menu, Avatar, Image, Modal, Button  } from 'antd';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { Menu, Avatar, Image, Modal, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 // import styled from 'styled-components';
@@ -10,17 +10,17 @@ import SignupModel from './signupModel';
 
 
 
-function NavBar(){
-    const [ User, setUser] = useState()
-    const [ loginVisible, setLoginVisible ] = useState(false)
-    const [ signupVisible, setSignupVisible ] = useState(false)
+function NavBar() {
+    const [User, setUser] = useState()
+    const [loginVisible, setLoginVisible] = useState(false)
+    const [signupVisible, setSignupVisible] = useState(false)
 
 
     // const pageList = PageList()
     // const updateCurPage = UpdateCurPage()
 
     const { zhPageList, setCurPage } = useData()
-    
+
 
 
     const showLogin = () => {
@@ -33,52 +33,57 @@ function NavBar(){
         setSignupVisible(true)
     }
 
-    return(
+    return (
         <>
-            <Menu 
+            <Menu
                 theme="dark"
-                mode="horizontal" 
-                defaultSelectedKeys={['2']} 
-                onClick={(e)=>{setCurPage(e.key)}}
+                mode="horizontal"
+                defaultSelectedKeys={['2']}
+                onClick={(e) => { setCurPage(e.key) }}
             >
 
-                {zhPageList.map((page)=> 
-                <Menu.Item key={page}>
-                    <Link to={"/"+page}>
-                        {page}
-                    </Link>
-                </Menu.Item>)}
+                {zhPageList.map((page) =>
+                    <Menu.Item key={page}>
+                        <Link to={"/" + page}>
+                            {page}
+                        </Link>
+                    </Menu.Item>)}
                 <Menu.Item key={"scheduler"}>
                     <Link to={"/scheduler"}>
                         {"scheduler"}
                     </Link>
                 </Menu.Item>
+                <Menu.Item key={"timer"}>
+                    <Link to={"/timer"}>
+                        {"timer"}
+                    </Link>
+                </Menu.Item>
                 <Menu.Item >
                     <Avatar
-                        style={{ backgroundColor: '#87d068', }} 
+                        style={{ backgroundColor: '#87d068', }}
                         icon={<UserOutlined />}
                     />
                 </Menu.Item>
-                <Menu.Item 
+                <Menu.Item
                     onClick={showLogin}
-                    // style={{float:"right"}}
+                // style={{float:"right"}}
                 >
                     登入
                 </Menu.Item>
-                <Menu.Item 
+                <Menu.Item
                     onClick={showSignup}
-                    // style={{float:"right"}}
+                // style={{float:"right"}}
                 >
                     註冊
                 </Menu.Item>
             </Menu>
-            
 
-            <LoginModel 
+
+            <LoginModel
                 visible={loginVisible}
                 setVisible={setLoginVisible}
             />
-            <SignupModel 
+            <SignupModel
                 visible={signupVisible}
                 setVisible={setSignupVisible}
             />

@@ -4,7 +4,7 @@ const exception = require(global.__MODULE_BASE__ + 'exception');
 const tool = require(global.__MODULE_BASE__ + 'tool');
 const config = require(global.__MODULE_BASE__ + 'config');
 const Team = require('./Team')
-
+const Recorder = require('./Recorder')
 class Match {
     constructor(token) {
         this.token = token;
@@ -150,13 +150,11 @@ Match.prototype.getALL = async function () {
         let results = (await db.execute(SQL, {}));
         results.forEach(match => {
             if (!tool.isNull(match.startDate)) {
-                match.endDate = new Date(match.startDate)
-                match.startDate = new Date(match.startDate)
-                match.endDate.setHours(match.startDate.getHours() + 1);
                 match.arranged = true;
             }
             else {
-                match.endDate = null;
+                delete match.endDate;
+                delete match.startDate;
                 match.arranged = false;
             }
         })
@@ -180,15 +178,23 @@ Match.prototype.update = async function (match_id, startDate, field, recorder) {
         logger.error(TAG, `Invalid Match ID ${match_id}.`);
         throw exception.BadRequestError('BAD_REQUEST', `Match ID (${match_id}) is invalid.`);
     }
+
+    if (field !== 0 && field !== 1) {
+        field = null;
+    } else if (!Recorder.IsVaildRecorderID(recorder)) {
+        recorder = null;
+    }
+
+
     const SQL =
         `UPDATE matchInfo SET 
             startDate = ${(startDate) ? `"${startDate}"` : "NULL"},
-            field =${field || null},
-            recorder=${recorder || null}
+            field =${field},
+            recorder=${recorder}
         WHERE match_id = ${match_id};`
     try {
         await db.execute(SQL, {});
-        return `Update (startDate = "${startDate || "NULL"}" field = ${field || "NULL"} recorder= ${recorder || "NULL"}) success.`
+        return `Update (startDate = "${startDate || "NULL"}" field = ${field} recorder= ${recorder || "NULL"}) success.`
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);

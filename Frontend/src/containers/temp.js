@@ -6,6 +6,7 @@ import ContentHeader from '../components/header';
 import { Menu, Layout } from 'antd';
 import { useData } from '../data/context';
 import Scheduler from '../components/scheduler'
+import Timer from '../components/Timer'
 
 const { Header, Content, Footer } = Layout;
 
@@ -37,6 +38,7 @@ function Temp() {
                     <Route exact path="/" component={ContentHeader} />
                     {zhPageList.map((page) => <Route path={"/" + page} component={ContentHeader} />)}
                     <Route path={"/scheduler"} component={Scheduler} />
+                    <Route path={"/Timer"} component={Timer} />
                 </Switch>
                 <Footer style={{ textAlign: 'center' }}>Online Basketball Web design by </Footer>
             </Layout>

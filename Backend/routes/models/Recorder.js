@@ -5,21 +5,21 @@ const tool = require(global.__MODULE_BASE__ + 'tool');
 const config = require(global.__MODULE_BASE__ + 'config');
 
 
-class Team {
+class Recorder {
     constructor(token) {
         this.token = token;
     }
 
-    static async IsVaildTeamID(id) {
-        let check = await db.execute(`SELECT team_id FROM teamInfo WHERE team_id = ${id}`);
+    static async IsVaildRecorderID(id) {
+        let check = await db.execute(`SELECT recorder_id FROM recorderInfo WHERE recorder_id = ${id}`);
         return (check.length === 0) ? false : true;
     }
 }
 
-Team.prototype.create = async function (name, department) {
-    const TAG = '[TeamCreate]';
+Recorder.prototype.create = async function (name, department) {
+    const TAG = '[RecorderCreate]';
     const logger = new Logger();
-    if (this.token.adim !== 'team') {
+    if (this.token.adim !== 'recorder') {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
         return exception.PermissionError('Permission Deny', 'have no access');
     }
@@ -36,7 +36,7 @@ Team.prototype.create = async function (name, department) {
         const SQL = `
             SELECT 
                 COUNT(1)
-            FROM teamInfo
+            FROM recorderInfo
             WHERE 1 = 1
             AND user_id = ${this.token.user_id}
         ;`;
@@ -45,15 +45,15 @@ Team.prototype.create = async function (name, department) {
     })()
 
     if (!isUniqueID) {
-        logger.error(TAG, `You already have a team`);
-        throw exception.BadRequestError('BAD_REQUEST', `You already have a team`);
+        logger.error(TAG, `You already have a recorder`);
+        throw exception.BadRequestError('BAD_REQUEST', `You already have a recorder`);
     }
 
     const isUniqueName = await (async () => {
         const SQL = `
             SELECT 
                 COUNT(1)
-            FROM teamInfo
+            FROM recorderInfo
             WHERE 1 = 1
             AND name = ${db.escape(name)}
         ;`;
@@ -61,7 +61,7 @@ Team.prototype.create = async function (name, department) {
         return result[0]['COUNT(1)'] > 0 ? false : true;
     })()
     if (!isUniqueName) {
-        logger.error(TAG, `Invalid Team Name (${name}): Name already existed.`);
+        logger.error(TAG, `Invalid recorder Name (${name}): Name already existed.`);
         throw exception.BadRequestError('BAD_REQUEST', `Name (${name}) already existed.`);
     }
 
@@ -70,15 +70,15 @@ Team.prototype.create = async function (name, department) {
         throw exception.BadRequestError('BAD_REQUEST', ` Department (${department}) doesn't exist.`);
     }
 
-    let team_id = (await db.execute("SELECT MAX(team_id) FROM teamInfo;"))[0]['MAX(team_id)'];
-    if (tool.isNull(team_id))
-        team_id = 1;
+    let recorder_id = (await db.execute("SELECT MAX(recorder_id) FROM recorderInfo;"))[0]['MAX(recorder_id)'];
+    if (tool.isNull(recorder_id))
+        recorder_id = 1;
     else
-        team_id += 1;
-    const SQL = `INSERT INTO teamInfo (user_id, team_id, name, department) VALUE (${this.token.user_id}, ${team_id}, "${name}", "${department}");`
+        recorder_id += 1;
+    const SQL = `INSERT INTO recorderInfo (user_id, recorder_id, name, department) VALUE (${this.token.user_id}, ${recorder_id}, "${name}", "${department}");`
     try {
         await db.execute(SQL);
-        return `INSERT INTO teamInfo VALUE (${this.token.user_id}, ${team_id}, ${name}, ${department}) success`;
+        return `INSERT INTO recorderInfo VALUE (${this.token.user_id}, ${recorder_id}, ${name}, ${department}) success`;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);
@@ -86,8 +86,8 @@ Team.prototype.create = async function (name, department) {
 
 }
 
-Team.prototype.status = async function (team_id, status) {
-    const TAG = '[TeamStatus]';
+Recorder.prototype.status = async function (recorder_id, status) {
+    const TAG = '[RecorderStatus]';
     const logger = new Logger();
 
     if (config.AdimLevel[this.token.adim] < 2) {
@@ -95,28 +95,28 @@ Team.prototype.status = async function (team_id, status) {
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
-    if (!(await Team.IsVaildTeamID(team_id))) {
-        logger.error(TAG, `Invalid team_id : ${team_id} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', `Team ID (${team_id}) is invalid.`);
+    if (!(await Recorder.IsVaildRecorderID(recorder_id))) {
+        logger.error(TAG, `Invalid recorder_id : ${recorder_id} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', `recorder ID (${recorder_id}) is invalid.`);
     }
 
-    if (config.teamStatus.find(x => (x === status)) === undefined) {
-        logger.error(TAG, `Invalid team status : Status (${status}) does not existed.`);
+    if (config.recorderStatus.find(x => (x === status)) === undefined) {
+        logger.error(TAG, `Invalid recorder status : Status (${status}) does not existed.`);
         throw exception.BadRequestError('BAD_REQUEST', ` Status (${status}) is invalid.`);
     }
 
-    const SQL = `UPDATE teamInfo SET status = "${status}" WHERE team_id=${team_id};`;
+    const SQL = `UPDATE recorderInfo SET status = "${status}" WHERE recorder_id=${recorder_id};`;
     try {
         await db.execute(SQL, {});
-        return { info: `UPDATE team status to ${status} Success` };
+        return { info: `UPDATE recorder status to ${status} Success` };
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
 }
 
-Team.prototype.delete = async function (team_id) {
-    const TAG = '[TeamDelete]';
+Recorder.prototype.delete = async function (recorder_id) {
+    const TAG = '[RecorderDelete]';
     const logger = new Logger();
 
     if (config.AdimLevel[this.token.adim] < 2) {
@@ -124,16 +124,16 @@ Team.prototype.delete = async function (team_id) {
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
-    if (!(await Team.IsVaildTeamID(team_id))) {
-        logger.error(TAG, `Invalid team_id : ${team_id} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', 'Team ID (${team_id}) is invalid.');
+    if (!(await recorder.IsVaildrecorderID(recorder_id))) {
+        logger.error(TAG, `Invalid recorder_id : ${recorder_id} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'recorder ID (${recorder_id}) is invalid.');
     }
 
-    const SQL = `DELETE FROM teamInfo WHERE team_id = ${team_id};`;
+    const SQL = `DELETE FROM recorderInfo WHERE recorder_id = ${recorder_id};`;
     console.log(SQL);
     try {
         await db.execute(SQL, {});
-        return { info: `Delete team ${team_id} Success` };
+        return { info: `Delete recorder ${recorder_id} Success` };
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
@@ -141,8 +141,8 @@ Team.prototype.delete = async function (team_id) {
 
 }
 
-Team.prototype.getInfoByID = async function (team_id) {
-    const TAG = '[TeamGetInfo]';
+Recorder.prototype.getInfoByID = async function (recorder_id) {
+    const TAG = '[RecorderGetInfo]';
     const logger = new Logger();
 
     if (config.AdimLevel[this.token.adim] < 1) {
@@ -150,23 +150,23 @@ Team.prototype.getInfoByID = async function (team_id) {
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
-    if (!(await Team.IsVaildTeamID(team_id))) {
-        logger.error(TAG, `Invalid team_id : ${team_id} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', 'Team ID (${team_id}) is invalid.');
+    if (!(await recorder.IsVaildrecorderID(recorder_id))) {
+        logger.error(TAG, `Invalid recorder_id : ${recorder_id} does not existed.`);
+        throw exception.BadRequestError('BAD_REQUEST', 'recorder ID (${recorder_id}) is invalid.');
     }
 
     const SQL =
         `SELECT 
-            ${(config.AdimLevel[this.token.adim] >= 2) ? "team_id, status," : ""}
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "recorder_id, status," : ""}
             userInfo.username AS owner,
             userInfo.department AS ownerDepartment,
             userInfo.email AS email,
             name,
-            teamInfo.department AS department
-        FROM teamInfo
+            recorderInfo.department AS department
+        FROM recorderInfo
         LEFT JOIN userInfo ON 
-            userInfo.user_id = teamInfo.user_id
-        WHERE teamInfo.team_id = ${team_id};`;
+            userInfo.user_id = recorderInfo.user_id
+        WHERE recorderInfo.recorder_id = ${recorder_id};`;
     try {
         return (await db.execute(SQL, {}))[0];
     } catch (err) {
@@ -175,8 +175,8 @@ Team.prototype.getInfoByID = async function (team_id) {
     }
 }
 
-Team.prototype.getALL = async function () {
-    const TAG = `[TeamGetALL]`
+Recorder.prototype.getALL = async function () {
+    const TAG = `[RecorderGetALL]`
     const logger = new Logger();
     if (config.AdimLevel[this.token.adim] < 1) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
@@ -185,15 +185,15 @@ Team.prototype.getALL = async function () {
 
     const SQL =
         `SELECT 
-            ${(config.AdimLevel[this.token.adim] >= 2) ? "team_id, status," : ""}
+            ${(config.AdimLevel[this.token.adim] >= 2) ? "recorder_id, status," : ""}
             userInfo.username AS owner,
             userInfo.department AS ownerDepartment,
             userInfo.email AS email,
             name,
-            teamInfo.department AS department
-        FROM teamInfo
+            recorderInfo.department AS department
+        FROM recorderInfo
         LEFT JOIN userInfo ON 
-            userInfo.user_id = teamInfo.user_id;`;
+            userInfo.user_id = recorderInfo.user_id;`;
     try {
         return (await db.execute(SQL, {}));
     } catch (err) {
@@ -202,27 +202,26 @@ Team.prototype.getALL = async function () {
     }
 }
 
-Team.prototype.update = async function (name, department) {
-    const TAG = "[TeamUpdate]";
+Recorder.prototype.update = async function (name, department) {
+    const TAG = "[RecorderUpdate]";
     const logger = new Logger();
-    if (this.token.adim !== 'team') {
+    if (this.token.adim !== 'recorder') {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
         return exception.PermissionError('Permission Deny', 'have no access');
     }
-    const team_id = await (async () => {
+    const recorder_id = await (async () => {
         const SQL = `
             SELECT 
-                team_id
-            FROM teamInfo
+                recorder_id
+            FROM recorderInfo
             WHERE 1 = 1
             AND user_id = ${this.token.user_id}
         ;`;
         const result = await db.execute(SQL, {});
-        console.log(result)
-        return (result.length > 0) ? result[0]['team_id'] : undefined;
+        return (result.length > 0) ? result[0]['recorder_id'] : undefined;
     })();
 
-    if (team_id === undefined) {
+    if (recorder_id === undefined) {
         logger.error(TAG, `User (${this.token.user_id}) has no access to ${TAG}.`);
         return exception.PermissionError('Permission Deny', 'Have no access');
     }
@@ -239,10 +238,10 @@ Team.prototype.update = async function (name, department) {
         const SQL = `
             SELECT 
                 COUNT(1)
-            FROM teamInfo
+            FROM recorderInfo
             WHERE 1 = 1
             AND (name = ${db.escape(name)} OR department=${db.escape(department)})
-            AND team_id != ${team_id}
+            AND recorder_id != ${team_id}
         ;`;
         const result = await db.execute(SQL, {});
         return result[0]['COUNT(1)'] > 0 ? false : true;
@@ -253,7 +252,7 @@ Team.prototype.update = async function (name, department) {
         throw exception.BadRequestError('BAD_REQUEST', `Name (${name}) already existed.`);
     }
 
-    const SQL = `UPDATE teamInfo SET name=${db.escape(name)}, department=${db.escape(department)} WHERE team_id=${team_id};`
+    const SQL = `UPDATE recorderInfo SET name=${db.escape(name)}, department=${db.escape(department)} WHERE recorder_id=${recorder_id};`
     try {
         await db.execute(SQL, {});
         return { info: `Update team ${team_id} Success` };
@@ -263,4 +262,4 @@ Team.prototype.update = async function (name, department) {
     }
 }
 
-module.exports = Team;
+module.exports = Recorder;

@@ -29,6 +29,7 @@ config.AdimLevel = { administer: 2, recorder: 1, team: 1, public: 0 };
 
 config.department = ['ME', "EE", "DFLL", "FIN", "CHE"];
 config.teamStatus = ['已報名', '已繳費', '審核中', '未報名', '未繳費'];
+config.recorderStatus = ['已報名', '未報名']
 
 config.AdministerEmail = {
     user: 'thomson861106@gmail.com',

@@ -37,11 +37,10 @@ function DataCell(props) {
   );
 }
 
-
+let timeString = "No Update";
 function App() {
   const scheduler = useRef(null);
-  let [timeString] = useState("No Update");
-  const [appointments, setAppointments] = useState([]);
+  const [appointments] = useState([]);
 
   const AddbusyTime = data => {
     let newappointments = {
@@ -53,6 +52,7 @@ function App() {
       return;
     if (scheduler.current.props.dataSource.find(x => ((new Date(x.startDate)).toUTCString() === newappointments.startDate.toUTCString())) === undefined)
       scheduler.current.instance.addAppointment(newappointments);
+    console.log(newappointments)
     SetTimeString();
   }
 
@@ -62,34 +62,37 @@ function App() {
   }
 
   const SetTimeString = () => {
-    let timeListes = [...scheduler.current.props.dataSource].map(x => x.startDate);
-    timeString = timeListes.join(',');
-    console.log(timeString);
+    let timeListes = [...scheduler.current.props.dataSource].map(x => {
+      let out = new Date(x.startDate);
+      return out.toISOString();
+
+    });
+    timeString = timeListes.filter(x => (x != "Invalid Date")).join(',');
+    console.log(timeString)
   }
 
   useEffect(() => {
     const GetData = async () => {
       const timeResponse = await Time.GetTime();
-      timeResponse.map(time => {
-        scheduler.current.instance.addAppointment(time);
-      })
+      console.log(timeResponse)
+      if (timeResponse.length > 0)
+        timeResponse.map(time => {
+          console.log(time)
+          scheduler.current.instance.addAppointment(time);
+        })
     }
     GetData();
     return () => {
+      console.log(timeString);
       if (timeString !== "No Update") {
         (async () => {
+          console.log("Updated", timeString)
           await Time.Update(timeString)
         })()
       }
     }
   }, [])
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (timeString !== "NO UPDATES")
-  //       await Time.Update(timeString)
-  //   })()
-  // }, [timeString])
 
 
 
