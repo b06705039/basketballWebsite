@@ -137,14 +137,17 @@ Match.prototype.getALL = async function () {
             Away.department As awayDepartment,
             ${(config.AdimLevel[this.token.adim] >= 2) ? "Away.status As awayStatus," : ""}
             matchInfo.startDate AS startDate, 
-            matchInfo.field AS field, 
-            matchInfo.recorder AS recorder,
+            matchInfo.field AS field,
+            matchInfo.recorder AS recorder_id,
+            recorderInfo.name AS recorder,
             matchInfo.winner AS winner
             FROM matchInfo
         LEFT JOIN teamInfo AS Home ON 
             Home.team_id = matchInfo.home
         LEFT JOIN teamInfo AS Away ON 
-            Away.team_id = matchInfo.away;`;
+            Away.team_id = matchInfo.away
+        LEFT JOIN recorderInfo ON 
+            recorderInfo.recorder_id = matchInfo.recorder;`;
 
     try {
         let results = (await db.execute(SQL, {}));

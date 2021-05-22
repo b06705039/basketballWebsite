@@ -3,7 +3,7 @@ import Scheduler, { AppointmentDragging, Resource, View } from 'devextreme-react
 import Draggable from 'devextreme-react/draggable';
 import ScrollView from 'devextreme-react/scroll-view';
 import notify from 'devextreme/ui/notify';
-import { busytime, FieldData } from '../data/data';
+import { FieldData } from '../data/data';
 import AppointmentFormat from './Appointment'
 import AppointmentTooltip from './AppointmentTooltip'
 import 'devextreme/dist/css/dx.common.css';
@@ -49,14 +49,14 @@ class App extends React.Component {
       let allmatches = await Match.GetALLMatch()
       allmatches.forEach(match => { match.text = `${match.home} vs ${match.away}`; match.startDate = new Date(match.startDate) })
       let responseTime = await Time.GetALLTime();
-      let setbusytime = {}, setrecorder = {}, setteam = {}, teamtime = {};
+      let setbusytime = {}, setrecorder = [], setteam = {}, teamtime = {};
       responseTime.recorderTimes.forEach(x => {
-        setrecorder[x.name] = x.department;
+        setrecorder.push({ name: x.name, department: x.department, id: x.id });
         x.times.forEach(time => {
           if (time in setbusytime)
             setbusytime[time].recorder.push(x.name)
           else {
-            setbusytime[time] = { recorder: [x.name], team: [] }
+            setbusytime[time] = { recorder: [x.name] }
           }
         })
       })
@@ -228,7 +228,6 @@ class App extends React.Component {
     let check = this.state.appointments.filter(x => (x.arranged && id !== x.id &&
       startDate.getDate() === x.startDate.getDate()))
     check.filter(x => (x.home === home || x.home === away || x.away === home || x.away === away))
-    console.log(check)
     return (check.length === 0) ? true : false;
   }
 
@@ -296,8 +295,8 @@ class App extends React.Component {
       notify(`${e.oldData.home} or ${e.oldData.away} have game at the same time`);
       return;
     }
-    const { id, startDate, field, recorder } = e.newData;
-    (async () => { await Match.Update(id, startDate, field, recorder); })()
+    const { id, startDate, field, recorder_id } = e.newData;
+    (async () => { await Match.Update(id, startDate, field, recorder_id); })()
   }
 
   onListDragStart(e) {
@@ -317,34 +316,52 @@ class App extends React.Component {
   }
 
   onAppointmentFormOpening = (data) => {
-
-    if (this.checkIfNoGame(data.appointmentData.startDate)) {
+    const { homeDepartment, awayDepartment, startDate, recorder_id } = data.appointmentData
+    if (this.checkIfNoGame(startDate)) {
       data.cancel = true;
       return;
     }
+    let busyrecorders = [];
+    if (startDate.toISOString() in this.state.busytime) {
+      busyrecorders = this.state.busytime[startDate.toISOString()].recorder;
+    }
+    let options = this.state.recorders.filter(x => {
+      let output = (
+        x.department !== homeDepartment &&
+        x.department !== awayDepartment &&
+        busyrecorders.find(person => (person === x.name)) === undefined
+      );
+      return output
+    })
+
+    if (options.length === 0) {
+      notify("Seem there are no avaliable recorders")
+      data.cancel = true;
+      return
+    }
+
+    console.log(options)
     let form = data.form;
-    let text = data.appointmentData.text;
     form.option('items', [{
       colSpan: 2,
       label: {
-        text: 'Contest'
+        text: 'Recorder'
       },
       editorType: 'dxSelectBox',
-      dataField: 'id',
-      value: text,
+      dataField: 'recorder_id',
+      value: recorder_id,
       editorOptions: {
-        items: this.state.appointments.filter(x => (x.arranged !== true)),
+        items: options,
         itemTemplate: function (option) {
-          return option.text
+          return `${option.name} ${option.department}`
         },
-        displayExpr: 'text',
-        valueExpr: 'id',
         onValueChanged: (args) => {
-          let target = this.state.appointments.find(x => (x.id === args.value))
-          if (target !== undefined) {
-            form.updateData('text', target.text)
-          }
-        }
+          let target = options.find(x => (x.id === args.value));
+          if (target !== undefined)
+            form.updateData('recorder', target.name);
+        },
+        displayExpr: 'name',
+        valueExpr: 'id'
       }
     }]);
   }

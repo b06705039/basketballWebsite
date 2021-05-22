@@ -132,7 +132,8 @@ Time.prototype.getALL = async function () {
     try {
         let output = {}
         let SQL =
-            `SELECT 
+            `SELECT
+                teamInfo.team_id AS id,
                 teamTime.timeString AS times,
                 teamInfo.name AS name,
                 teamInfo.department AS department
@@ -143,6 +144,7 @@ Time.prototype.getALL = async function () {
         output.teamTimes = await db.execute(SQL, {});
         SQL =
             `SELECT 
+            recorderInfo.recorder_id AS id,
             recorderTime.timeString AS times,
             recorderInfo.name AS name,
             recorderInfo.department AS department

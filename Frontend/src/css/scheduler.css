@@ -41,17 +41,17 @@
   }
   
   .movie-tooltip img {
-    height: 80px;
+    height: 200px;
     margin-bottom: 10px;
   }
   
   .movie-tooltip .movie-title {
-    font-size: 1.5em;
+    font-size: 2em;
     line-height: 40px;
   }
   
   .movie-tooltip{
-      width: 200px;
+      width: 400px;
       margin: 0 auto;
   }
   
@@ -80,4 +80,15 @@
       transparent 9px);
     text-align: center;
     color: #ff000d;
+  }
+
+
+  .appointment-detail{
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .appointment-detail td{
+    border: 1px solid #333;
+    width: 1200px;
   }
