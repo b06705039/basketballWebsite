@@ -11,19 +11,3 @@ html, body{
 #root{
     height: 100%;
 }
-/* 
-.ant-layout-content{
-    background-image: url("./img/tempback_img.jpg");
-    height: 1000px;
-    opacity: 10%;
-    display: flex;
-    z-index:1; 
-    
-}
-.site-layout-content{
-    z-index:0;
-    opacity: 100%;
-    color: black;
-    
-    
-} */

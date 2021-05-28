@@ -1,14 +1,14 @@
 import React from 'react';
-import {ContextProvider} from './data/context';
+import { PagesProvider } from './hooks/usePages';
 import Temp from './containers/temp';
 
 function App(){
 
     return(
         <>
-            <ContextProvider> 
+            <PagesProvider> 
                 <Temp/>
-            </ContextProvider>       
+            </PagesProvider>       
         </>
     );
 };

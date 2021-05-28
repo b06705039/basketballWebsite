@@ -508,3 +508,16 @@ export const Recorder = {
         };
     }
 }
+
+
+const doLogin = async ( username, password ) => {
+    const msg = { userid:1, identity:"admin" }
+    return msg
+}
+
+const doSignup = async ( department, username, identity, password ) => {
+    const msg = true
+    return msg
+}
+
+export { doLogin, doSignup }

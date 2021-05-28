@@ -4,8 +4,8 @@ import Draggable from 'devextreme-react/draggable';
 import ScrollView from 'devextreme-react/scroll-view';
 import notify from 'devextreme/ui/notify';
 import { FieldData } from '../data/data';
-import AppointmentFormat from './Appointment'
-import AppointmentTooltip from './AppointmentTooltip'
+import AppointmentFormat from '../components/Appointment'
+import AppointmentTooltip from '../components/AppointmentTooltip'
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import '../css/scheduler.css'

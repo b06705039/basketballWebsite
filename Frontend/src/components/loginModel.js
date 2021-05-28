@@ -1,6 +1,7 @@
-import React, { useRef } from 'react'
+import React,{ useRef, useState } from 'react'
 import { Modal, Button, Form, Input, Checkbox } from 'antd'
-import { isLogin, isSignup } from '../axios'
+import { login, useUser } from '../hooks/useUser'
+import { usePages } from '../hooks/usePages'
 
 const formItemLayout = {
   labelCol: {
@@ -21,73 +22,68 @@ const formItemLayout = {
   },
 };
 
-
 export default function LoginModel(props) {
-
   const usernameRef = useRef();
   const passwordRef = useRef();
+  const { status, login } = useUser();
+  const { setId } = usePages();
+  const [ LoginWarn, setLoginWarn ] = useState(false);
+  const [ form ] = Form.useForm()
 
-  console.log("in login model", props.visible);
-
-  const handleOK = () => {
-    props.setVisible(false)
-    const msg = isLogin(usernameRef.current.value, passwordRef.current.value)
-    console.log("in handle ok", props.visible)
+  const handleOK = async () => {
+    if(await login(usernameRef.current.value,passwordRef.current.value)){
+      console.log("in model, true")
+      props.setVisible(false)
+      setLoginWarn(false)
+      setId('admin')
+    } 
+    else{
+      console.log("in model, false")
+      setLoginWarn(true)
+    }
+    form.resetFields();
   }
 
-  const handleCancel = () => {
+  const handleCancel = () =>{
     props.setVisible(false)
   }
 
-
-  return (
+  return(
     <div>
-      <Modal
-        visible={props.visible}
-        onOk={handleOK}
-        onCancel={handleCancel}
+      <Modal 
+      visible = { props.visible }
+      onOk = { handleOK }
+      onCancel = { handleCancel } 
+      afterClose = { ()=>setLoginWarn(false) }
       >
-        <Form
+        <Form 
           {...formItemLayout}
-          style={{ textAlign: "center" }}
+          style={{textAlign:"center"}}
+          form={form}
         >
-
-          <h2 style={{ textAlign: "center" }}>登入</h2>
-
+          <h2 style={{textAlign:"center"}}>登入</h2>
+          <h4 style={{textAlign:"center",visibility:LoginWarn?"":"hidden",color:"red"}} >登入失敗!</h4>
           <Form.Item
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail!',
-              },
-              {
-                required: true,
-                message: 'Please input your E-mail!',
-              },
-            ]}
-          >
-            <Input ref={usernameRef} />
+          name="username"
+          label="Username"
+        >
+          <Input ref={usernameRef} value={null} />
           </Form.Item>
-
+        
           <Form.Item
-            name="password"
-            label="Password"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your password!',
-              },
-            ]}
-            hasFeedback
+          name="password"
+          label="Password"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your password!',
+            },
+          ]}
+          hasFeedback
           >
-            <Input.Password ref={passwordRef} />
+            <Input.Password ref={passwordRef} value={null}/>
           </Form.Item>
-
-
         </Form>
-
       </Modal>
     </div>
   )
