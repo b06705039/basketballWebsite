@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Button } from 'antd'
-import UseData from '../hooks/useData'
 import PreGameTable from '../components/preGameTable'
-import ACycle from '../components/ACycle'
-
+import Cycles from '../components/Cycles'
+import usePreGame from '../hooks/usePreGame'
 
 const ContentBackground = styled.div`
     height: 1000px;
@@ -52,18 +51,10 @@ const RightBlock = styled.div`
     float:left;
 `
 
-
-
-
-
-
 const PreGame = () => {
-
-    const { preGameData, setPreGameData } = UseData()
-
-
     
-
+    const { mapDict } = usePreGame()
+    
     return(
         <ContentBackground className="ant-layout-content" >
             <ContentBody className="site-layout-content">
@@ -78,17 +69,14 @@ const PreGame = () => {
                 
                 <BottomDiv>
                     <LeftBlock>
-                        <PreGameTable data={preGameData}/>
+                        <PreGameTable />
                     </LeftBlock>
 
                     <RightBlock>
-                       {preGameData.map(team=><ACycle />)} 
+                        {mapDict && <Cycles data={mapDict}/>}
                     </RightBlock>
                 </BottomDiv>
                 
-
-
-
             </ContentBody>
         </ContentBackground>
     )

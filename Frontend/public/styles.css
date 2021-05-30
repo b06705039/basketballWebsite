@@ -11,3 +11,8 @@ html, body{
 #root{
     height: 100%;
 }
+
+.forStyledComponent{
+    align-content: space-between;
+    display:contents;
+}

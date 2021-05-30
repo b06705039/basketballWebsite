@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import 'antd/dist/antd.css';
 import { Table, Input, Form } from 'antd'
+import usePreGame from '../hooks/usePreGame'
 
 const PreGameCol = [
     {
       title: '球隊',
-      dataIndex: 'team',
-      key: 'team',
+      dataIndex: 'name',
+      key: 'name',
       width: '50%',
     },
     {
@@ -87,22 +88,20 @@ const EditableCell = ({
     return <td {...restProps}>{childNode}</td>;
 };
 
-const PreGameTable = (props) => {
-
+const PreGameTable = () => {
+    
     const [ columns, setColumns ] = useState(PreGameCol)
-    const [ state, setState ] = useState({dataSource:props.data, count:3})
+    const { preGameTable, setPreGameTable } = usePreGame()
+    console.log("in preGameTable", preGameTable)
 
     const handleSave = (row) => {
-        const newData = [...state.dataSource];
+        const newData = JSON.parse(JSON.stringify(preGameTable))
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
-        setState({
-            dataSource: newData,
-        });
+        setPreGameTable(newData);
     };
 
-    const { dataSource } = state;
     const components = {
         body: {
             row: EditableRow,
@@ -132,7 +131,7 @@ const PreGameTable = (props) => {
                 components={components}
                 rowClassName={() => 'editable-row'}
                 bordered
-                dataSource={dataSource}
+                dataSource={preGameTable}
                 columns={Columns}
             />
         </>

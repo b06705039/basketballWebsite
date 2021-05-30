@@ -3,8 +3,11 @@ import { pagesMenu } from './pagesMenu'
 
 const defId = "admin"
 const defCurPage = "news"
+// 加入下面這行 const { ..., pageName } = pagesMenu()
 const { News, PreGame, Default, Try , Scheduler, Timer} = pagesMenu()
 
+
+// 找到相對應頁面，改後面的component
 const zhPage = {
     'news':[ '最新消息', News ],
     'schedule':[ '賽程時間表', Scheduler ],
