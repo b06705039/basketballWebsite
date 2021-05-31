@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import 'antd/dist/antd.css';
 import { Table, Input, Form } from 'antd'
-import usePreGame from '../hooks/usePreGame'
+import { usePreGame } from '../hooks/usePreGame'
 
 const PreGameCol = [
     {

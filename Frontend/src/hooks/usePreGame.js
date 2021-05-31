@@ -1,8 +1,15 @@
-import { configConsumerProps } from 'antd/lib/config-provider'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { Team } from '../axios'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { Team, Match } from '../axios'
 
-const usePreGame = () => {
+
+const PreGameData = React.createContext()
+
+
+export const usePreGame = () => {
+    return useContext(PreGameData)
+}
+
+const PreGamgeProvider = ({children}) => {
 
     const [ preGameTable, setPreGameTable ] = useState([])
     const [ cycle3, setCycle3 ] = useState(0)
@@ -10,7 +17,7 @@ const usePreGame = () => {
     const [ mapDict, setMapDict ] = useState({})
 
     useEffect(async() => {
-        let preGameData = await Team.GetALLTeam()
+        const preGameData = await Team.GetALLTeam()
         let newData = []
         Object.entries(preGameData).forEach((data) => newData.push({key:data[1].team_id, name:data[1].name, session:'--' }))
         setPreGameTable(newData)
@@ -20,7 +27,7 @@ const usePreGame = () => {
         try{
             let totalCycle = preGameTable.length
             if(totalCycle - (totalCycle%3 * 4) >= 0){
-                setCycle3( totalCycle - (totalCycle%3 * 4) )
+                setCycle3( (totalCycle - (totalCycle%3 * 4))/3 )
                 setCycle4( totalCycle%3 )
             }
             else{
@@ -57,7 +64,6 @@ const usePreGame = () => {
     //     }
     // }
     // session depends on cycle3 & cycle4
-
     const cycleDict = () => {
         let dict = {}
         // A = 65
@@ -74,11 +80,10 @@ const usePreGame = () => {
             }
             dict[alphaChar] = ACycleDict
         }
-        return( dict )
+        return dict
     }
 
-    useEffect(() => {
-        console.log("in usePreGame updateDict" )
+    useMemo(() => {
         let updateDict = cycleDict()
         Object.entries(preGameTable).map((team, index)=>{
             const teamSessionGroup = team[1].session[0]
@@ -88,12 +93,19 @@ const usePreGame = () => {
             }
         })
         console.log("in usePreGame updateDict", updateDict)
+        
         setMapDict(updateDict)
     }, [ cycle3, cycle4, preGameTable])
 
     console.log("in usePreGame", preGameTable, cycle3, cycle4, mapDict)
 
-    return {
+
+    const saveResult = async() => {
+
+        // await Match.Update()
+    }
+
+    const value = {
         preGameTable,
         setPreGameTable,
         cycle3,
@@ -102,8 +114,15 @@ const usePreGame = () => {
         setCycle4,
         mapDict,
         setMapDict,
-        cycleDict
+        cycleDict,
+        saveResult
     }
+
+    return (
+        <PreGameData.Provider value={value}>
+            {children}
+        </PreGameData.Provider>
+    )
 }
 
-export default usePreGame
+export default PreGamgeProvider

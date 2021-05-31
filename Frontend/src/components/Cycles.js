@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Acycle3 from './Acycle3'
 import Acycle4 from './Acycle4'
-// import usePreGame from '../hooks/usePreGame'
+import { usePreGame } from '../hooks/usePreGame'
 
 const CycleDiv = styled.div`
     display: inline-block;
@@ -10,12 +10,14 @@ const CycleDiv = styled.div`
     height: 100%;
 `
 
-const Cycles = (props) => {
-    console.log("in cycle, ")
+const Cycles = () => {
+
+    const { mapDict } = usePreGame()
 
     return (
         <CycleDiv>
-            {props.data && Object.entries(props.data).map((session, index)=>{
+            {mapDict && Object.entries(mapDict).map((session, index)=>{
+                console.log("in cycle, update aCycles")
                 if(Object.keys(session[1]).length ===3){
                     return <Acycle3 key={index} data={session[1]} />
                 }else{
