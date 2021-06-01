@@ -43,18 +43,19 @@ const Teamname = styled.div`
 const Acycle3 = (props) => {
 
     const data = Object.entries(props.data)
+    console.log("in cycle3, ", data[1], data[0][1].session)
 
     return (
         <BodyDiv>
             <TopLabal>
-                <Teamname>{data[0][1]}</Teamname>
+                <Teamname>{data[0][1].name || data[0][1].session}</Teamname>
             </TopLabal>
             <MiddleGraph>
                 &#9651;
             </MiddleGraph>
             <BottomLabel>
-                <Teamname>{data[1][1]}</Teamname>
-                <Teamname>{data[2][1]}</Teamname>
+                <Teamname>{data[1][1].name || data[1][1].session}</Teamname>
+                <Teamname>{data[2][1].name || data[2][1].session}</Teamname>
             </BottomLabel>
         </BodyDiv>
     )

@@ -393,7 +393,22 @@ export const Match = {
         } catch (err) {
             return `[Error][Match][Update]` + err;
         }
+    },
 
+
+    Create: async( home, away ) => {
+        try{
+            let response = await axios({
+                method: 'POST',
+                url: serverURL + 'matches/create',
+                data: { home_id: home, away_id: away },
+                headers: { Authorization: token }
+            })
+            return response.data;
+        } catch (err){
+            return `[Error][Match][AddMatch]` + err;
+        }
+        
     }
 }
 

@@ -39,15 +39,15 @@ const Acycle4 = (props) => {
     return (
         <BodyDiv>
             <BottomLabel>
-                <Teamname>{data[0][1]}</Teamname>
-                <Teamname>{data[1][1]}</Teamname>
+                <Teamname>{data[0][1].name || data[0][1].session}</Teamname>
+                <Teamname>{data[1][1].name || data[1][1].session}</Teamname>
             </BottomLabel>
             <MiddleGraph>
                 &#9634;
             </MiddleGraph>
             <BottomLabel>
-                <Teamname>{data[2][1]}</Teamname>
-                <Teamname>{data[3][1]}</Teamname>
+                <Teamname>{data[2][1].name || data[2][1].session}</Teamname>
+                <Teamname>{data[3][1].name || data[3][1].session}</Teamname>
             </BottomLabel>
         </BodyDiv>
     )

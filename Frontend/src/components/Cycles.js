@@ -16,12 +16,12 @@ const Cycles = () => {
 
     return (
         <CycleDiv>
-            {mapDict && Object.entries(mapDict).map((session, index)=>{
-                console.log("in cycle, update aCycles")
-                if(Object.keys(session[1]).length ===3){
-                    return <Acycle3 key={index} data={session[1]} />
+            {mapDict && Object.entries(mapDict).map((sessionObject, index)=>{
+                console.log("in cycle, update aCycles", sessionObject)
+                if(Object.keys(sessionObject[1]).length ===3){
+                    return <Acycle3 key={index} data={sessionObject[1]} />
                 }else{
-                    return <Acycle4 key={index} data={session[1]} />
+                    return <Acycle4 key={index} data={sessionObject[1]} />
                 }
             })}
         </CycleDiv>
