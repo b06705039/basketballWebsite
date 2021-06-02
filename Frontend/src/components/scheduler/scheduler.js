@@ -7,17 +7,34 @@ import Scheduler, {
 import Draggable from "devextreme-react/draggable";
 import ScrollView from "devextreme-react/scroll-view";
 import notify from "devextreme/ui/notify";
-import { FieldData } from "../data/data";
-import AppointmentFormat from "../components/Appointment";
-import AppointmentTooltip from "../components/AppointmentTooltip";
+import AppointmentFormat from "./Appointment";
+import AppointmentTooltip from "./AppointmentTooltip";
 import "devextreme/dist/css/dx.common.css";
 import "devextreme/dist/css/dx.light.css";
-import "../css/scheduler.css";
-import { Match, Time } from "../axios";
+import "./css/scheduler.css";
+import { Match, Time } from "../../axios";
 const currentDate = new Date(2021, 4, 24);
 const views = ["workWeek"];
 const draggingGroupName = "appointmentsGroup";
 const TimeRangeObject = { 1: "12:30", 2: "18:30", 3: "19:30" };
+
+const time = ["12:30-13:30", "18:30-19:30", "19:30-20:30"];
+const FieldData = [
+  {
+    text: "Field A",
+    id: 0,
+    color: "#1e90ff",
+  },
+  {
+    text: "Field B",
+    id: 1,
+    color: "#ff9747",
+  },
+];
+const fieldPicture = {
+  0: "https://i.imgur.com/uR9JIRI.png",
+  1: "https://i.imgur.com/C378EBB.png",
+};
 
 const TimeCell = ({ date }) => {
   let text = TimeRangeObject[date.getHours()];
@@ -42,7 +59,7 @@ class App extends React.Component {
   componentDidMount = () => {
     (async () => {
       let allmatches = await Match.GetALLMatch();
-      allmatches.forEach((match, index) => {
+      allmatches.forEach((match) => {
         match.text = `${match.home} vs ${match.away}`;
         match.startDate = new Date(match.startDate);
       });
@@ -181,11 +198,10 @@ class App extends React.Component {
           >
             {this.state.appointments
               .filter((x) => x.arranged === false)
-              .map((task, index) => {
-                task.key = index;
+              .map((task) => {
                 return (
                   <Draggable
-                    key={index}
+                    key={task.text}
                     className="item dx-card dx-theme-text-color dx-theme-background-color"
                     clone={true}
                     group={draggingGroupName}
@@ -240,16 +256,14 @@ class App extends React.Component {
 
   checkTeams = (home, away, startDate) => {
     if (
-      home in this.state.teamtime &&
       this.state.teamtime[home].find((x) => startDate.toISOString() === x) !==
-        undefined
+      undefined
     ) {
       notify(`${home} is not avaliable.`);
       return false;
     } else if (
-      away in this.state.teamtime &&
       this.state.teamtime[away].find((x) => startDate.toISOString() === x) !==
-        undefined
+      undefined
     ) {
       notify(`${away} is not avaliable.`);
       return false;
@@ -257,21 +271,17 @@ class App extends React.Component {
     return true;
   };
 
-  checkMatches = (id, home, away, startDate, field) => {
+  checkMatches = (id, home, away, startDate) => {
+    startDate.toISOString();
     let check = this.state.appointments.filter(
       (x) =>
         x.arranged &&
         id !== x.id &&
         startDate.getDate() === x.startDate.getDate()
     );
-    check = check.filter(
+    check.filter(
       (x) =>
-        x.home === home ||
-        x.home === away ||
-        x.away === home ||
-        x.away === away ||
-        x.startDate !== startDate ||
-        x.field !== field
+        x.home === home || x.home === away || x.away === home || x.away === away
     );
     return check.length === 0 ? true : false;
   };
@@ -303,8 +313,7 @@ class App extends React.Component {
         e.fromData.id,
         e.fromData.home,
         e.fromData.away,
-        e.itemData.startDate,
-        e.itemData.field
+        e.itemData.startDate
       )
     ) {
       e.cancel = true;
@@ -351,8 +360,7 @@ class App extends React.Component {
         e.oldData.id,
         e.oldData.home,
         e.oldData.away,
-        e.newData.startDate,
-        e.newData.field
+        e.newData.startDate
       )
     ) {
       e.cancel = true;
@@ -383,57 +391,57 @@ class App extends React.Component {
     }
   };
 
-  onAppointmentFormOpening = (data) => {
-    const { homeDepartment, awayDepartment, startDate, recorder_id } =
-      data.appointmentData;
-    if (this.checkIfNoGame(startDate)) {
-      data.cancel = true;
-      return;
-    }
-    let busyrecorders = [];
-    if (startDate.toISOString() in this.state.busytime) {
-      busyrecorders = this.state.busytime[startDate.toISOString()].recorder;
-    }
-    let options = this.state.recorders.filter((x) => {
-      let output =
-        x.department !== homeDepartment &&
-        x.department !== awayDepartment &&
-        busyrecorders.find((person) => person === x.name) === undefined;
-      return output;
-    });
+  // onAppointmentFormOpening = (data) => {
+  //   const { homeDepartment, awayDepartment, startDate, recorder_id } =
+  //     data.appointmentData;
+  //   if (this.checkIfNoGame(startDate)) {
+  //     data.cancel = true;
+  //     return;
+  //   }
+  //   let busyrecorders = [];
+  //   if (startDate.toISOString() in this.state.busytime) {
+  //     busyrecorders = this.state.busytime[startDate.toISOString()].recorder;
+  //   }
+  //   let options = this.state.recorders.filter((x) => {
+  //     let output =
+  //       x.department !== homeDepartment &&
+  //       x.department !== awayDepartment &&
+  //       busyrecorders.find((person) => person === x.name) === undefined;
+  //     return output;
+  //   });
 
-    if (options.length === 0) {
-      notify("Seem there are no avaliable recorders");
-      data.cancel = true;
-      return;
-    }
+  //   if (options.length === 0) {
+  //     notify("Seem there are no avaliable recorders");
+  //     data.cancel = true;
+  //     return;
+  //   }
 
-    console.log(options);
-    let form = data.form;
-    form.option("items", [
-      {
-        colSpan: 2,
-        label: {
-          text: "Recorder",
-        },
-        editorType: "dxSelectBox",
-        dataField: "recorder_id",
-        value: recorder_id,
-        editorOptions: {
-          items: options,
-          itemTemplate: function (option) {
-            return `${option.name} ${option.department}`;
-          },
-          onValueChanged: (args) => {
-            let target = options.find((x) => x.id === args.value);
-            if (target !== undefined) form.updateData("recorder", target.name);
-          },
-          displayExpr: "name",
-          valueExpr: "id",
-        },
-      },
-    ]);
-  };
+  //   console.log(options);
+  //   let form = data.form;
+  //   form.option("items", [
+  //     {
+  //       colSpan: 2,
+  //       label: {
+  //         text: "Recorder",
+  //       },
+  //       editorType: "dxSelectBox",
+  //       dataField: "recorder_id",
+  //       value: recorder_id,
+  //       editorOptions: {
+  //         items: options,
+  //         itemTemplate: function (option) {
+  //           return `${option.name} ${option.department}`;
+  //         },
+  //         onValueChanged: (args) => {
+  //           let target = options.find((x) => x.id === args.value);
+  //           if (target !== undefined) form.updateData("recorder", target.name);
+  //         },
+  //         displayExpr: "name",
+  //         valueExpr: "id",
+  //       },
+  //     },
+  //   ]);
+  // };
 
   DataCell = (props) => {
     let cellName = "",
