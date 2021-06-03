@@ -259,19 +259,19 @@ class App extends React.Component {
 
   checkMatches = (id, home, away, startDate, field) => {
     let check = this.state.appointments.filter(
+      //取得當天所有已排的的比賽
       (x) =>
-        x.arranged &&
-        id !== x.id &&
-        startDate.getDate() === x.startDate.getDate()
+        x.arranged && // 已上排程
+        id !== x.id && // 不是自己
+        startDate.getDate() === x.startDate.getDate() // 同一天
     );
     check = check.filter(
       (x) =>
         x.home === home ||
         x.home === away ||
         x.away === home ||
-        x.away === away ||
-        x.startDate !== startDate ||
-        x.field !== field
+        x.away === away || //在當天有其他比賽
+        (x.startDate === startDate && x.field === field) //在同一個時段以及場地有比賽
     );
     return check.length === 0 ? true : false;
   };

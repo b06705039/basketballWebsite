@@ -1,42 +1,44 @@
-import React from 'react'
-import styled from 'styled-components'
-import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import NavBar from '../components/nav'
-import { Layout } from 'antd'
-import { usePages } from '../hooks/usePages'
-import { pagesMenu } from '../hooks/pagesMenu'
-
+import React from "react";
+import styled from "styled-components";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import NavBar from "../components/nav";
+import { Layout } from "antd";
+import { usePages } from "../hooks/usePages";
+import { pagesMenu } from "../hooks/pagesMenu";
+import Editor from "../components/editor";
 const { Header, Footer } = Layout;
 
 const TempBack = styled.div`
-    height: 100%;
-    background-image: url("./img/tempback_img.jpg") ;
-    opacity: 10%;
-    display: flex;
+  height: 100%;
+  background-image: url("./img/tempback_img.jpg");
+  opacity: 10%;
+  display: flex;
 `;
 
-function Temp(){
-    const { zhPageList } = usePages()
-    const { News } = pagesMenu()
+function Temp() {
+  const { zhPageList } = usePages();
+  const { News } = pagesMenu();
 
-    return(
-        <Router>
-            <Layout className="layout">
-                <Header>
-                    {/* <div className="logo" /> */}
-                    <NavBar/>
-                </Header>
-                <Switch>
-                    <Route exact path="/" component={News} />
-                    {zhPageList.map((page, index)=>
-                        <Route key={index} path={"/"+page[0]} component={page[1]} />)} 
-                </Switch>
-                <Footer style={{ textAlign: 'center' }}>Online Basketball Web design by </Footer>
-            </Layout>
-        </Router>
-    );
-};
+  return (
+    <Router>
+      <Layout className="layout">
+        <Header>
+          {/* <div className="logo" /> */}
+          <NavBar />
+        </Header>
+        <Switch>
+          <Route exact path="/" component={News} />
+          {zhPageList.map((page, index) => (
+            <Route key={index} path={"/" + page[0]} component={page[1]} />
+          ))}
+          <Route exact path="/test" component={Editor} />
+        </Switch>
+        <Footer style={{ textAlign: "center" }}>
+          Online Basketball Web design by{" "}
+        </Footer>
+      </Layout>
+    </Router>
+  );
+}
 
 export default Temp;
-
-
