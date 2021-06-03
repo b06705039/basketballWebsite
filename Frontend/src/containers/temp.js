@@ -5,7 +5,7 @@ import NavBar from "../components/nav";
 import { Layout } from "antd";
 import { usePages } from "../hooks/usePages";
 import { pagesMenu } from "../hooks/pagesMenu";
-import Editor from "../components/editor";
+
 const { Header, Footer } = Layout;
 
 const TempBack = styled.div`
@@ -31,7 +31,6 @@ function Temp() {
           {zhPageList.map((page, index) => (
             <Route key={index} path={"/" + page[0]} component={page[1]} />
           ))}
-          <Route exact path="/test" component={Editor} />
         </Switch>
         <Footer style={{ textAlign: "center" }}>
           Online Basketball Web design by{" "}
