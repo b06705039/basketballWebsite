@@ -28,7 +28,7 @@ export const UserEditor = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const [username, setUsername] = useState("test");
+  const [username, setUsername] = useState("");
   const [account, setAccount] = useState("");
   const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("ME");
@@ -47,7 +47,7 @@ export const UserEditor = () => {
   return onEdit === undefined ? (
     <Text strong>Loading</Text>
   ) : (
-    <div style={{ marginLeft: 10, marginTop: 20, width: 600, border: 2 }}>
+    <div style={{ marginLeft: 10, marginTop: 20, width: 600 }}>
       <Form
         {...layout}
         name="basic"
