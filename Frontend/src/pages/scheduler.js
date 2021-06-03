@@ -169,7 +169,6 @@ class App extends React.Component {
           direction="both"
           height={50}
           width={"100%"}
-          style={{ marginLeft: 50 }}
           bounceEnabled={true}
         >
           <Draggable

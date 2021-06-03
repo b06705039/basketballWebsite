@@ -1,538 +1,541 @@
-import axios from 'axios'
+import axios from "axios";
 
-const serverURL = 'http://localhost:4000/';
-
+const serverURL = "http://localhost:4000/";
 
 const testUsers = {
-    adiminister: [
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJhY2NvdW50IjoidGhvbXNvbjg2MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbiIsImVtYWlsIjoidGhvbXNvbjg2MTEwNkBnbWFpbC5jb20iLCJhY3RpdmUiOjEsImFkaW0iOiJhZG1pbmlzdGVyIiwiaWF0IjoxNjIxNjU3MTE4LCJleHAiOjE2Mzk2NTcxMTh9.rx55CJNzevSUFJUP1EFjukPTgs47s2E42Ex-XHe_FdU",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJhY2NvdW50IjoidGhvc21vbjg3MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbjIiLCJlbWFpbCI6InRob3Ntb244NzExMDZAZ21haWwuY29tIiwiYWN0aXZlIjoxLCJhZGltIjoiYWRtaW5pc3RlciIsImlhdCI6MTYyMTY1NzA2MiwiZXhwIjoxNjM5NjU3MDYyfQ.4-fwrbsyCKAkzwwWzZyBdIvceuO0DKAxPVs69PzEGRY",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJhY2NvdW50IjoidGhvc21vbjg4MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbjMiLCJlbWFpbCI6InRob3Ntb244ODExMDZAZ21haWwuY29tIiwiYWN0aXZlIjoxLCJhZGltIjoiYWRtaW5pc3RlciIsImlhdCI6MTYyMTY1NzA4NCwiZXhwIjoxNjM5NjU3MDg0fQ.PS68aMdUqW6chb2wEg0w8h7KPGm9Vyn-QenLwH9K_qU"
-    ],
+  adiminister: [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJhY2NvdW50IjoidGhvbXNvbjg2MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbiIsImVtYWlsIjoidGhvbXNvbjg2MTEwNkBnbWFpbC5jb20iLCJhY3RpdmUiOjEsImFkaW0iOiJhZG1pbmlzdGVyIiwiaWF0IjoxNjIxNjU3MTE4LCJleHAiOjE2Mzk2NTcxMTh9.rx55CJNzevSUFJUP1EFjukPTgs47s2E42Ex-XHe_FdU",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJhY2NvdW50IjoidGhvc21vbjg3MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbjIiLCJlbWFpbCI6InRob3Ntb244NzExMDZAZ21haWwuY29tIiwiYWN0aXZlIjoxLCJhZGltIjoiYWRtaW5pc3RlciIsImlhdCI6MTYyMTY1NzA2MiwiZXhwIjoxNjM5NjU3MDYyfQ.4-fwrbsyCKAkzwwWzZyBdIvceuO0DKAxPVs69PzEGRY",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJhY2NvdW50IjoidGhvc21vbjg4MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbjMiLCJlbWFpbCI6InRob3Ntb244ODExMDZAZ21haWwuY29tIiwiYWN0aXZlIjoxLCJhZGltIjoiYWRtaW5pc3RlciIsImlhdCI6MTYyMTY1NzA4NCwiZXhwIjoxNjM5NjU3MDg0fQ.PS68aMdUqW6chb2wEg0w8h7KPGm9Vyn-QenLwH9K_qU",
+  ],
 
-    team: [
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJhY2NvdW50IjoiY2h1bmdjdCIsInVzZXJuYW1lIjoiQ2h1bmdjdCIsImVtYWlsIjoicjA5NTIyNjI0QG51dC5lZHUudHciLCJhY3RpdmUiOjEsImFkaW0iOiJ0ZWFtIiwiaWF0IjoxNjIxNjU2ODgxLCJleHAiOjE2Mzk2NTY4ODF9.DXGYx-BQjcOuQCxid5TzWD1hfXwN6ofmiHN26M6CXfM",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJhY2NvdW50IjoiY2h1bmdjdDIiLCJ1c2VybmFtZSI6IkNodW5nY3QyIiwiZW1haWwiOiJyMTA1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InRlYW0iLCJpYXQiOjE2MjE2NTY5NzIsImV4cCI6MTYzOTY1Njk3Mn0.gfQXe6jHVxOMl7_hMYvK7Qvzh04hfzAxHvHZpbyJZaw",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJhY2NvdW50IjoiY2h1bmdjdDMiLCJ1c2VybmFtZSI6IkNodW5nY3QzIiwiZW1haWwiOiJyMTE1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InRlYW0iLCJpYXQiOjE2MjE2NTY5MjUsImV4cCI6MTYzOTY1NjkyNX0.POeu6ENMWBSjbP9mPlaPc98KJci-DQx25RPXHg4YCDo"
-    ],
-    recorder: [
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJhY2NvdW50IjoiY2h1bmdjdHRlc3QiLCJ1c2VybmFtZSI6IkNodW5nY3R0ZXN0IiwiZW1haWwiOiJyMDk1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InJlY29yZGVyIiwiaWF0IjoxNjIxNjU2ODE0LCJleHAiOjE2Mzk2NTY4MTR9.z4CTNXZqBofLpJDxE-PE8uyGcZTwLEPhkYzC73kUuzs",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJhY2NvdW50IjoiY2h1bmdjdHRlc3QyIiwidXNlcm5hbWUiOiJDaHVuZ2N0dGVzdDIiLCJlbWFpbCI6InIwOTcyMjYyNEBudHUuZWR1LnR3IiwiYWN0aXZlIjoxLCJhZGltIjoicmVjb3JkZXIiLCJpYXQiOjE2MjE2NTY4NDIsImV4cCI6MTYzOTY1Njg0Mn0.3-9QGyTv4wZ7B4HG-Az-90zAX-CARjeqGUuL0QR_Gyg",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJhY2NvdW50IjoiY2h1bmdjdHRlc3QzIiwidXNlcm5hbWUiOiJDaHVuZ2N0dGVzdDMiLCJlbWFpbCI6InIxMDcyMjYyNEBudHUuZWR1LnR3IiwiYWN0aXZlIjoxLCJhZGltIjoicmVjb3JkZXIiLCJpYXQiOjE2MjE2NTY4NjIsImV4cCI6MTYzOTY1Njg2Mn0.SQXJc-cM496v6AdXi6ERNIJTANQSF5aDZuIwRRR2Aus"
-    ]
-}
+  team: [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJhY2NvdW50IjoiY2h1bmdjdCIsInVzZXJuYW1lIjoiQ2h1bmdjdCIsImVtYWlsIjoicjA5NTIyNjI0QG51dC5lZHUudHciLCJhY3RpdmUiOjEsImFkaW0iOiJ0ZWFtIiwiaWF0IjoxNjIxNjU2ODgxLCJleHAiOjE2Mzk2NTY4ODF9.DXGYx-BQjcOuQCxid5TzWD1hfXwN6ofmiHN26M6CXfM",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJhY2NvdW50IjoiY2h1bmdjdDIiLCJ1c2VybmFtZSI6IkNodW5nY3QyIiwiZW1haWwiOiJyMTA1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InRlYW0iLCJpYXQiOjE2MjE2NTY5NzIsImV4cCI6MTYzOTY1Njk3Mn0.gfQXe6jHVxOMl7_hMYvK7Qvzh04hfzAxHvHZpbyJZaw",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJhY2NvdW50IjoiY2h1bmdjdDMiLCJ1c2VybmFtZSI6IkNodW5nY3QzIiwiZW1haWwiOiJyMTE1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InRlYW0iLCJpYXQiOjE2MjE2NTY5MjUsImV4cCI6MTYzOTY1NjkyNX0.POeu6ENMWBSjbP9mPlaPc98KJci-DQx25RPXHg4YCDo",
+  ],
+  recorder: [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJhY2NvdW50IjoiY2h1bmdjdHRlc3QiLCJ1c2VybmFtZSI6IkNodW5nY3R0ZXN0IiwiZW1haWwiOiJyMDk1MjI2MjRAbnR1LmVkdS50dyIsImFjdGl2ZSI6MSwiYWRpbSI6InJlY29yZGVyIiwiaWF0IjoxNjIxNjU2ODE0LCJleHAiOjE2Mzk2NTY4MTR9.z4CTNXZqBofLpJDxE-PE8uyGcZTwLEPhkYzC73kUuzs",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJhY2NvdW50IjoiY2h1bmdjdHRlc3QyIiwidXNlcm5hbWUiOiJDaHVuZ2N0dGVzdDIiLCJlbWFpbCI6InIwOTcyMjYyNEBudHUuZWR1LnR3IiwiYWN0aXZlIjoxLCJhZGltIjoicmVjb3JkZXIiLCJpYXQiOjE2MjE2NTY4NDIsImV4cCI6MTYzOTY1Njg0Mn0.3-9QGyTv4wZ7B4HG-Az-90zAX-CARjeqGUuL0QR_Gyg",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJhY2NvdW50IjoiY2h1bmdjdHRlc3QzIiwidXNlcm5hbWUiOiJDaHVuZ2N0dGVzdDMiLCJlbWFpbCI6InIxMDcyMjYyNEBudHUuZWR1LnR3IiwiYWN0aXZlIjoxLCJhZGltIjoicmVjb3JkZXIiLCJpYXQiOjE2MjE2NTY4NjIsImV4cCI6MTYzOTY1Njg2Mn0.SQXJc-cM496v6AdXi6ERNIJTANQSF5aDZuIwRRR2Aus",
+  ],
+};
 
 // 調整這去改變目前使用者身分 Ex: testUser.team[0] (0號系隊使用者)
 let token = testUsers.adiminister[0];
 
-
 function DateConverter(date) {
-    return (date !== null) ? (new Date(date)).toISOString() : null;
+  return date !== null ? new Date(date).toISOString() : null;
 }
 
+export const isLogin = async () => {
+  return undefined;
+};
 
-export const isLogin = async () => { return undefined }
-
-export const isSignup = async () => { return undefined }
+export const isSignup = async () => {
+  return undefined;
+};
 
 export const Login = async (account, password) => {
+  // [Must] account =    使用者帳號
+  // [Must] password =   使用者密碼
 
-    // [Must] account =    使用者帳號
-    // [Must] password =   使用者密碼
-
-    try {
-        let response = await axios({
-            method: 'PUT',
-            url: serverURL + '/login',
-            data: { account, password }
-        })
-        token = response.data.token;
-        return response.data;
-    } catch (err) {
-        return `[Login][Error]` + err;
-    }
-}
+  try {
+    let response = await axios({
+      method: "PUT",
+      url: serverURL + "/login",
+      data: { account, password },
+    });
+    token = response.data.token;
+    return response.data;
+  } catch (err) {
+    return `[Login][Error]` + err;
+  }
+};
 
 export const User = {
+  Create: async (
+    account,
+    username,
+    password,
+    passwordConfirm,
+    adim,
+    email,
+    department
+  ) => {
+    // [Must] account              使用者帳號
+    // [Must] password             使用者密碼
+    // [Must] passwordConfirm      使用者密碼確認
+    // [Must] adim                 使用者類別 [administer, recorder, team]
+    // [Must] email                使用者信箱
+    // [Must] department           使用者校系
 
-    Create: async (account, username, password, passwordConfirm, adim, email, department) => {
-        // [Must] account              使用者帳號
-        // [Must] password             使用者密碼
-        // [Must] passwordConfirm      使用者密碼確認
-        // [Must] adim                 使用者類別 [administer, recorder, team]
-        // [Must] email                使用者信箱
-        // [Must] department           使用者校系
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + '/users/create',
-                data: { account, username, password, passwordConfirm, adim, email, department }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][Create]` + err;
-        }
-    },
-
-    AccountActive: async (id) => {
-
-        // [Must] id       User ID
-        // [Must] token    使用者登入憑證 {adim: administer}  
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'users/active',
-                data: { user_id: id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][Active]` + err;
-        }
-    },
-
-    AccountDelete: async (id) => {
-
-        // [Must] id       User ID
-        // [Must] token    使用者登入憑證 {adim: administer}  
-
-        try {
-            let response = await axios({
-                method: 'DELETE',
-                url: serverURL + 'users/delete',
-                data: { user_id: id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][Delete]` + err;
-        }
-    },
-
-    GetAccountByID: async (id) => {
-
-        // [Must] id       User ID
-        // [Must] token    使用者登入憑證 excpet for {adim: public}  
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'users/data',
-                query: { id: id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][GetUserByID]` + err;
-        }
-    },
-
-    GetALLAccount: async () => {
-
-        // [Must] id       User ID
-        // [Must] token    使用者登入憑證 {adim: administer}  
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'users/getALL',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][GetALLData]` + err;
-        }
-    },
-
-    SendRemindEmail: async (email) => {
-
-        // [Must] email    使用者信箱
-
-        try {
-            let response = await axios({
-                method: 'PUT',
-                url: serverURL + 'users/remind',
-                data: { email }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][SendRemindInfo]` + err;
-        }
-    },
-
-    Update: async (account, username, email, deparment) => {
-
-        // [Must] account
-        // [Must] username
-        // [Must] email
-        // [Must] deparment
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'users/update',
-                data: { account, username, email, deparment }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][User][Update]` + err;
-        }
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "/users/create",
+        data: {
+          account,
+          username,
+          password,
+          passwordConfirm,
+          adim,
+          email,
+          department,
+        },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][Create]` + err;
     }
-}
+  },
+
+  AccountActive: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    使用者登入憑證 {adim: administer}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "users/active",
+        data: { user_id: id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][Active]` + err;
+    }
+  },
+
+  AccountDelete: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    使用者登入憑證 {adim: administer}
+
+    try {
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "users/delete",
+        data: { user_id: id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][Delete]` + err;
+    }
+  },
+
+  GetAccountByID: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    使用者登入憑證 excpet for {adim: public}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "users/data",
+        params: { id: id },
+        headers: { Authorization: token },
+      });
+      return response.data[0];
+    } catch (err) {
+      return `[Error][User][GetUserByID]` + err;
+    }
+  },
+
+  GetALLAccount: async () => {
+    // [Must] id       User ID
+    // [Must] token    使用者登入憑證 {adim: administer}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "users/getALL",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][GetALLData]` + err;
+    }
+  },
+
+  SendRemindEmail: async (email) => {
+    // [Must] email    使用者信箱
+
+    try {
+      let response = await axios({
+        method: "PUT",
+        url: serverURL + "users/remind",
+        data: { email },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][SendRemindInfo]` + err;
+    }
+  },
+
+  Update: async (account, username, email, department) => {
+    // [Must] account
+    // [Must] username
+    // [Must] email
+    // [Must] deparment
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "users/update",
+        data: { account, username, email, department },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][Update]` + err;
+    }
+  },
+};
 
 export const Team = {
-    Create: async (name, department) => {
-        // return status success | fail_<reason>
+  Create: async (name, department) => {
+    // return status success | fail_<reason>
 
-        // [Must] name         隊伍名稱
-        // [Must] department   隊伍校系
-        // [Must] token        {administer: team}    
+    // [Must] name         隊伍名稱
+    // [Must] department   隊伍校系
+    // [Must] token        {administer: team}
 
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'teams/create',
-                data: { name, department },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][Create]` + err;
-        }
-    },
-
-    Status: async (id, status) => {
-
-        // [Must] id       User ID
-        // [Must] status   ['已報名', '已繳費', '審核中', '未報名', '未繳費']
-        // [Myst] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'teams/status',
-                data: { id, status },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][SetStatus]` + err;
-        };
-    },
-
-    Delete: async (id) => {
-
-        // [Must] id       User ID
-        // [Myst] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'teams/status',
-                data: { id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][Delete]` + err;
-        };
-    },
-
-    GetTeamByID: async (id) => {
-
-        // [Must] id       User ID
-        // [Must] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'teams/data',
-                query: { id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][GetInfoByID]` + err;
-        };
-    },
-
-    GetALLTeam: async () => {
-
-        // [Must] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'teams/getALL',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][GetALL]` + err;
-        };
-    },
-
-    Update: async (id, name) => {
-
-        // [Must] id       Team ID
-        // [Must] name     Team Name
-        // [Myst] token    {adim:team}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'teams/update',
-                data: { id, name },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Team][Update]` + err;
-        };
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/create",
+        data: { name, department },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][Create]` + err;
     }
-}
+  },
+
+  Status: async (id, status) => {
+    // [Must] id       User ID
+    // [Must] status   ['已報名', '已繳費', '審核中', '未報名', '未繳費']
+    // [Myst] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/status",
+        data: { id, status },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][SetStatus]` + err;
+    }
+  },
+
+  Delete: async (id) => {
+    // [Must] id       User ID
+    // [Myst] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/status",
+        data: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][Delete]` + err;
+    }
+  },
+
+  GetTeamByID: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/data",
+        query: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][GetInfoByID]` + err;
+    }
+  },
+
+  GetALLTeam: async () => {
+    // [Must] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/getALL",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][GetALL]` + err;
+    }
+  },
+
+  Update: async (id, name) => {
+    // [Must] id       Team ID
+    // [Must] name     Team Name
+    // [Myst] token    {adim:team}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/update",
+        data: { id, name },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][Update]` + err;
+    }
+  },
+};
 
 export const Time = {
-    Update: async (timeString) => {
-        // return status success | fail_<reason>
+  Update: async (timeString) => {
+    // return status success | fail_<reason>
 
-        // [Must] timeString   沒空時間字串
-        // [Must] token        {administer: team}    
-        console.log("Update " + timeString)
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'time/update',
-                data: { timeString },
-                headers: { Authorization: token }
-            })
-            console.log(response.data)
-            return response.data;
-        } catch (err) {
-            return `[Error][Time][Update]` + err;
-        }
-    },
-
-    Delete: async (id) => {
-        // return status success | fail_<reason>
-
-        // [Must] id            刪除使用者沒空紀錄
-        // [Must] token        {administer: team}    
-
-        try {
-            let response = await axios({
-                method: 'DELETE',
-                url: serverURL + 'time/delete',
-                data: { id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Time][Delete]` + err;
-        }
-    },
-
-    GetALLTime: async () => {
-        // return status success | fail_<reason>
-        // [Must] token        {administer: administer}    
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'time/getALL',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Time][GetAllTime]` + err;
-        }
-    },
-
-    GetTime: async () => {
-        // return status success | fail_<reason>
-        // [Must] token        {administer: team}    
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'time/data',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Time][GetTime]` + err;
-        }
+    // [Must] timeString   沒空時間字串
+    // [Must] token        {administer: team}
+    console.log("Update " + timeString);
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "time/update",
+        data: { timeString },
+        headers: { Authorization: token },
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      return `[Error][Time][Update]` + err;
     }
-}
+  },
+
+  Delete: async (id) => {
+    // return status success | fail_<reason>
+
+    // [Must] id            刪除使用者沒空紀錄
+    // [Must] token        {administer: team}
+
+    try {
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "time/delete",
+        data: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Time][Delete]` + err;
+    }
+  },
+
+  GetALLTime: async () => {
+    // return status success | fail_<reason>
+    // [Must] token        {administer: administer}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "time/getALL",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Time][GetAllTime]` + err;
+    }
+  },
+
+  GetTime: async () => {
+    // return status success | fail_<reason>
+    // [Must] token        {administer: team}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "time/data",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Time][GetTime]` + err;
+    }
+  },
+};
 
 export const Match = {
-    GetALLMatch: async () => {
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'matches/getALL',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Match][GetALL]` + err;
-        }
-    },
-
-    Update: async (id, startDate, field, recorder) => {
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'matches/update',
-                data: { match_id: id, startDate: DateConverter(startDate) || null, field: field, recorder: recorder },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Match][Update]` + err;
-        }
-    },
-
-
-    Create: async( home, away ) => {
-        try{
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'matches/create',
-                data: { home_id: home, away_id: away },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err){
-            return `[Error][Match][AddMatch]` + err;
-        }
-        
+  GetALLMatch: async () => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "matches/getALL",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Match][GetALL]` + err;
     }
-}
+  },
+
+  Update: async (id, startDate, field, recorder) => {
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "matches/update",
+        data: {
+          match_id: id,
+          startDate: DateConverter(startDate) || null,
+          field: field,
+          recorder: recorder,
+        },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Match][Update]` + err;
+    }
+  },
+
+  Create: async (home, away) => {
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "matches/create",
+        data: { home_id: home, away_id: away },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Match][AddMatch]` + err;
+    }
+  },
+};
 
 export const Recorder = {
-    Create: async (name, department) => {
-        // return status success | fail_<reason>
+  Create: async (name, department) => {
+    // return status success | fail_<reason>
 
-        // [Must] name         隊伍名稱
-        // [Must] department   隊伍校系
-        // [Must] token        {administer: team}    
+    // [Must] name         隊伍名稱
+    // [Must] department   隊伍校系
+    // [Must] token        {administer: team}
 
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'recorders/create',
-                data: { name, department },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][Create]` + err;
-        }
-    },
-
-    Status: async (id, status) => {
-
-        // [Must] id       User ID
-        // [Must] status   ['已報名', '已繳費', '審核中', '未報名', '未繳費']
-        // [Myst] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'recorders/status',
-                data: { id, status },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][SetStatus]` + err;
-        };
-    },
-
-    Delete: async (id) => {
-
-        // [Must] id       User ID
-        // [Myst] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'recorders/status',
-                data: { id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][Delete]` + err;
-        };
-    },
-
-    GetRecorderByID: async (id) => {
-
-        // [Must] id       User ID
-        // [Must] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'recorders/data',
-                query: { id },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][GetInfoByID]` + err;
-        };
-    },
-
-    GetALLRecorder: async () => {
-
-        // [Must] token    {adim:adimister}
-
-        try {
-            let response = await axios({
-                method: 'GET',
-                url: serverURL + 'recorders/getALL',
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][GetALL]` + err;
-        };
-    },
-
-    Update: async (id, name) => {
-
-        // [Must] id       Team ID
-        // [Must] name     Team Name
-        // [Myst] token    {adim:team}
-
-        try {
-            let response = await axios({
-                method: 'POST',
-                url: serverURL + 'recorders/update',
-                data: { id, name },
-                headers: { Authorization: token }
-            })
-            return response.data;
-        } catch (err) {
-            return `[Error][Recorder][Update]` + err;
-        };
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "recorders/create",
+        data: { name, department },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][Create]` + err;
     }
-}
+  },
 
+  Status: async (id, status) => {
+    // [Must] id       User ID
+    // [Must] status   ['已報名', '已繳費', '審核中', '未報名', '未繳費']
+    // [Myst] token    {adim:adimister}
 
-const doLogin = async ( username, password ) => {
-    const msg = { userid:1, identity:"admin" }
-    return msg
-}
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "recorders/status",
+        data: { id, status },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][SetStatus]` + err;
+    }
+  },
 
-const doSignup = async ( department, username, identity, password ) => {
-    const msg = true
-    return msg
-}
+  Delete: async (id) => {
+    // [Must] id       User ID
+    // [Myst] token    {adim:adimister}
 
-export { doLogin, doSignup }
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "recorders/status",
+        data: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][Delete]` + err;
+    }
+  },
+
+  GetRecorderByID: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "recorders/data",
+        query: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][GetInfoByID]` + err;
+    }
+  },
+
+  GetALLRecorder: async () => {
+    // [Must] token    {adim:adimister}
+
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "recorders/getALL",
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][GetALL]` + err;
+    }
+  },
+
+  Update: async (id, name) => {
+    // [Must] id       Team ID
+    // [Must] name     Team Name
+    // [Myst] token    {adim:team}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "recorders/update",
+        data: { id, name },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][Update]` + err;
+    }
+  },
+};
+
+const doLogin = async (username, password) => {
+  const msg = { userid: 1, identity: "admin" };
+  return msg;
+};
+
+const doSignup = async (department, username, identity, password) => {
+  const msg = true;
+  return msg;
+};
+
+export { doLogin, doSignup };
