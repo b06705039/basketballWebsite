@@ -77,51 +77,49 @@ const PreGameDiv = () => {
 
     const { saveResult, setCycle3, setCycle4 } = usePreGame()
     const [ showChangeCycle, setShowChangeCycle ] = useState(false)
-    const [ showSaveMes, setShowSaveMes ] = useState(false)
+    // const [ showSaveMes, setShowSaveMes ] = useState(false)
     const [ editable, setEditable ] = useState(true)
     const cycle3Ref = useRef()
     const cycle4Ref = useRef()
     const [ form ] = Form.useForm()
-    
-    
 
     const handleOK = (e) => {
-
         setCycle3(cycle3Ref.current.props.value)
         setCycle4(cycle4Ref.current.props.value)
-        
         form.resetFields()
         setShowChangeCycle(false)
     }   
 
     const generateModal = () =>{
-        let secondsToGo = 5;
+        let secondsToGo = 5
         const modal = Modal.success({
             title: 'This is a notification message',
-            content: `This modal will be destroyed after ${secondsToGo} second.`,
-        });
+            content: `${secondsToGo} 秒後跳轉至結果頁面`,
+        })
         const timer = setInterval(() => {
-            secondsToGo -= 1;
+            secondsToGo -= 1
             modal.update({
-                content: `This modal will be destroyed after ${secondsToGo} second.`,
-            });
-        }, 1000);
+                content: `${secondsToGo} 秒後跳轉至結果頁面`,
+            })
+        }, 1000)
         setTimeout(() => {
-            clearInterval(timer);
-            modal.destroy();
+            clearInterval(timer)
+            modal.destroy()
+            setEditable(false)
         }, secondsToGo * 1000);
 
+        
     }
 
-    useMemo(() => {
-        console.log("in show modal, into useEffect")
-        if (showSaveMes){
-            generateModal()
-            setShowSaveMes(false)
-            setEditable(false)
-        }
-    }, [showSaveMes])
-      
+    // useMemo(() => {
+    //     console.log("in show modal, into useEffect", showSaveMes)
+    //     if (showSaveMes){
+    //         generateModal()
+    //         setShowSaveMes(false)
+    //     }else{
+    //         setEditable(false)
+    //     }
+    // }, [showSaveMes])
 
     return(
         <>
@@ -134,7 +132,8 @@ const PreGameDiv = () => {
                                                 <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
                                                 <StyledButton onClick={()=>{
                                                     saveResult()
-                                                    setShowSaveMes(true)
+                                                    // setShowSaveMes(true)
+                                                    generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
                                                 <StyledButton onClick={()=>{setEditable(true)}}>更動預賽</StyledButton>
