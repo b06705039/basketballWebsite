@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { Button } from 'antd'
 import PreGameTable from '../components/preGameTable'
@@ -16,11 +16,9 @@ const ContentBody = styled.div`
     flex-direction: column;
     // justify-content: space-between;
     height:100%;
-
 `
 const TopDiv = styled.div`
     height: 64px;
-
 `
 const BottomDiv = styled.div`
     width:100%;
@@ -39,6 +37,8 @@ const StyledButton = styled(Button)`
     height: 33px;
     background-color: #6b9abb;
     border-radius: 10px;
+    float: right;
+    display: flex;
 `
 const LeftBlock = styled.div`
     padding: 5px;
@@ -47,7 +47,7 @@ const LeftBlock = styled.div`
 `
 const RightBlock = styled.div`
     padding: 5px;
-    border: 1px solid black;
+    // border: 1px solid black;
     width: 75%;
     float:left;
 `
@@ -77,7 +77,8 @@ const PreGameDiv = () => {
 
     const { saveResult, setCycle3, setCycle4 } = usePreGame()
     const [ showChangeCycle, setShowChangeCycle ] = useState(false)
-    const [ showRedirect, setShowRedirect ] = useState(false)
+    const [ showSaveMes, setShowSaveMes ] = useState(false)
+    const [ editable, setEditable ] = useState(true)
     const cycle3Ref = useRef()
     const cycle4Ref = useRef()
     const [ form ] = Form.useForm()
@@ -91,26 +92,60 @@ const PreGameDiv = () => {
         
         form.resetFields()
         setShowChangeCycle(false)
+    }   
+
+    const generateModal = () =>{
+        let secondsToGo = 5;
+        const modal = Modal.success({
+            title: 'This is a notification message',
+            content: `This modal will be destroyed after ${secondsToGo} second.`,
+        });
+        const timer = setInterval(() => {
+            secondsToGo -= 1;
+            modal.update({
+                content: `This modal will be destroyed after ${secondsToGo} second.`,
+            });
+        }, 1000);
+        setTimeout(() => {
+            clearInterval(timer);
+            modal.destroy();
+        }, secondsToGo * 1000);
+
     }
+
+    useMemo(() => {
+        console.log("in show modal, into useEffect")
+        if (showSaveMes){
+            generateModal()
+            setShowSaveMes(false)
+            setEditable(false)
+        }
+    }, [showSaveMes])
+      
 
     return(
         <>
             <ContentBackground className="ant-layout-content" >
                 <ContentBody className="site-layout-content">
-
-                    <TopDiv>
+                   <TopDiv>
                         <Title>預賽安排</Title>
-                        <ButtonDiv>
-                            <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
-                            <StyledButton onClick={saveResult}>輸出結果</StyledButton>
+                        <ButtonDiv style={{"justify-content": editable?" space-between":"flex-end"}}>
+                            { editable? (<>
+                                                <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
+                                                <StyledButton onClick={()=>{
+                                                    saveResult()
+                                                    setShowSaveMes(true)
+                                                }}>輸出結果</StyledButton>
+                                        </>):(
+                                                <StyledButton onClick={()=>{setEditable(true)}}>更動預賽</StyledButton>
+                                        )
+                            }
                         </ButtonDiv>
                     </TopDiv>
-                    
                     <BottomDiv>
-                        <LeftBlock>
-                            <PreGameTable />
-                        </LeftBlock>
-
+                        { editable && ( <LeftBlock>
+                                            <PreGameTable />
+                                        </LeftBlock>)}
                         <RightBlock>
                             <Cycles />
                         </RightBlock>
@@ -124,7 +159,6 @@ const PreGameDiv = () => {
                 visible = { showChangeCycle }
                 onOk = { (e)=>handleOK(e) }
                 onCancel = { ()=>setShowChangeCycle(false) } 
-
                 >
                     <Form 
                         {...formItemLayout}
@@ -147,6 +181,19 @@ const PreGameDiv = () => {
                         </Form.Item>
                     </Form>
                 </Modal>
+            </>
+
+            <>
+                {/* <Modal 
+                    visible= { showSaveMes }
+                    onOk={()=>setShowSaveMes(false)}
+                    centered={true}
+                    closable={false}
+                    mask={false}
+                    style={{'alignItems':'center'}}
+                >
+                    預賽賽程已儲存，正在導到結果頁面
+                </Modal> */}
             </>
         </>
     )
