@@ -86,8 +86,8 @@ config.teamStatus = ["已報名", "已繳費", "審核中", "未報名", "未繳
 config.recorderStatus = ["已報名", "未報名"];
 
 config.AdministerEmail = {
-  user: "thomson861106@gmail.com",
-  pass: "qqqq10134037", // 台大女籃 (用英文打)
+  user: "ntu.girlbasketball@gmail.com",
+  pass: "w96284sm3x06", // 台大女籃 (用英文打)
 };
 
 module.exports = config;

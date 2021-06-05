@@ -109,4 +109,13 @@ router.post("/update", async (req, res) => {
   }
 });
 
+router.get("/register", async (_, res) => {
+  try {
+    const result = await new User().getRegister();
+    return response.succ(res, result);
+  } catch (err) {
+    return response.fail(res, err);
+  }
+});
+
 module.exports = router;

@@ -73,7 +73,7 @@ export const User = {
     try {
       let response = await axios({
         method: "POST",
-        url: serverURL + "/users/create",
+        url: serverURL + "users/create",
         data: {
           account,
           username,
@@ -106,7 +106,17 @@ export const User = {
       return `[Error][User][Active]` + err;
     }
   },
-
+  GetRegisterData: async () => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "users/register",
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][GetRegisterData]` + err;
+    }
+  },
   AccountDelete: async (id) => {
     // [Must] id       User ID
     // [Must] token    使用者登入憑證 {adim: administer}
@@ -156,7 +166,6 @@ export const User = {
       return `[Error][User][GetALLData]` + err;
     }
   },
-
   SendRemindEmail: async (email) => {
     // [Must] email    使用者信箱
 
@@ -533,7 +542,24 @@ const doLogin = async (username, password) => {
   return msg;
 };
 
-const doSignup = async (department, username, identity, password) => {
+const doSignup = async (SignUpObj) => {
+  const { account, username, password, identity, email, department } =
+    SignUpObj;
+  await User.Create(
+    account,
+    username,
+    password,
+    password,
+    identity,
+    email,
+    department
+  );
+  if (SignUpObj["identity"] === "team") {
+    const { teamname, teamdepartment } = SignUpObj;
+    await Team.Create(teamname, teamdepartment);
+  } else if (SignUpObj["identity"] === "recorder") {
+    await Recorder.Create(username, department);
+  }
   const msg = true;
   return msg;
 };

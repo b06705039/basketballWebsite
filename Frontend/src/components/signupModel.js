@@ -1,17 +1,6 @@
-import React, { useRef, useState } from "react";
-import {
-  Form,
-  Input,
-  Cascader,
-  Select,
-  Row,
-  Col,
-  Checkbox,
-  Button,
-  AutoComplete,
-  Modal,
-} from "antd";
-import { doSignup } from "../axios";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Input, Select, Modal } from "antd";
+import { doSignup, User } from "../axios";
 import Department from "../department.json";
 
 const { Option } = Select;
@@ -32,27 +21,78 @@ const formItemLayout = {
   },
 };
 
+let CheckInfo = {
+  account: [],
+  username: [],
+  email: [],
+  teamname: [],
+};
+(async () => {
+  let response = await User.GetRegisterData();
+  response.user.map((item) => {
+    CheckInfo.account.push(item.account);
+    CheckInfo.username.push(item.username);
+    CheckInfo.email.push(item.email);
+  });
+  response.team.map((item) => {
+    CheckInfo.teamname.push(item["name"]);
+  });
+})();
+
 export default function SignupModel(props) {
-  const departmentRef = useRef();
-  const usernameRef = useRef();
-  const identityRef = useRef();
-  const passwordRef = useRef();
   const [form] = Form.useForm();
+  const [identity, setIdentity] = useState("adim");
   const [issignup, setsignup] = useState(false);
   const [showWarn, setShowWarn] = useState(false);
+  const IdentityMode = {
+    team: (
+      <>
+        <Form.Item
+          name="teamname"
+          label="teamname"
+          rules={[
+            {
+              required: true,
+              message: "Please input your teamname!",
+            },
+            () => ({
+              validator(_, value) {
+                if (!CheckInfo.teamname.includes(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Team name already use"));
+              },
+            }),
+          ]}
+          hasFeedback
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="teamdepartment"
+          label="teamdepartment"
+          rules={[
+            {
+              required: true,
+              message: "Please input your teamdepartment!",
+            },
+          ]}
+          hasFeedback
+        >
+          <Select placeholder="Select your department">
+            {Object.keys(Department.info).map((part, index) => (
+              <Option key={index} value={part}>
+                {Department.info[part]["zh"]}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </>
+    ),
+  };
 
   const handleOK = async () => {
-    if (issignup) {
-      props.setVisible(false);
-      setsignup(false);
-    } else if (
-      await doSignup(
-        departmentRef.current.value,
-        usernameRef.current.value,
-        identityRef.current.value,
-        passwordRef.current.value
-      )
-    ) {
+    if (await doSignup(form.getFieldsValue())) {
       setsignup(true);
       setShowWarn(false);
     } else {
@@ -69,13 +109,23 @@ export default function SignupModel(props) {
   return (
     <Modal
       visible={props.visible}
-      onOk={handleOK}
+      onOk={() => {
+        if (issignup) {
+          props.setVisible(false);
+          setsignup(false);
+        } else form.submit();
+      }}
       onCancel={handleCancel}
       afterClose={() => setShowWarn(false)}
     >
       {issignup && <h2 style={{ textAlign: "center" }}>註冊成功</h2>}
       {!issignup && (
-        <Form {...formItemLayout} name="register" form={form}>
+        <Form
+          {...formItemLayout}
+          name="register"
+          form={form}
+          onFinish={handleOK}
+        >
           <h2 style={{ textAlign: "center" }}>註冊</h2>
           <h4
             style={{
@@ -89,15 +139,18 @@ export default function SignupModel(props) {
           <Form.Item
             name="department"
             label="Department"
+            hasFeedback
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <Select placeholder="Select your department" ref={departmentRef}>
-              {Object.keys(Department.info).map((part) => (
-                <Option value={part}>{Department.info[part]["zh"]}</Option>
+            <Select placeholder="Select your department">
+              {Object.keys(Department.info).map((part, index) => (
+                <Option key={index} value={part}>
+                  {Department.info[part]["zh"]}
+                </Option>
               ))}
             </Select>
           </Form.Item>
@@ -105,29 +158,71 @@ export default function SignupModel(props) {
           <Form.Item
             name="username"
             label="Username"
+            hasFeedback
             rules={[
               {
                 required: true,
                 message: "Please input your username!",
               },
+              () => ({
+                validator(_, value) {
+                  if (!CheckInfo.username.includes(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Username already use"));
+                },
+              }),
             ]}
           >
-            <Input ref={usernameRef} />
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="account"
+            label="account"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: "Please input your account!",
+              },
+              () => ({
+                validator(_, value) {
+                  if (!CheckInfo.account.includes(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Account already use"));
+                },
+              }),
+            ]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item
             name="identity"
             label="Identity"
+            hasFeedback
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <Select placeholder="Select your identity" ref={identityRef}>
-              <Option value="adiminister">主辦人員</Option>
-              <Option value="team">系隊代表</Option>
-              <Option value="recorder">紀錄人員</Option>
+            <Select
+              placeholder="Select your identity"
+              onChange={(adim) => {
+                setIdentity(adim);
+              }}
+            >
+              <Option key={1} value="administer">
+                主辦人員
+              </Option>
+              <Option key={2} value="team">
+                系隊代表
+              </Option>
+              <Option key={3} value="recorder">
+                紀錄人員
+              </Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -141,7 +236,7 @@ export default function SignupModel(props) {
             ]}
             hasFeedback
           >
-            <Input.Password ref={passwordRef} />
+            <Input.Password />
           </Form.Item>
           <Form.Item
             name="confirm"
@@ -169,6 +264,31 @@ export default function SignupModel(props) {
           >
             <Input.Password />
           </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              {
+                type: "email",
+                message: "Email's format is incorrect.",
+              },
+              {
+                required: true,
+              },
+              () => ({
+                validator(_, value) {
+                  if (!CheckInfo.email.includes(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Email already use"));
+                },
+              }),
+            ]}
+            hasFeedback
+          >
+            <Input />
+          </Form.Item>
+          {IdentityMode[identity]}
         </Form>
       )}
     </Modal>
