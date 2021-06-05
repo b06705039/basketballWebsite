@@ -31,19 +31,14 @@ export default function LoginModel(props) {
   const [ form ] = Form.useForm()
 
   const handleOK = async () => {
-
-    try{
       const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
-      console.log(msg)
-      setUserInfo(msg)
-      props.setVisible(false)
-      setLoginWarn(false)
-      return true
-    }catch{
+      if( typeof(msg) !== "string"){
+        setUserInfo(msg)
+        props.setVisible(false)
+        setLoginWarn(false)
+      }else{
         setLoginWarn(true)
-        return false
-    }
-
+      }
     form.resetFields();
   }
 

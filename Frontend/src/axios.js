@@ -28,6 +28,14 @@ function DateConverter(date) {
   return date !== null ? new Date(date).toISOString() : null;
 }
 
+export const isLogin = async () => {
+  return undefined;
+};
+
+export const isSignup = async () => {
+  return undefined;
+};
+
 export const Login = async (account, password) => {
   // [Must] account =    使用者帳號
   // [Must] password =   使用者密碼
@@ -527,10 +535,16 @@ export const Recorder = {
       return `[Error][Recorder][Update]` + err;
     }
   },
-}
+};
+
+const doLogin = async (username, password) => {
+  const msg = { userid: 1, identity: "admin" };
+  return msg;
+};
 
 const doSignup = async (SignUpObj) => {
-  const { account, username, password, identity, email, department } = SignUpObj;
+  const { account, username, password, identity, email, department } =
+    SignUpObj;
   await User.Create(
     account,
     username,
@@ -550,4 +564,4 @@ const doSignup = async (SignUpObj) => {
   return msg;
 };
 
-export { doSignup };
+export { doLogin, doSignup };
