@@ -1,25 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
-import "antd/dist/antd.css";
-import { usePages } from "../hooks/usePages";
-import LoginModel from "./loginModel";
-import SignupModel from "./signupModel";
-import { useUser } from "../hooks/useUser";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import 'antd/dist/antd.css';
+import { usePages } from '../hooks/usePages';
+import LoginModel from './loginModel';
+import SignupModel from './signupModel';
 
-function NavBar() {
-  const [loginVisible, setLoginVisible] = useState(false);
-  const [signupVisible, setSignupVisible] = useState(false);
-  const { id, zhPageList, setCurPage } = usePages();
-  const { logout } = useUser();
+function NavBar(){
+    const [ loginVisible, setLoginVisible ] = useState(false)
+    const [ signupVisible, setSignupVisible ] = useState(false)
+    const { id, zhPageList, setCurPage, logout } = usePages()
 
-  const showLogin = () => {
-    setLoginVisible(true);
-  };
-  const showSignup = () => {
-    setSignupVisible(true);
-  };
+    const showLogin = () => {
+        setLoginVisible(true)
+    }
+    const showSignup = () => {
+        setSignupVisible(true)
+    }
+
 
   return (
     <>

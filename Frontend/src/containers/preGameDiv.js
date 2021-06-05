@@ -169,7 +169,7 @@ const PreGameDiv = () => {
                             name="cycle3Num"
                             label="三循環數目"
                             >
-                        <Input ref={cycle3Ref} />
+                            <Input ref={cycle3Ref} />
                         </Form.Item>
                         
                         <Form.Item

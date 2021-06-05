@@ -1,7 +1,7 @@
 import React,{ useRef, useState } from 'react'
-import { Modal, Button, Form, Input, Checkbox } from 'antd'
-import { login, useUser } from '../hooks/useUser'
+import { Modal, Form, Input } from 'antd'
 import { usePages } from '../hooks/usePages'
+import { Login } from '../axios'
 
 const formItemLayout = {
   labelCol: {
@@ -23,24 +23,27 @@ const formItemLayout = {
 };
 
 export default function LoginModel(props) {
-  const usernameRef = useRef();
-  const passwordRef = useRef();
-  const { status, login } = useUser();
-  const { setId } = usePages();
+  const usernameRef = useRef()
+  const passwordRef = useRef()
+  const { setUserInfo } = usePages()
+
   const [ LoginWarn, setLoginWarn ] = useState(false);
   const [ form ] = Form.useForm()
 
   const handleOK = async () => {
-    if(await login(usernameRef.current.value,passwordRef.current.value)){
-      console.log("in model, true")
+
+    try{
+      const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
+      console.log(msg)
+      setUserInfo(msg)
       props.setVisible(false)
       setLoginWarn(false)
-      setId('admin')
-    } 
-    else{
-      console.log("in model, false")
-      setLoginWarn(true)
+      return true
+    }catch{
+        setLoginWarn(true)
+        return false
     }
+
     form.resetFields();
   }
 
@@ -59,15 +62,13 @@ export default function LoginModel(props) {
         <Form 
           {...formItemLayout}
           style={{textAlign:"center"}}
-          form={form}
-        >
+          form={form}>
           <h2 style={{textAlign:"center"}}>登入</h2>
           <h4 style={{textAlign:"center",visibility:LoginWarn?"":"hidden",color:"red"}} >登入失敗!</h4>
           <Form.Item
           name="username"
-          label="Username"
-        >
-          <Input ref={usernameRef} value={null} />
+          label="Username">
+            <Input ref={usernameRef} />
           </Form.Item>
         
           <Form.Item
@@ -78,10 +79,8 @@ export default function LoginModel(props) {
               required: true,
               message: 'Please input your password!',
             },
-          ]}
-          hasFeedback
-          >
-            <Input.Password ref={passwordRef} value={null}/>
+          ]}>
+            <Input.Password ref={passwordRef} />
           </Form.Item>
         </Form>
       </Modal>

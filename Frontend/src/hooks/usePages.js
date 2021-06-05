@@ -1,11 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
-import { pagesMenu } from "./pagesMenu";
+import React,{ useState, useContext, useMemo, useEffect } from 'react'
+import { pagesMenu } from './pagesMenu'
 
-const defId = "admin";
-const defCurPage = "news";
+const defId = "public"
+const defCurPage = "news"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
-const { News, PreGame, Default, Try, Scheduler, Timer, UserEditor } =
-  pagesMenu();
+const { News, PreGame, Default, Try , Scheduler, Timer} = pagesMenu()
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
@@ -24,12 +23,11 @@ const zhPage = {
   scheduleTime: ["填寫賽程時間", Timer],
 };
 const idPage = {
-  testPublic: ["news", "schedule"],
-  public: ["news", "schedule", "gameResult", "adminInfo", "contact"],
-  admin: ["main", "teamInfo", "schedule", "preGame", "interGame", "annouce"],
-  scoring: ["main", "inChargeGame"],
-  team: ["main", "register", "scheduleTime"],
-};
+    'public':['news','schedule','gameResult','adminInfo','contact'],
+    'administer':['main','teamInfo','schedule','preGame','interGame','annouce'],
+    'recorder':['main','inChargeGame'],
+    'team':['main','register','scheduleTime']
+}
 
 const Pages = React.createContext();
 
@@ -37,30 +35,49 @@ export function usePages() {
   return useContext(Pages);
 }
 
-export function PagesProvider({ children }) {
-  const [id, setId] = useState(defId);
-  const [pageList, setPageList] = useState(idPage[id]);
-  const [zhPageList, setZhPageList] = useState(
-    pageList.map((page) => zhPage[page])
-  );
-  const [curPage, setCurPage] = useState(zhPageList[0]);
+const userForm = {  account: null,
+                    active: null, 
+                    adim: 'public', 
+                    email: null, 
+                    token: null,
+                    user_id: null,
+                    username: null }
 
-  useEffect(() => {
-    setPageList(idPage[id]);
-  }, [id]);
 
-  useEffect(() => {
-    setZhPageList(pageList.map((page) => zhPage[page]));
-    setCurPage(zhPage[pageList[0]]);
-  }, [pageList]);
+export function PagesProvider({children}){
+    const [ userInfo, setUserInfo ] = useState(userForm)
+    const [ id, setId ] = useState(defId)
+    const [ pageList, setPageList ] = useState(idPage[id])
+    const [ zhPageList, setZhPageList ] = useState(pageList.map(page=>zhPage[page]))
+    const [ curPage, setCurPage ] = useState(zhPageList[0])
+    
+    const logout = () => {
+        setUserInfo(userForm)
+    }
 
-  const value = {
-    id,
-    setId,
-    zhPageList,
-    curPage,
-    setCurPage,
-  };
+    useEffect(() => {
+        const updateId = userInfo['adim']
+        const updatePageList = idPage[updateId]
+        setId(updateId)
+        setPageList(updatePageList)
+        setZhPageList(updatePageList.map(page=>zhPage[page]))
+        setCurPage(zhPage[updatePageList[0]])
+      }, [userInfo])
 
-  return <Pages.Provider value={value}>{children}</Pages.Provider>;
+    const value = {
+        id,
+        setId,
+        zhPageList, 
+        curPage,
+        setCurPage,
+        userInfo,
+        setUserInfo, 
+        logout
+    }
+
+    return(
+        <Pages.Provider value={value}>
+            {children}
+        </Pages.Provider>
+    )
 }
