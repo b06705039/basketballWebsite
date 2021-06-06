@@ -1,4 +1,5 @@
 import React from 'react'
+import InterGameDiv from '../containers/interGameDiv'
 
 
 
@@ -6,7 +7,7 @@ const InterGame = () => {
     return(
         <div className="ant-layout-content" style={{ height: '1000px'}}>
             <div className="site-layout-content" style={{ padding: '0 50px'}}>
-                <p> This is default page</p>
+                <InterGameDiv />
             </div>
         </div>
     )

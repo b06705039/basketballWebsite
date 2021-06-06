@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Button } from 'antd'
+// import InterGameTable from '../components/interGameTable'
 import PreGameTable from '../components/preGameTable'
-import Cycles from '../components/Cycles'
-import { usePreGame } from '../hooks/usePreGame'
-import { Form, Input, Modal } from 'antd'
+import Kickout from '../components/kickout'
+import { Form, Modal } from 'antd'
 
 const ContentBackground = styled.div`
     height: 1000px;
@@ -71,24 +71,13 @@ const formItemLayout = {
     },
   };
 
-const PreGameDiv = () => {
+const InterGameDiv = () => {
 
-    console.log("in preGame Div")
-
-    const { saveResult, setCycle3, setCycle4 } = usePreGame()
+    // const { saveResult } = usePreGame()
     const [ showChangeCycle, setShowChangeCycle ] = useState(false)
-    // const [ showSaveMes, setShowSaveMes ] = useState(false)
     const [ editable, setEditable ] = useState(true)
-    const cycle3Ref = useRef()
-    const cycle4Ref = useRef()
     const [ form ] = Form.useForm()
 
-    const handleOK = (e) => {
-        setCycle3(cycle3Ref.current.props.value)
-        setCycle4(cycle4Ref.current.props.value)
-        form.resetFields()
-        setShowChangeCycle(false)
-    }   
 
     const generateModal = () =>{
         let secondsToGo = 5
@@ -111,78 +100,40 @@ const PreGameDiv = () => {
         
     }
 
-    // useMemo(() => {
-    //     console.log("in show modal, into useEffect", showSaveMes)
-    //     if (showSaveMes){
-    //         generateModal()
-    //         setShowSaveMes(false)
-    //     }else{
-    //         setEditable(false)
-    //     }
-    // }, [showSaveMes])
-
     return(
         <>
             <ContentBackground className="ant-layout-content" >
                 <ContentBody className="site-layout-content">
                    <TopDiv>
-                        <Title>預賽安排</Title>
+                        <Title>複賽安排</Title>
                         <ButtonDiv style={{"justifyContent": editable?" space-between":"flex-end"}}>
                             { editable? (<>
-                                                <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
                                                 <StyledButton onClick={()=>{
-                                                    saveResult()
+                                                    // saveResult()
                                                     generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
-                                                <StyledButton onClick={()=>{setEditable(true)}}>更動預賽</StyledButton>
+                                                <StyledButton onClick={()=>{setEditable(true)}}>更動複賽</StyledButton>
                                         )
                             }
                         </ButtonDiv>
                     </TopDiv>
                     <BottomDiv>
                         { editable && ( <LeftBlock>
-                                            <PreGameTable />
+                                            {/* <PreGameTable /> */}
                                         </LeftBlock>)}
                         <RightBlock>
-                            <Cycles />
+                            <Kickout />
                         </RightBlock>
                     </BottomDiv>
                     
                 </ContentBody>
             </ContentBackground>
 
-            <>
-                <Modal 
-                visible = { showChangeCycle }
-                onOk = { (e)=>handleOK(e) }
-                onCancel = { ()=>setShowChangeCycle(false) } 
-                >
-                    <Form 
-                        {...formItemLayout}
-                        style={{textAlign:"center"}}
-                        form={form}
-                        >
-                        <h2 style={{textAlign:"center"}}>更改循環數</h2>
-                        <Form.Item
-                            name="cycle3Num"
-                            label="三循環數目"
-                            >
-                            <Input ref={cycle3Ref} />
-                        </Form.Item>
-                        
-                        <Form.Item
-                            name="cycle4Num"
-                            label="四循環數目"
-                            >
-                            <Input ref={cycle4Ref} />
-                        </Form.Item>
-                    </Form>
-                </Modal>
-            </>
+
         </>
     )
 }
 
 
-export default PreGameDiv
+export default InterGameDiv

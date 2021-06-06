@@ -19,9 +19,9 @@ const Cycles = () => {
             {mapDict && Object.entries(mapDict).map((sessionObject, index)=>{
                 console.log("in cycle, update aCycles", sessionObject)
                 if(Object.keys(sessionObject[1]).length ===3){
-                    return <Acycle3 key={index} data={sessionObject[1]} />
+                    return <Acycle3 key={index} groupSession={sessionObject[0]} data={sessionObject[1]} />
                 }else{
-                    return <Acycle4 key={index} data={sessionObject[1]} />
+                    return <Acycle4 key={index} groupSession={sessionObject[0]} data={sessionObject[1]} />
                 }
             })}
         </CycleDiv>

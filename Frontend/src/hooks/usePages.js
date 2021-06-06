@@ -4,7 +4,7 @@ import { pagesMenu } from './pagesMenu'
 const defId = "public"
 const defCurPage = "news"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
-const { News, PreGame, Default, Try , Scheduler, Timer} = pagesMenu()
+const { News, PreGame, Default, Try , Scheduler, Timer, InterGame} = pagesMenu()
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
@@ -16,7 +16,7 @@ const zhPage = {
   main: ["首頁", Default],
   teamInfo: ["球隊資訊", Try],
   preGame: ["安排預賽賽程", PreGame],
-  interGame: ["安排複賽循環", Default],
+  interGame: ["安排複賽循環", InterGame],
   annouce: ["發布消息", Default],
   inChargeGame: ["負責賽事", Default],
   register: ["報名", Default],
@@ -56,6 +56,7 @@ export function PagesProvider({children}){
     }
 
     useEffect(() => {
+        console.log("user Info: ", userInfo)
         const updateId = userInfo['adim']
         const updatePageList = idPage[updateId]
         setId(updateId)

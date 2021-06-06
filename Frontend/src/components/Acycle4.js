@@ -56,7 +56,7 @@ const Acycle4 = (props) => {
             </BottomLabel>
             <MiddleGraph>
                 <Graph>&#9634;</Graph>
-                <GroupSession>{data[0][1].session[0]}</GroupSession>
+                <GroupSession>{props.groupSession}</GroupSession>
             </MiddleGraph>
             <BottomLabel>
                 <Teamname>{data[2][1].name || data[2][1].session}</Teamname>

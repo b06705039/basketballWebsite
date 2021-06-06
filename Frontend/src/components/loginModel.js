@@ -43,13 +43,12 @@ export default function LoginModel(props) {
         setShowWarn(true)
       }
     }else{
-      // SendRemindEmail
-      if( typeof(msg) !== "string"){
         const msg = User.SendRemindEmail(emailRef.current.props.value)
-        setShowWarn(false)
-      }else{
-        setShowWarn(true)
-      }
+        if( typeof(msg) !== "string"){
+          setShowWarn(false)
+        }else{
+          setShowWarn(true)
+        }
     }
       
     form.resetFields();

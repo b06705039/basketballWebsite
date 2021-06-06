@@ -190,7 +190,9 @@ Team.prototype.getALL = async function () {
             userInfo.department AS ownerDepartment,
             userInfo.email AS email,
             name,
-            teamInfo.department AS department
+            teamInfo.department AS department,
+            teamInfo.session_preGame AS session_preGame,
+            teamInfo.session_interGame AS session_interGame
         FROM teamInfo
         LEFT JOIN userInfo ON 
             userInfo.user_id = teamInfo.user_id;`;
@@ -258,6 +260,24 @@ Team.prototype.update = async function (name, department) {
         await db.execute(SQL, {});
         return { info: `Update team ${team_id} Success` };
     } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+}
+
+Team.prototype.updateSession = async function(sessionType, id, teamSession){
+    
+    const TAG = "[TeamUpdateSession]";
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
+    const SQL = `UPDATE teamInfo SET ${sessionType}='${teamSession}' WHERE team_id=${id};`
+    try{
+        await db.execute(SQL, {});
+        return { info: `Update session ${id} Success`};
+    }catch (err){
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }

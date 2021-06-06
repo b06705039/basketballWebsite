@@ -284,22 +284,23 @@ export const Team = {
         url: serverURL + "teams/getALL",
         headers: { Authorization: token },
       });
+      console.log(response.data)
       return response.data;
     } catch (err) {
       return `[Error][Team][GetALL]` + err;
     }
   },
 
-  Update: async (id, name) => {
-    // [Must] id       Team ID
-    // [Must] name     Team Name
-    // [Myst] token    {adim:team}
+  Update: async (name, department) => {
+    // [Must] id       Team name
+    // [Must] name     Team department
+    // [Must] token    {adim:team}
 
     try {
       let response = await axios({
         method: "POST",
         url: serverURL + "teams/update",
-        data: { id, name },
+        data: { name, department },
         headers: { Authorization: token },
       });
       return response.data;
@@ -307,6 +308,26 @@ export const Team = {
       return `[Error][Team][Update]` + err;
     }
   },
+
+  UpdateSession: async(sessionType, id, teamSession) => {
+    // [Must] sessionType     preGame || interGame
+    // [Must] id              Team ID
+    // [Must] teamSession     Team assined session
+    // [Must] token           {adim: adimister} 
+
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/update_session",
+        data: { sessionType, id, teamSession },
+        headers: { Authorization: token }
+      });
+      return response.data;
+    } catch (err) {
+      return `[ERROR][Team][Update_session]` + err;
+    }
+  }
+
 };
 
 export const Time = {

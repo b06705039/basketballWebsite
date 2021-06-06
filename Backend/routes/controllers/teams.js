@@ -58,6 +58,7 @@ router.get('/getALL', async (req, resp) => {
     const token = req.body.token;
     try {
         const result = await new Team(token).getALL();
+        console.log(result)
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -70,6 +71,16 @@ router.post('/update', async (req, resp) => {
     try {
         const result = await new Team(token).update(name, department);
         return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
+router.post('/update_session', async(req, resp) => {
+    const token = req.body.token;
+    const { sessionType, id, teamSession } = req.body;
+    try{
+        const result = await new Team(token).updateSession( sessionType, id, teamSession );
     } catch (err) {
         return response.fail(resp, err);
     }

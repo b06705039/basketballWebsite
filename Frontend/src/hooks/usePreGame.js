@@ -19,7 +19,7 @@ const PreGamgeProvider = ({children}) => {
     useEffect(async() => {
         const preGameData = await Team.GetALLTeam()
         let newData = []
-        Object.entries(preGameData).forEach((data) => newData.push({key:data[1].team_id, name:data[1].name, session:'--' , }))
+        Object.entries(preGameData).forEach((data) => newData.push({key:data[1].team_id, name:data[1].name, session:data[1].session_preGame }))
         setPreGameTable(newData)
     }, [])
 
@@ -37,8 +37,6 @@ const PreGamgeProvider = ({children}) => {
             console.log("in preGame, Signup teams count is below 3")
         }
     }, [preGameTable])
-
-    
 
 
     // cycleDict format = {
@@ -79,9 +77,10 @@ const PreGamgeProvider = ({children}) => {
         setTimeout(() => {
             let updateDict = cycleDict()
             Object.entries(preGameTable).map((team, index)=>{
+                console.log("team", index, team)
                 const teamSessionGroup = team[1].session[0]
                 if(teamSessionGroup in updateDict && team[1].session !== '--'){
-                    updateDict[teamSessionGroup][team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session}
+                    updateDict[teamSessionGroup][team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session_preGame}
                 }
             })
             console.log("in usePreGame updateDict", updateDict, cycle3, cycle4)
@@ -95,9 +94,13 @@ const PreGamgeProvider = ({children}) => {
 
 
     const saveResult = async() => {
+        console.log(" update session1: ", preGameTable)
+        Object.entries(preGameTable).map(async( team ) => {
+            console.log(" update session2: ", team, team[1].key, team[1].session)
+            await Team.UpdateSession('session_preGame', team[1].key, team[1].session)
+        })
 
         
-
         // Object.entries(mapDict).map(async(sessionGroup, index)=>{
         //     let teams = Object.entries(sessionGroup[1])
         //     for (let i=0;i<teams.length;i++){
