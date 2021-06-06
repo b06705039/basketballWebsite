@@ -58,7 +58,16 @@ router.get('/getALL', async (req, resp) => {
     const token = req.body.token;
     try {
         const result = await new Team(token).getALL();
-        console.log(result)
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
+router.get('/getInterGame', async(req, resp) => {
+    const token = req.body.token;
+    try{
+        const result = await new Team(token).getInterGame();
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);

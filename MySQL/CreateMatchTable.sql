@@ -6,5 +6,6 @@ CREATE TABLE matches (
     endDate DATE,
     field INT,
     recorder VARCHAR(20),
-    winner INT
+    winner INT,
+    stage VARCHAR(20)
 );

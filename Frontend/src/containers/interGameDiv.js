@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
-import { Button } from 'antd'
-// import InterGameTable from '../components/interGameTable'
-import PreGameTable from '../components/preGameTable'
+import { Button, Select } from 'antd'
+import InterGameTable from '../components/interGameTable'
 import Kickout from '../components/kickout'
 import { Form, Modal } from 'antd'
+import { useInterGame } from '../hooks/useInterGame'
+const { Option } = Select;
 
 const ContentBackground = styled.div`
     height: 1000px;
@@ -31,7 +32,7 @@ const ButtonDiv = styled.div`
     float: right;
     display: flex;
     justify-content: space-between;
-    width: 225px;
+    width: 250px;
 `
 const StyledButton = styled(Button)`
     height: 33px;
@@ -74,10 +75,11 @@ const formItemLayout = {
 const InterGameDiv = () => {
 
     // const { saveResult } = usePreGame()
-    const [ showChangeCycle, setShowChangeCycle ] = useState(false)
+    const [ showChangeTeamNum, setShowChangeTeamNum ] = useState(false)
     const [ editable, setEditable ] = useState(true)
+    const TeamNumRef = useRef()
     const [ form ] = Form.useForm()
-
+    const { interTeamNum, setInterTeamNum } = useInterGame()
 
     const generateModal = () =>{
         let secondsToGo = 5
@@ -96,8 +98,10 @@ const InterGameDiv = () => {
             modal.destroy()
             setEditable(false)
         }, secondsToGo * 1000);
+    }
 
-        
+    const handleOK = () => {
+
     }
 
     return(
@@ -108,6 +112,7 @@ const InterGameDiv = () => {
                         <Title>複賽安排</Title>
                         <ButtonDiv style={{"justifyContent": editable?" space-between":"flex-end"}}>
                             { editable? (<>
+                                                <StyledButton onClick={()=>setShowChangeTeamNum(true)}>更改複賽隊伍數目</StyledButton>
                                                 <StyledButton onClick={()=>{
                                                     // saveResult()
                                                     generateModal()
@@ -120,7 +125,7 @@ const InterGameDiv = () => {
                     </TopDiv>
                     <BottomDiv>
                         { editable && ( <LeftBlock>
-                                            {/* <PreGameTable /> */}
+                                            <InterGameTable />
                                         </LeftBlock>)}
                         <RightBlock>
                             <Kickout />
@@ -129,6 +134,42 @@ const InterGameDiv = () => {
                     
                 </ContentBody>
             </ContentBackground>
+
+            <>
+                <Modal 
+                visible = { showChangeTeamNum }
+                onOk = { () =>{
+                        setInterTeamNum(TeamNumRef.current.props.value)
+                        setShowChangeTeamNum(false)}}
+                onCancel = { ()=>setShowChangeTeamNum(false) } 
+                >
+                    <Form 
+                        {...formItemLayout}
+                        style={{textAlign:"center"}}
+                        form={form}
+                        >
+                        <h2 style={{textAlign:"center"}}>更改循環數</h2>
+                        <Form.Item
+                            name="Number of Team"
+                            label="numOfTeam"
+                            rules={[ { required: true,}, ]}
+                            >
+                            <Select
+                                placeholder="選擇預賽隊伍數"
+                                // onChange={this.onGenderChange}
+                                ref={TeamNumRef}
+                                allowClear
+                            >
+                                <Option value="8">8</Option>
+                                <Option value="9">9</Option>
+                                <Option value="10">10</Option>
+                                <Option value="11">11</Option>
+                                <Option value="12">12</Option>
+                            </Select>
+                            </Form.Item>
+                    </Form>
+                </Modal>
+            </>
 
 
         </>

@@ -284,10 +284,23 @@ export const Team = {
         url: serverURL + "teams/getALL",
         headers: { Authorization: token },
       });
-      console.log(response.data)
       return response.data;
     } catch (err) {
       return `[Error][Team][GetALL]` + err;
+    }
+  },
+  GetInterGame: async () => {
+    // [Must] token {adim: adiminister}
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/getInterGame",
+        headers: { Authorization: token },
+      });
+      console.log("in axios", response)
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][GetInterGame]` + err;
     }
   },
 
@@ -436,12 +449,12 @@ export const Match = {
     }
   },
 
-  Create: async (home, away) => {
+  Create: async (home, away, stage) => {
     try {
       let response = await axios({
         method: "POST",
         url: serverURL + "matches/create",
-        data: { home_id: home, away_id: away },
+        data: { home_id: home, away_id: away, stage: stage},
         headers: { Authorization: token },
       });
       return response.data;

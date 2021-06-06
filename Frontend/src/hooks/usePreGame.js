@@ -101,17 +101,17 @@ const PreGamgeProvider = ({children}) => {
         })
 
         
-        // Object.entries(mapDict).map(async(sessionGroup, index)=>{
-        //     let teams = Object.entries(sessionGroup[1])
-        //     for (let i=0;i<teams.length;i++){
-        //         for (let j=i+1;j<teams.length;j++){
-        //             if(i !== j){
-        //                 const res = await Match.Create( teams[i][1].key, teams[j][1].key)
-        //                 console.log("in saveResult, res:", res)
-        //             }
-        //         }
-        //     }
-        // })
+        Object.entries(mapDict).map(async(sessionGroup, index)=>{
+            let teams = Object.entries(sessionGroup[1])
+            for (let i=0;i<teams.length;i++){
+                for (let j=i+1;j<teams.length;j++){
+                    if(i !== j){
+                        const res = await Match.Create( teams[i][1].key, teams[j][1].key, 'preGame')
+                        console.log("in saveResult, res:", res)
+                    }
+                }
+            }
+        })
     }
 
     const value = {

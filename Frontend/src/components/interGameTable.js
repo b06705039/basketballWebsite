@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import 'antd/dist/antd.css';
 import { Table, Input, Form } from 'antd'
-import { usePreGame } from '../hooks/usePreGame'
+import { useInterGame } from '../hooks/useInterGame'
 
-const PreGameCol = [
+const GameCol = [
     {
       title: '球隊',
       dataIndex: 'name',
@@ -90,15 +90,16 @@ const EditableCell = ({
 
 const InterGameTable = () => {
     
-    const [ columns, setColumns ] = useState(PreGameCol)
-    const { preGameTable, setPreGameTable } = usePreGame()
+    const [ columns, setColumns ] = useState(GameCol)
+    const { interGameTable, setInterGameTable } = useInterGame()
 
     const handleSave = (row) => {
-        const newData = JSON.parse(JSON.stringify(preGameTable))
+        const newData = JSON.parse(JSON.stringify(interGameTable))
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
-        setPreGameTable(newData);
+        console.log("interGame handleSave: ", newData)
+        setInterGameTable(newData);
     };
 
     const components = {
@@ -130,7 +131,7 @@ const InterGameTable = () => {
                 components={components}
                 rowClassName={() => 'editable-row'}
                 bordered
-                dataSource={preGameTable}
+                dataSource={interGameTable}
                 columns={Columns}
             />
         </>

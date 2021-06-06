@@ -37,7 +37,7 @@ export function usePages() {
 
 const userForm = {  account: null,
                     active: null, 
-                    adim: 'public', 
+                    adim: 'administer', 
                     email: null, 
                     token: null,
                     user_id: null,

@@ -191,8 +191,7 @@ Team.prototype.getALL = async function () {
             userInfo.email AS email,
             name,
             teamInfo.department AS department,
-            teamInfo.session_preGame AS session_preGame,
-            teamInfo.session_interGame AS session_interGame
+            teamInfo.session_preGame AS session_preGame
         FROM teamInfo
         LEFT JOIN userInfo ON 
             userInfo.user_id = teamInfo.user_id;`;
@@ -202,6 +201,36 @@ Team.prototype.getALL = async function () {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
+}
+
+Team.prototype.getInterGame = async function(){
+    const TAG = `[TeamGetPreGame]`
+    const logger = new Logger();
+    if (config.AdimLevel[this.token.adim] < 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
+    const SQL = `SELECT 
+        ${(config.AdimLevel[this.token.adim] >= 2) ? "team_id, status," : ""}
+        userInfo.username AS owner,
+        userInfo.department AS ownerDepartment,
+        userInfo.email AS email,
+        name,
+        teamInfo.department AS department,
+        teamInfo.session_interGame AS session_interGame
+    FROM teamInfo
+    LEFT JOIN userInfo ON 
+        userInfo.user_id = teamInfo.user_id
+    WHERE teamInfo.session_interGame IS NOT NULL;`;
+
+    try {
+        return (await db.execute(SQL, {}));
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+
 }
 
 Team.prototype.update = async function (name, department) {
