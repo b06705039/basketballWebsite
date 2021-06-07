@@ -131,6 +131,9 @@ export const UserEditor = () => {
         </Form>
       </Card>
       <Table type="users" />
+      <Table type="teams" />
+      <Table type="recorders" />
+      <Table type="matches" />
     </>
   );
 };

@@ -28,8 +28,10 @@ const extension = {
   team_id: 130,
   recorder_id: 130,
   match_id: 130,
-  id: 130,
+  id: 80,
   startDate: 200,
+  homeDepartment: 150,
+  awayDepartment: 150,
 };
 
 const filters = {
@@ -68,7 +70,7 @@ function Activator(props) {
 
 let special = {
   active: {
-    title: "Activator",
+    title: "啟用狀態",
     dataIndex: "",
     render: (data) => <Activator data={data} />,
   },
@@ -96,6 +98,8 @@ export default function (props) {
             if (item in config.translateItem) {
               element[item] = config.translateItem[item](element[item]);
             }
+            if (element[item] === null || element[item] === undefined)
+              element[item] = "NONE";
           }
           element["key"] = index;
           return element;

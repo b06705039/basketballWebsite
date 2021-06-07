@@ -7,7 +7,6 @@ import Scheduler, {
 import Draggable from "devextreme-react/draggable";
 import ScrollView from "devextreme-react/scroll-view";
 import notify from "devextreme/ui/notify";
-import { FieldData } from "../data/data";
 import AppointmentFormat from "../components/Appointment";
 import AppointmentTooltip from "../components/AppointmentTooltip";
 import "devextreme/dist/css/dx.common.css";
@@ -18,6 +17,19 @@ const currentDate = new Date(2021, 4, 24);
 const views = ["workWeek"];
 const draggingGroupName = "appointmentsGroup";
 const TimeRangeObject = { 1: "12:30", 2: "18:30", 3: "19:30" };
+
+const FieldData = [
+  {
+    text: "Field A",
+    id: 0,
+    color: "#1e90ff",
+  },
+  {
+    text: "Field B",
+    id: 1,
+    color: "#ff9747",
+  },
+];
 
 const TimeCell = ({ date }) => {
   let text = TimeRangeObject[date.getHours()];
