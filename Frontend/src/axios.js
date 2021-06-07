@@ -90,7 +90,7 @@ export const User = {
       let response = await axios({
         method: "POST",
         url: serverURL + "users/active",
-        data: { user_id: id },
+        data: { id: id },
         headers: { Authorization: token },
       });
       return response.data;
@@ -527,10 +527,11 @@ export const Recorder = {
       return `[Error][Recorder][Update]` + err;
     }
   },
-}
+};
 
 const doSignup = async (SignUpObj) => {
-  const { account, username, password, identity, email, department } = SignUpObj;
+  const { account, username, password, identity, email, department } =
+    SignUpObj;
   await User.Create(
     account,
     username,

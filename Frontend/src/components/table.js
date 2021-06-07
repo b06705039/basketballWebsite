@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import React, { useState, useEffect } from "react";
 import { Team, Match, User, Recorder } from "../axios";
-import config from "../config";
+import config from "./config";
 
 /*
 <table type='users'>  => 使用者資料
