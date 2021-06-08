@@ -39,6 +39,7 @@ const TimeCell = ({ date }) => {
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.uploading = false;
     this.state = {
       appointments: [],
       busytime: {},
@@ -48,7 +49,14 @@ class App extends React.Component {
     };
     this.scheduler = React.createRef();
   }
-
+  startupload = () => {
+    this.uploading = true;
+    notify("Uploading");
+  };
+  endupload = () => {
+    this.uploading = false;
+    notify("Uploaded");
+  };
   componentWillUnmount = () => {};
 
   componentDidMount = () => {
@@ -122,7 +130,6 @@ class App extends React.Component {
 
   render() {
     const { appointments } = this.state;
-    console.log(this.state);
     return (
       <React.Fragment>
         <Scheduler
@@ -237,6 +244,9 @@ class App extends React.Component {
       let newappointments = this.state.appointments;
       delete newappointments[index].startDate;
       delete newappointments[index].endDate;
+
+      newappointments[index].recorder_id = null;
+      newappointments[index].recorder = null;
       newappointments[index].arranged = false;
       this.setState({
         appointments: newappointments,
@@ -244,7 +254,9 @@ class App extends React.Component {
       });
       const { id } = e.itemData;
       (async () => {
+        this.startupload();
         await Match.Update(id, null, null, null);
+        this.endupload();
       })();
     }
   };
@@ -288,6 +300,10 @@ class App extends React.Component {
   };
 
   onAppointmentAdd = (e) => {
+    if (this.uploading) {
+      e.cancel = true;
+      return;
+    }
     if (e.itemData === undefined) {
       e.cancel = true;
       return;
@@ -333,14 +349,20 @@ class App extends React.Component {
       this.setState({
         appointments: newappointments,
       });
-      const { id, startDate, field, recorder } = e.itemData;
+      const { id, startDate, field, recorder_id } = e.itemData;
       (async () => {
-        await Match.Update(id, startDate, field, recorder);
+        this.startupload();
+        await Match.Update(id, startDate, field, recorder_id);
+        this.endupload();
       })();
     }
   };
 
   onAppointmentUpdating = (e) => {
+    if (this.uploading) {
+      e.cancel = true;
+      return;
+    }
     if (e.newData.allDay) e.cancel = true;
     if (e.newData.startDate.getHours() === 0) {
       e.cancel = true;
@@ -374,7 +396,9 @@ class App extends React.Component {
     }
     const { id, startDate, field, recorder_id } = e.newData;
     (async () => {
+      this.startupload();
       await Match.Update(id, startDate, field, recorder_id);
+      this.endupload();
     })();
   };
 
@@ -419,7 +443,6 @@ class App extends React.Component {
       return;
     }
 
-    console.log(options);
     let form = data.form;
     form.option("items", [
       {
