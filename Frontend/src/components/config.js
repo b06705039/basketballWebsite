@@ -15,7 +15,7 @@ config.translate = {
   status: "隊伍狀態",
   createtime: "創建時間",
   owner: "隊伍代表",
-  ownerDepartment: "隊伍系所",
+  ownerDepartment: "隊伍代表系所",
   recorder_id: "紀錄員編號",
   name: "姓名",
   id: "編號",
@@ -30,7 +30,7 @@ config.translate = {
   recorder: "紀錄員",
   winner: "勝方",
 };
-const time = ["12:00", "18:30", "19:30"];
+const time = ["下午12:30", "晚上6:30", "晚上7:30"];
 
 function Getdepartment(part) {
   return Department.info[part]["zh"];
@@ -38,13 +38,14 @@ function Getdepartment(part) {
 function SpecialDate(date) {
   if (date === null) return "NONE";
   let output = new Date(date);
-  return `${output.toLocaleDateString()} : ${time[output.getHours() - 1]}`;
+  return `${output.toLocaleDateString()} ${time[output.getHours() - 1]}`;
 }
 config.adimType = {
   administer: "主辦單位",
   team: "系隊",
   recorder: "紀錄員",
 };
+config.teamstatus = ["未報名", "已報名", "未繳費", "已繳費"];
 
 config.translateItem = {
   department: Getdepartment,

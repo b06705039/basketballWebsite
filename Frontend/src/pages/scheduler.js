@@ -13,6 +13,7 @@ import "devextreme/dist/css/dx.common.css";
 import "devextreme/dist/css/dx.light.css";
 import "../css/scheduler.css";
 import { Match, Time } from "../axios";
+import { LoadPanel } from "devextreme-react/load-panel";
 const currentDate = new Date(2021, 4, 24);
 const views = ["workWeek"];
 const draggingGroupName = "appointmentsGroup";
@@ -46,15 +47,16 @@ class App extends React.Component {
       recorders: {},
       teams: {},
       currentAppointment: null,
+      loading: true,
     };
     this.scheduler = React.createRef();
   }
   startupload = () => {
-    this.uploading = true;
+    this.setState(() => ({ loading: true }));
     notify("Uploading");
   };
   endupload = () => {
-    this.uploading = false;
+    this.setState(() => ({ loading: false }));
     notify("Uploaded");
   };
   componentWillUnmount = () => {};
@@ -90,6 +92,7 @@ class App extends React.Component {
         recorders: setrecorder,
         busytime: setbusytime,
         teamtime,
+        loading: false,
       }));
     })();
   };
@@ -99,11 +102,13 @@ class App extends React.Component {
     if (home in this.state.teamtime)
       this.state.teamtime[home].map((time) => {
         thisbusy[time] = `${home}: 無法出賽`;
+        return true;
       });
     if (away in this.state.teamtime)
       this.state.teamtime[away].map((time) => {
         if (time in thisbusy) thisbusy[time] = `${home}, ${away}: 無法出賽`;
         else thisbusy[time] = `${away}: 無法出賽`;
+        return true;
       });
 
     for (let time in thisbusy) {
@@ -132,92 +137,102 @@ class App extends React.Component {
     const { appointments } = this.state;
     return (
       <React.Fragment>
-        <Scheduler
-          ref={this.scheduler}
-          adaptivityEnabled={true}
-          timeZone="Asia/Taipei"
-          id="scheduler"
-          dataSource={appointments.filter((x) => x.arranged === true)}
-          defaultCurrentDate={currentDate}
-          height={"100%"}
-          startDayHour={1}
-          endDayHour={4}
-          cellDuration={60}
-          editing={{
-            allowAdding: true,
-            allowDeleting: true,
-            allowResizing: false,
-            allowDragging: true,
-            allowUpdating: true,
-          }}
-          groupByDate={true}
-          groups={["field"]}
-          views={views}
-          dataCellComponent={this.DataCell}
-          defaultCurrentView={views[0]}
-          appointmentComponent={AppointmentFormat}
-          appointmentTooltipComponent={AppointmentTooltip}
-          onAppointmentFormOpening={this.onAppointmentFormOpening}
-          onAppointmentUpdating={this.onAppointmentUpdating}
-          onAppointmentAdded={this.onAppointmentAdd}
-          timeCellRender={TimeCell}
+        <div
+          id="scheduler-container"
+          style={{ display: "flex", flexDirection: "column" }}
         >
-          <Resource
-            fieldExpr="field"
-            allowMultiple={false}
-            dataSource={FieldData}
-            label="Field"
-          />
-          <View
-            type="timelineWeek"
-            name="Timeline Week"
-            groupOrientation="horizontal"
-            maxAppointmentsPerCell={1}
-          />
-          <AppointmentDragging
-            group={draggingGroupName}
-            onRemove={this.onAppointmentRemove}
-            onAdd={this.onAppointmentAdd}
-            onDragEnd={this.onAppointmentDragEnd}
-            onDragStart={this.onAppointmentDragStart}
-          />
-        </Scheduler>
-        <h1 style={{ marginLeft: 50 }}>賽程</h1>
-        <ScrollView
-          id="scroll"
-          direction="both"
-          height={50}
-          width={"100%"}
-          bounceEnabled={true}
-        >
-          <Draggable
-            id="DragList"
-            data="dropArea"
-            height={50}
-            group={draggingGroupName}
-            onDragStart={this.onListDragStart}
+          <Scheduler
+            ref={this.scheduler}
+            adaptivityEnabled={true}
+            timeZone="Asia/Taipei"
+            id="scheduler"
+            dataSource={appointments.filter((x) => x.arranged === true)}
+            defaultCurrentDate={currentDate}
+            height={"100%"}
+            startDayHour={1}
+            endDayHour={4}
+            cellDuration={60}
+            editing={{
+              allowAdding: true,
+              allowDeleting: true,
+              allowResizing: false,
+              allowDragging: true,
+              allowUpdating: true,
+            }}
+            groupByDate={true}
+            groups={["field"]}
+            views={views}
+            dataCellComponent={this.DataCell}
+            defaultCurrentView={views[0]}
+            appointmentComponent={AppointmentFormat}
+            appointmentTooltipComponent={AppointmentTooltip}
+            onAppointmentFormOpening={this.onAppointmentFormOpening}
+            onAppointmentUpdating={this.onAppointmentUpdating}
+            onAppointmentAdded={this.onAppointmentAdd}
+            timeCellRender={TimeCell}
           >
-            {this.state.appointments
-              .filter((x) => x.arranged === false)
-              .map((task, index) => {
-                task.key = index;
-                return (
-                  <Draggable
-                    key={index}
-                    className="item dx-card dx-theme-text-color dx-theme-background-color"
-                    clone={true}
-                    group={draggingGroupName}
-                    data={task}
-                    width={200}
-                    onDragStart={this.onItemDragStart}
-                    onDragEnd={this.onItemDragEnd}
-                  >
-                    <div style={{ textAlign: "center" }}>{task.text}</div>
-                  </Draggable>
-                );
-              })}
-          </Draggable>
-        </ScrollView>
+            <Resource
+              fieldExpr="field"
+              allowMultiple={false}
+              dataSource={FieldData}
+              label="Field"
+            />
+            <View
+              type="timelineWeek"
+              name="Timeline Week"
+              groupOrientation="horizontal"
+              maxAppointmentsPerCell={1}
+            />
+            <AppointmentDragging
+              group={draggingGroupName}
+              onRemove={this.onAppointmentRemove}
+              onAdd={this.onAppointmentAdd}
+              onDragEnd={this.onAppointmentDragEnd}
+              onDragStart={this.onAppointmentDragStart}
+            />
+          </Scheduler>
+          <h1 style={{ marginLeft: 50 }}>賽程</h1>
+          <ScrollView
+            id="scroll"
+            direction="both"
+            height={50}
+            width={"100%"}
+            bounceEnabled={true}
+          >
+            <Draggable
+              id="DragList"
+              data="dropArea"
+              height={50}
+              group={draggingGroupName}
+              onDragStart={this.onListDragStart}
+            >
+              {this.state.appointments
+                .filter((x) => x.arranged === false)
+                .map((task, index) => {
+                  task.key = index;
+                  return (
+                    <Draggable
+                      key={index}
+                      className="item dx-card dx-theme-text-color dx-theme-background-color"
+                      clone={true}
+                      group={draggingGroupName}
+                      data={task}
+                      width={200}
+                      onDragStart={this.onItemDragStart}
+                      onDragEnd={this.onItemDragEnd}
+                    >
+                      <div style={{ textAlign: "center" }}>{task.text}</div>
+                    </Draggable>
+                  );
+                })}
+            </Draggable>
+          </ScrollView>
+        </div>
+        <LoadPanel
+          shadingColor="rgba(0,0,0,0.4)"
+          position={{ of: "#scheduler-container" }}
+          visible={this.state.loading}
+        />
       </React.Fragment>
     );
   }

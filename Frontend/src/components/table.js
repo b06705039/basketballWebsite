@@ -45,7 +45,16 @@ const filters = {
       value: config.department.info[part]["zh"],
     })),
   },
-  teams: {},
+  teams: {
+    status: config.teamstatus.map((status) => ({
+      text: status,
+      value: status,
+    })),
+    department: Object.keys(config.department.info).map((part) => ({
+      text: config.department.info[part]["zh"],
+      value: config.department.info[part]["zh"],
+    })),
+  },
   recorders: {},
   matches: {},
 };
@@ -57,12 +66,12 @@ function Activator(props) {
     setactive(active === "已啟用" ? "未啟用" : "已啟用");
   };
   return props.data.adim !== "主辦單位" ? (
-    <a
+    <h4
       onClick={sendactive}
-      style={{ color: active === "未啟用" ? "red" : undefined }}
+      style={{ color: active === "未啟用" ? "red" : "blue" }}
     >
       {active}
-    </a>
+    </h4>
   ) : (
     <h4>{active}</h4>
   );

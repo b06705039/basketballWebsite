@@ -202,8 +202,6 @@ Match.prototype.getALL = async function () {
       if (!tool.isNull(match.startDate)) {
         match.arranged = true;
       } else {
-        delete match.endDate;
-        delete match.startDate;
         match.arranged = false;
       }
     });
