@@ -98,7 +98,7 @@ export const User = {
       let response = await axios({
         method: "POST",
         url: serverURL + "users/active",
-        data: { user_id: id },
+        data: { id: id },
         headers: { Authorization: token },
       });
       return response.data;
@@ -430,7 +430,7 @@ export const Match = {
     }
   },
 
-  Update: async (id, startDate, field, recorder) => {
+  Update: async (id, startDate, field, recorder_id) => {
     try {
       let response = await axios({
         method: "POST",
@@ -439,7 +439,7 @@ export const Match = {
           match_id: id,
           startDate: DateConverter(startDate) || null,
           field: field,
-          recorder: recorder,
+          recorder_id: recorder_id,
         },
         headers: { Authorization: token },
       });

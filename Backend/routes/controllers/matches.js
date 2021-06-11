@@ -1,11 +1,11 @@
-var express = require('express');
-const response = require(global.__MODULE_BASE__ + "response")
-const Match = require(global.__MODEL_BASE__ + "Match")
-const aurthor = require('./Aurthorize');
+var express = require("express");
+const response = require(global.__MODULE_BASE__ + "response");
+const Match = require(global.__MODEL_BASE__ + "Match");
+const aurthor = require("./Aurthorize");
 
 var router = express.Router();
 
-router.use('*', aurthor.doAuthAction);
+router.use("*", aurthor.doAuthAction);
 
 router.post('/create', async (req, resp) => {
     const token = req.body.token;
@@ -39,39 +39,44 @@ router.delete('/delete', async (req, resp) => {
     } catch (err) {
         return response.fail(resp, err);
     }
+
+
+router.get("/data", async (req, resp) => {
+  const token = req.body.token;
+  const match_id = req.query.id || "";
+  try {
+    const result = await new Match(token).getInfoByID(match_id);
+    return response.succ(resp, result);
+  } catch (err) {
+    return response.fail(resp, err);
+  }
 });
 
-router.get('/data', async (req, resp) => {
-    const token = req.body.token;
-    const match_id = req.query.id || "";
-    try {
-        const result = await new Match(token).getInfoByID(match_id);
-        return response.succ(resp, result);
-    } catch (err) {
-        return response.fail(resp, err);
-    }
+router.get("/getAll", async (req, resp) => {
+  const token = req.body.token;
+  const match_id = req.query.id || "";
+  try {
+    const result = await new Match(token).getALL();
+    return response.succ(resp, result);
+  } catch (err) {
+    return response.fail(resp, err);
+  }
 });
 
-router.get('/getAll', async (req, resp) => {
-    const token = req.body.token;
-    const match_id = req.query.id || "";
-    try {
-        const result = await new Match(token).getALL();
-        return response.succ(resp, result);
-    } catch (err) {
-        return response.fail(resp, err);
-    }
-});
-
-router.post('/update', async (req, resp) => {
-    const token = req.body.token;
-    const { match_id, startDate, field, recorder } = req.body;
-    try {
-        const result = await new Match(token).update(match_id, startDate, field, recorder);
-        return response.succ(resp, result);
-    } catch (err) {
-        return response.fail(resp, err);
-    }
+router.post("/update", async (req, resp) => {
+  const token = req.body.token;
+  const { match_id, startDate, field, recorder_id } = req.body;
+  try {
+    const result = await new Match(token).update(
+      match_id,
+      startDate,
+      field,
+      recorder_id
+    );
+    return response.succ(resp, result);
+  } catch (err) {
+    return response.fail(resp, err);
+  }
 });
 
 module.exports = router;

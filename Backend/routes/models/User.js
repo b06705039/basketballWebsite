@@ -336,7 +336,7 @@ User.prototype.getALL = async function () {
 
   const target =
     config.AdimLevel[this.token.adim] === 2
-      ? "user_id, account,  username, adim, createtime, active, email, department"
+      ? "user_id, account,  username, adim, createtime, email, department, active"
       : "username, adim, email, department";
 
   const SQL = `SELECT ${target} FROM userInfo;`;

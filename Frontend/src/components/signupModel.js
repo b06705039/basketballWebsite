@@ -49,7 +49,7 @@ export default function SignupModel(props) {
       <>
         <Form.Item
           name="teamname"
-          label="teamname"
+          label="隊伍名稱"
           rules={[
             {
               required: true,
@@ -70,7 +70,7 @@ export default function SignupModel(props) {
         </Form.Item>
         <Form.Item
           name="teamdepartment"
-          label="teamdepartment"
+          label="隊伍系所"
           rules={[
             {
               required: true,
@@ -138,7 +138,7 @@ export default function SignupModel(props) {
           </h4>
           <Form.Item
             name="department"
-            label="Department"
+            label="使用者系所"
             hasFeedback
             rules={[
               {
@@ -157,7 +157,7 @@ export default function SignupModel(props) {
 
           <Form.Item
             name="username"
-            label="Username"
+            label="使用者姓名"
             hasFeedback
             rules={[
               {
@@ -178,7 +178,7 @@ export default function SignupModel(props) {
           </Form.Item>
           <Form.Item
             name="account"
-            label="account"
+            label="使用者帳號"
             hasFeedback
             rules={[
               {
@@ -200,7 +200,7 @@ export default function SignupModel(props) {
 
           <Form.Item
             name="identity"
-            label="Identity"
+            label="註冊身份"
             hasFeedback
             rules={[
               {
@@ -227,7 +227,7 @@ export default function SignupModel(props) {
           </Form.Item>
           <Form.Item
             name="password"
-            label="Password"
+            label="密碼"
             rules={[
               {
                 required: true,
@@ -240,7 +240,7 @@ export default function SignupModel(props) {
           </Form.Item>
           <Form.Item
             name="confirm"
-            label="Confirm Password"
+            label="確認密碼"
             dependencies={["password"]}
             hasFeedback
             rules={[
@@ -266,7 +266,7 @@ export default function SignupModel(props) {
           </Form.Item>
           <Form.Item
             name="email"
-            label="Email"
+            label="使用者信箱"
             rules={[
               {
                 type: "email",
