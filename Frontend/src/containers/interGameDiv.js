@@ -79,7 +79,7 @@ const InterGameDiv = () => {
     const [ editable, setEditable ] = useState(true)
     const TeamNumRef = useRef()
     const [ form ] = Form.useForm()
-    const { interTeamNum, setInterTeamNum } = useInterGame()
+    const { setInterTeamNum, saveResult } = useInterGame()
 
     const generateModal = () =>{
         let secondsToGo = 5
@@ -100,9 +100,6 @@ const InterGameDiv = () => {
         }, secondsToGo * 1000);
     }
 
-    const handleOK = () => {
-
-    }
 
     return(
         <>
@@ -114,7 +111,7 @@ const InterGameDiv = () => {
                             { editable? (<>
                                                 <StyledButton onClick={()=>setShowChangeTeamNum(true)}>更改複賽隊伍數目</StyledButton>
                                                 <StyledButton onClick={()=>{
-                                                    // saveResult()
+                                                    saveResult()
                                                     generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
@@ -170,8 +167,6 @@ const InterGameDiv = () => {
                     </Form>
                 </Modal>
             </>
-
-
         </>
     )
 }

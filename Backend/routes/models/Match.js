@@ -16,7 +16,7 @@ class Match {
     }
 }
 
-Match.prototype.create = async function (stage, home_id, away_id) {
+Match.prototype.create = async function ( home_id, away_id, stage ) {
     const TAG = '[MatchCreate]';
     const logger = new Logger();
     console.log(this.token);
@@ -49,8 +49,28 @@ Match.prototype.create = async function (stage, home_id, away_id) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);
     }
+}
+
+Match.prototype.createInterMatch = async function ( home_id, away_id, stage ) {
+    const TAG = '[MatchCreateInterMatch]';
+    const logger = new Logger();
+    console.log(this.token);
+    if (config.AdimLevel[this.token.adim] < 2) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
+    const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, ${stage});`
+    try {
+        await db.execute(SQL);
+        return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success(createInterMatch)`;
+    } catch (err) {
+        logger.error(TAG, `Execute MySQL Failed.`);
+        throw exception.BadRequestError('MySQL Server Error', '' + err);
+    }
 
 }
+
 
 Match.prototype.delete = async function (match_id) {
     const TAG = '[MatchDelete]';

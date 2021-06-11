@@ -26,7 +26,7 @@ const Kickout = () => {
             preview={false}
             />
         <BottomDiv>
-            {Object.entries(mapDict).map(item=><p>{item[1].name || item[1].session}</p>)}
+            {Object.entries(mapDict).map((item,index)=><p key={index}>{item[1].name || item[1].session}</p>)}
         </BottomDiv>
     </>
   )

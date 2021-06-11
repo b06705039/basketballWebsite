@@ -301,8 +301,9 @@ Team.prototype.updateSession = async function(sessionType, id, teamSession){
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
         return exception.PermissionError('Permission Deny', 'have no access');
     }
-
+    
     const SQL = `UPDATE teamInfo SET ${sessionType}='${teamSession}' WHERE team_id=${id};`
+    console.log("updateSession: ", id, SQL)
     try{
         await db.execute(SQL, {});
         return { info: `Update session ${id} Success`};

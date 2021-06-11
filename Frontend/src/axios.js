@@ -459,9 +459,25 @@ export const Match = {
       });
       return response.data;
     } catch (err) {
-      return `[Error][Match][AddMatch]` + err;
+      return `[Error][Match][Create]` + err;
     }
   },
+
+  CreateInterMatch: async( home, away, stage ) => {
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "matches/createInterMatch",
+        data: { home_id: home, away_id: away, stage: stage},
+        header: { Authorization: token },
+      });
+      return response.data;
+    } catch (err){
+      return `[Error][Match][CreateInterMatch]` + err;
+    }
+  },
+
+
 };
 
 export const Recorder = {

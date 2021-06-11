@@ -12,13 +12,23 @@ router.post('/create', async (req, resp) => {
     const home_id = req.body.home_id || "";
     const away_id = req.body.away_id || "";
     try {
-        const result = await new Match(token).create(home_id, away_id);
+        const result = await new Match(token).create(home_id, away_id, req.body.stage);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
     }
 });
 
+router.post('/createInterMatch', async(req, resp) => {
+    const token = req.body.token;
+    console.log(token)
+    try {
+        const result = await new Match(token).createInterMatch(req.body.home_id, req.body.away_id, req.body.stage)
+        return response.succ(resp, result);
+    } catch (err){
+        return response.fail(resp, err)
+    }
+});
 
 router.delete('/delete', async (req, resp) => {
     const token = req.body.token;

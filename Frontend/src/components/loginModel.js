@@ -43,7 +43,8 @@ export default function LoginModel(props) {
         setShowWarn(true)
       }
     }else{
-        const msg = User.SendRemindEmail(emailRef.current.props.value)
+        const msg = await User.SendRemindEmail(emailRef.current.props.value)
+        console.log("remind email res: ", msg)
         if( typeof(msg) !== "string"){
           setShowWarn(false)
         }else{
@@ -69,7 +70,10 @@ export default function LoginModel(props) {
       visible = { props.visible }
       onOk = { handleOK }
       onCancel = { handleCancel } 
-      afterClose = { ()=>setShowWarn(false) }
+      afterClose = { ()=>{
+            setShowWarn(false)
+            setShowForgetPw(false)
+           }}
       >
         <Form 
           {...formItemLayout}
