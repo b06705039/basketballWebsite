@@ -90,11 +90,10 @@ router.post('/update_session', async(req, resp) => {
     const { sessionType, id, teamSession } = req.body;
     try{
         const result = await new Team(token).updateSession( sessionType, id, teamSession );
+        return response.succ(resp, result)
     } catch (err) {
         return response.fail(resp, err);
     }
 });
-
-
 
 module.exports = router;

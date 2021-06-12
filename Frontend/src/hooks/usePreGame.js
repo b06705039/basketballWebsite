@@ -4,7 +4,6 @@ import { Team, Match } from '../axios'
 
 const PreGameData = React.createContext()
 
-
 export const usePreGame = () => {
     return useContext(PreGameData)
 }
@@ -72,7 +71,7 @@ const PreGamgeProvider = ({children}) => {
         return dict
     }
 
-    useMemo(() => {
+    useEffect(() => {
 
         setTimeout(() => {
             let updateDict = cycleDict()
@@ -80,12 +79,12 @@ const PreGamgeProvider = ({children}) => {
                 console.log("team", index, team)
                 const teamSessionGroup = team[1].session[0]
                 if(teamSessionGroup in updateDict && team[1].session !== '--'){
-                    updateDict[teamSessionGroup][team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session_preGame}
+                    updateDict[teamSessionGroup][team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session}
                 }
             })
             console.log("in usePreGame updateDict", updateDict, cycle3, cycle4)
             
-            setMapDict(updateDict)
+            setMapDict(()=>updateDict)
         }, 500);
         
     }, [ cycle3, cycle4, preGameTable])
@@ -93,20 +92,20 @@ const PreGamgeProvider = ({children}) => {
     console.log("in usePreGame", preGameTable, cycle3, cycle4, mapDict)
 
 
-    const saveResult = async() => {
-        console.log(" update session1: ", preGameTable)
-        Object.entries(preGameTable).map(async( team ) => {
-            console.log(" update session2: ", team, team[1].key, team[1].session)
-            await Team.UpdateSession('session_preGame', team[1].key, team[1].session)
+    const saveResult = () => {
+        Object.entries(preGameTable).map(( team ) => {
+            const res = Team.UpdateSession('session_preGame', team[1].key, team[1].session)
         })
 
-        
-        Object.entries(mapDict).map(async(sessionGroup, index)=>{
+        Object.entries(mapDict).map((sessionGroup, index)=>{
             let teams = Object.entries(sessionGroup[1])
+            console.log("in usePreGame, createMatch, teams: ", teams)
+
             for (let i=0;i<teams.length;i++){
                 for (let j=i+1;j<teams.length;j++){
                     if(i !== j){
-                        const res = await Match.Create( teams[i][1].key, teams[j][1].key, 'preGame')
+                        console.log("in usePreGame, createMatch, AMatch: ", teams[i][1].key, teams[j][1].key )
+                        const res = Match.Create( teams[i][1].key, teams[j][1].key, 'preGame')
                         console.log("in saveResult, res:", res)
                     }
                 }

@@ -37,16 +37,18 @@ Match.prototype.create = async function ( home_id, away_id, stage ) {
         throw exception.BadRequestError('BAD_REQUEST', `Invalid Away ID (${away_id}).`);
     }
 
-    let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0]['MAX(match_id)'];
-    if (tool.isNull(match_id))
-        match_id = 1;
-    else
-        match_id += 1;
+    // let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0]['MAX(match_id)'];
+    // if (tool.isNull(match_id))
+    //     match_id = 1;
+    // else
+    //     match_id += 1;
 
-    const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, '${stage}');`
+    // const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, '${stage}');`
+    const SQL = `INSERT INTO matchInfo (home, away, stage) VALUE ( ${home_id}, ${away_id}, '${stage}');`
     try {
         await db.execute(SQL);
-        return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success`;
+        return `INSERT INTO matchInfo ( ${home_id}, ${away_id}, ${stage}) success`;
+        // return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success`;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);

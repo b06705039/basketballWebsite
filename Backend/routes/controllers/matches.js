@@ -7,12 +7,13 @@ var router = express.Router();
 
 router.use("*", aurthor.doAuthAction);
 
-router.post('/create', async (req, resp) => {
+router.post('/create', async(req, resp) => {
     const token = req.body.token;
     const home_id = req.body.home_id || "";
     const away_id = req.body.away_id || "";
+    const stage = req.body.stage || "";
     try {
-        const result = await new Match(token).create(home_id, away_id, req.body.stage);
+        const result = await new Match(token).create(home_id, away_id, stage);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);

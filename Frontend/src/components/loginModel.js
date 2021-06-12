@@ -69,11 +69,12 @@ export default function LoginModel(props) {
       <Modal 
       visible = { props.visible }
       onOk = { handleOK }
-      onCancel = { handleCancel } 
+      onCancel = { showForgetPw?()=>setShowForgetPw(false):
+                                ()=>props.setVisible(false)} 
       afterClose = { ()=>{
             setShowWarn(false)
-            setShowForgetPw(false)
-           }}
+            setShowForgetPw(false)}}
+      cancelText={showForgetPw?"返回登入":"Cancel"}
       >
         <Form 
           {...formItemLayout}

@@ -4,8 +4,8 @@ import { Menu, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { usePages } from '../hooks/usePages';
-import LoginModel from './loginModel';
-import SignupModel from './signupModel';
+import LoginModel from '../components/loginModel';
+import SignupModel from '../components/signupModel';
 
 function NavBar(){
     const [ loginVisible, setLoginVisible ] = useState(false)
@@ -27,7 +27,7 @@ function NavBar(){
         style={{ flexFlow: "nowrap", height: "64px", rowGap: "0px" }}
         theme="dark"
         mode="horizontal"
-        defaultSelectedKeys={["2"]}
+        defaultSelectedKeys={["0"]}
         onClick={(e) => {
           setCurPage(e.key);
         }}

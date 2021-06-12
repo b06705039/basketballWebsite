@@ -2,7 +2,6 @@ import React,{ useState, useContext, useMemo, useEffect } from 'react'
 import { pagesMenu } from './pagesMenu'
 
 const defId = "public"
-const defCurPage = "news"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const { News, PreGame, Default, Try , Scheduler, Timer, InterGame} = pagesMenu()
 
@@ -13,7 +12,7 @@ const zhPage = {
   gameResult: ["比賽結果", Default],
   adminInfo: ["主辦介紹", Default],
   contact: ["聯絡資訊", Default],
-  main: ["首頁", Default],
+  main: ["首頁", News],
   teamInfo: ["球隊資訊", Try],
   preGame: ["安排預賽賽程", PreGame],
   interGame: ["安排複賽循環", InterGame],
@@ -37,7 +36,7 @@ export function usePages() {
 
 const userForm = {  account: null,
                     active: null, 
-                    adim: 'public', 
+                    adim: 'administer', 
                     email: null, 
                     token: null,
                     user_id: null,

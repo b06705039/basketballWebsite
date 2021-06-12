@@ -309,7 +309,7 @@ Team.prototype.update = async function (name, department) {
       "BAD_REQUEST",
       `Department(${department}) is not valid.`
     );
-  }
+}
 
   const isUniqueNameAndDeparment = await (async () => {
     const SQL = `
@@ -367,3 +367,41 @@ Team.prototype.updateSession = async function(sessionType, id, teamSession){
 }
 
 module.exports = Team;
+// Team.prototype.update = async function (name, department) {
+//   const TAG = "[TeamUpdate]";
+//   const logger = new Logger();
+//   if (this.token.adim !== "team") {
+//     logger.error(
+//       TAG,
+//       `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+//     );
+//     return exception.PermissionError("Permission Deny", "have no access");
+//   }
+//   const team_id = await (async () => {
+//     const SQL = `
+//             SELECT 
+//                 team_id
+//             FROM teamInfo
+//             WHERE 1 = 1
+//             AND user_id = ${this.token.user_id}
+//         ;`;
+//     const result = await db.execute(SQL, {});
+//     console.log(result);
+//     return result.length > 0 ? result[0]["team_id"] : undefined;
+//   })();
+
+//   if (team_id === undefined) {
+//     logger.error(TAG, `User (${this.token.user_id}) has no access to ${TAG}.`);
+//     return exception.PermissionError("Permission Deny", "Have no access");
+//   }
+
+//   if (name.length === 0) {
+//     logger.error(TAG, `Name can not be empty.`);
+//     throw exception.BadRequestError("BAD_REQUEST", "Name can not be empty.");
+//   } else if (!tool.isVaildDepartment(department)) {
+//     logger.error(TAG, `Department(${department}) is not valid.`);
+//     throw exception.BadRequestError(
+//       "BAD_REQUEST",
+//       `Department(${department}) is not valid.`
+//     );
+// }
