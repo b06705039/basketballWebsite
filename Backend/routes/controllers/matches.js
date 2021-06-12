@@ -39,7 +39,7 @@ router.delete('/delete', async (req, resp) => {
     } catch (err) {
         return response.fail(resp, err);
     }
-
+})
 
 router.get("/data", async (req, resp) => {
   const token = req.body.token;
@@ -47,7 +47,7 @@ router.get("/data", async (req, resp) => {
   try {
     const result = await new Match(token).getInfoByID(match_id);
     return response.succ(resp, result);
-  } catch (err) {
+  } catch (err) {s
     return response.fail(resp, err);
   }
 });

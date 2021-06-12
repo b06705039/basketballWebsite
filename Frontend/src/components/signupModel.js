@@ -116,8 +116,11 @@ export default function SignupModel(props) {
         } else form.submit();
       }}
       onCancel={handleCancel}
-      afterClose={() => setShowWarn(false)}
-    >
+      afterClose={() => {setShowWarn(false)
+                        form.resetFields()}}
+      closable={issignup?false:true}
+      cancelButtonProps={issignup&& {style:{"display":"none"}}}
+      >
       {issignup && <h2 style={{ textAlign: "center" }}>註冊成功</h2>}
       {!issignup && (
         <Form

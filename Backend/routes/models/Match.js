@@ -62,6 +62,28 @@ Match.prototype.createInterMatch = async function ( home_id, away_id, stage ) {
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
+    if (!(await Team.IsVaildTeamID(home_id))) {
+      logger.error(TAG, `Invalid Home ID (${home_id}).`);
+      throw exception.BadRequestError(
+        "BAD_REQUEST",
+        `Invalid Home ID (${home_id}).`
+      );
+    }
+  
+    if (!(await Team.IsVaildTeamID(away_id))) {
+      logger.error(TAG, `Invalid Away ID (${away_id}).`);
+      throw exception.BadRequestError(
+        "BAD_REQUEST",
+        `Invalid Away ID (${away_id}).`
+      );
+    }
+
+    let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0][
+      "MAX(match_id)"
+    ];
+    if (tool.isNull(match_id)) match_id = 1;
+    else match_id += 1;
+
     const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, ${stage});`
     try {
         await db.execute(SQL);
@@ -71,36 +93,6 @@ Match.prototype.createInterMatch = async function ( home_id, away_id, stage ) {
         throw exception.BadRequestError('MySQL Server Error', '' + err);
     }
 
-  if (!(await Team.IsVaildTeamID(home_id))) {
-    logger.error(TAG, `Invalid Home ID (${home_id}).`);
-    throw exception.BadRequestError(
-      "BAD_REQUEST",
-      `Invalid Home ID (${home_id}).`
-    );
-  }
-
-  if (!(await Team.IsVaildTeamID(away_id))) {
-    logger.error(TAG, `Invalid Away ID (${away_id}).`);
-    throw exception.BadRequestError(
-      "BAD_REQUEST",
-      `Invalid Away ID (${away_id}).`
-    );
-  }
-
-  let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0][
-    "MAX(match_id)"
-  ];
-  if (tool.isNull(match_id)) match_id = 1;
-  else match_id += 1;
-
-  const SQL = `INSERT INTO matchInfo (match_id, home, away) VALUE (${match_id}, ${home_id}, ${away_id});`;
-  try {
-    await db.execute(SQL);
-    return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}) success`;
-  } catch (err) {
-    logger.error(TAG, `Execute MySQL Failed.`);
-    throw exception.BadRequestError("MySQL Server Error", "" + err);
-  }
 };
 
 
