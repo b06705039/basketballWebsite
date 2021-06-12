@@ -49,7 +49,8 @@ export const Login = async (account, password) => {
     token = response.data.token;
     return response.data;
   } catch (err) {
-    return `[Login][Error]` + err;
+    // return `[Login][Error]` + err;
+    throw err;
   }
 };
 
@@ -178,7 +179,8 @@ export const User = {
       });
       return response.data;
     } catch (err) {
-      return `[Error][User][SendRemindInfo]` + err;
+      // return `[Error][User][SendRemindInfo]` + err;
+      throw err;
     }
   },
 

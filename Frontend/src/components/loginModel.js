@@ -1,4 +1,4 @@
-import React,{ useRef, useState } from 'react'
+import React,{ useRef, useState, useEffect } from 'react'
 import { Modal, Form, Input, Button } from 'antd'
 import { usePages } from '../hooks/usePages'
 import { Login, User } from '../axios'
@@ -34,35 +34,35 @@ export default function LoginModel(props) {
 
   const handleOK = async () => {
     if(!showForgetPw){
-      const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
-      if( typeof(msg) !== "string"){
+      // if( typeof(msg) !== "string"){
+
+      try{
+        const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
         setUserInfo(msg)
         props.setVisible(false)
         setShowWarn(false)
-      }else{
+      } catch {
         setShowWarn(true)
       }
     }else{
-        const msg = await User.SendRemindEmail(emailRef.current.props.value)
-        console.log("remind email res: ", msg)
-        if( typeof(msg) !== "string"){
-          setShowWarn(false)
-        }else{
-          setShowWarn(true)
-        }
+      try{
+        await User.SendRemindEmail(emailRef.current.props.value)
+        setShowWarn(false)
+      } catch{
+        setShowWarn(true)
+      }
     }
       
     form.resetFields();
-  }
-
-  const handleCancel = () => {
-    props.setVisible(false)
   }
 
   const handleForgotPw = () => {
     setShowForgetPw(true)
   }
 
+  useEffect(() => {
+    setShowWarn(false)
+  }, [ showForgetPw ])
 
   return(
     <div>
