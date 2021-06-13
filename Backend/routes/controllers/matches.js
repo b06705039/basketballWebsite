@@ -92,16 +92,20 @@ router.delete("/deleteSession", async(req, resp) => {
 });
 
 
-router.get("/checkStage", async(req, resp) => {
+router.get("/checkIfStage", async(req, resp) => {
   const token = req.body.token;
   const stage = req.query.stage;
+
+  console.log("in matches, checkIfStage: ", token, stage)
   try{
-    const result = await new Match(token).checkStage( stage );
+    const result = await new Match(token).checkIfStage( stage );
     return response.succ(resp, result);
   } catch (err){
     return response.fail(resp, err);
   }
-})
+});
+
+
 
 
 module.exports = router;

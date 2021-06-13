@@ -485,7 +485,7 @@ export const Match = {
         method: "POST",
         url: serverURL + "matches/createInterMatch",
         data: { home_id: home, away_id: away, stage: stage},
-        header: { Authorization: token },
+        headers: { Authorization: token },
       });
       return response.data;
     } catch (err){
@@ -498,31 +498,30 @@ export const Match = {
         methos: "DELETE",
         url: serverURL + "matches/deleteSession",
         params: { stage: stage },
-        header: { Authorization: token },
+        headers: { Authorization: token },
       });
       return response.data;
     } catch (err) {
       throw err;
     }
   },
-  CheckStage: async( stage ) => {
+  CheckIfStage: async( stage ) => {
+
     try{
       let response = await axios({
         method: "GET",
-        url: serverURL + "matches/checkStage",
-        query: { stage },
-        header: { Authorization: token }
-      })
+        url: serverURL + "matches/checkIfStage",
+        params: { stage }, 
+        headers: { Authorization: token },
+      });
       return response.data;
     } catch (err) {
       throw err
     }
-  }
-
-
-
+  },
 
 };
+
 
 export const Recorder = {
   Create: async (name, department) => {

@@ -73,12 +73,9 @@ const formItemLayout = {
 
 const PreGameDiv = () => {
 
-    console.log("in preGame Div")
-
-    const { saveResult, setCycle3, setCycle4 } = usePreGame()
+    const { saveResult, setCycle3, setCycle4, editable, setEditable } = usePreGame()
     const [ showChangeCycle, setShowChangeCycle ] = useState(false)
-    // const [ showSaveMes, setShowSaveMes ] = useState(false)
-    const [ editable, setEditable ] = useState(true)
+    
     const cycle3Ref = useRef()
     const cycle4Ref = useRef()
     const [ form ] = Form.useForm()
@@ -110,16 +107,6 @@ const PreGameDiv = () => {
 
         
     }
-
-    // useMemo(() => {
-    //     console.log("in show modal, into useEffect", showSaveMes)
-    //     if (showSaveMes){
-    //         generateModal()
-    //         setShowSaveMes(false)
-    //     }else{
-    //         setEditable(false)
-    //     }
-    // }, [showSaveMes])
 
     return(
         <>

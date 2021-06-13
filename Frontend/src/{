@@ -1,0 +1,47 @@
+{
+  users: [
+    {
+      chatBoxes: [],
+      _id: 60c23ada0b103c23042ceaa9,
+      name: 'Eva',
+      __v: 0
+    },
+    {
+      chatBoxes: [],
+      _id: 60c5c9de5967c5cbf0351790,
+      name: 'test_react',
+      __v: 0
+    }
+  ],
+  messages: [],
+  _id: 60c5c9de5967c5cbf0351791,
+  name: 'Eva_test_react',
+  __v: 0
+}
+{
+  users: [
+    {
+      chatBoxes: [],
+      _id: 60c23ada0b103c23042ceaa9,
+      name: 'Eva',
+      __v: 0
+    },
+    {
+      chatBoxes: [],
+      _id: 60c5c9de5967c5cbf0351790,
+      name: 'test_react',
+      __v: 0
+    }
+  ],
+  messages: [
+    {
+      _id: 60c5c9f25967c5cbf0351792,
+      sender: [Object],
+      body: 'hi',
+      __v: 0
+    }
+  ],
+  _id: 60c5c9de5967c5cbf0351791,
+  name: 'Eva_test_react',
+  __v: 1
+}

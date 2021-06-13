@@ -11,6 +11,7 @@ export const usePreGame = () => {
 const PreGamgeProvider = ({children}) => {
 
     const [ preGameTable, setPreGameTable ] = useState([])
+    const [ editable, setEditable ] = useState(true)
     const [ cycle3, setCycle3 ] = useState(0)
     const [ cycle4, setCycle4 ] = useState(0)
     const [ mapDict, setMapDict ] = useState({})
@@ -20,6 +21,17 @@ const PreGamgeProvider = ({children}) => {
         let newData = []
         Object.entries(preGameData).forEach((data) => newData.push({key:data[1].team_id, name:data[1].name, session:data[1].session_preGame }))
         setPreGameTable(newData)
+
+        try{
+            const stage = 'preGame'
+            const ifStage = await Match.CheckIfStage(stage)
+            console.log("in usePreGame, ifStage: ", ifStage)
+            setEditable(()=>ifStage?false:true)
+        } catch (err) {
+            console.log("in preGame, checkIfStage false")
+        }
+
+
     }, [])
 
     useEffect(() => {
@@ -38,18 +50,7 @@ const PreGamgeProvider = ({children}) => {
     }, [preGameTable])
 
 
-    // cycleDict format = {
-    //     A:{
-    //         A1:' ',
-    //         A2:' ',
-    //         A3:' '
-    //     },
-    //     B{
-    //         B1:' ',
-    //         B2:' ',
-    //         B3:' '
-    //     }
-    // }
+    
     // session depends on cycle3 & cycle4
     const cycleDict = () => {
         let dict = {}
@@ -124,6 +125,8 @@ const PreGamgeProvider = ({children}) => {
         setMapDict,
         cycleDict,
         saveResult,
+        editable,
+        setEditable
     }
 
     return (

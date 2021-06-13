@@ -316,17 +316,18 @@ Match.prototype.deleteSession = async function( stage ){
   }
 };
 
-Match.prototype.checkStage = async function( stage ){
-  const TAG = "[CheckStage]";
+Match.prototype.checkIfStage = async function( stage ){
+  const TAG = "[CheckIfStage]";
   const logger = new Logger();
+  
+
   if (config.AdimLevel[this.token.adim] < 2) {
-    logger.error(
-      TAG,
-      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
-    );
-    return exception.PermissionError("Permission Deny", "have no access");
+    logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+    return exception.PermissionError('Permission Deny', 'have no access');
   }
+
   const SQL=`SELECT * FROM matchInfo WHERE stage ='${stage}' `;
+  console.log(SQL)
   try{
     const result = await db.execute(SQL, {})
     console.log(result.length===0? false:true)
@@ -334,11 +335,7 @@ Match.prototype.checkStage = async function( stage ){
   } catch(err) {
     throw exception.BadRequestError("MYSQL Error", "" + err);
   }
-
-  
-
-
-}
+};
 
 
 
