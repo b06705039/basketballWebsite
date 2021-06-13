@@ -261,7 +261,7 @@ Team.prototype.getInterGame = async function(){
     FROM teamInfo
     LEFT JOIN userInfo ON 
         userInfo.user_id = teamInfo.user_id
-    WHERE teamInfo.session_interGame IS NOT NULL;`;
+    WHERE teamInfo.session_interGame <> 'out';`;
 
     try {
         return (await db.execute(SQL, {}));
@@ -376,48 +376,10 @@ Team.prototype.checkFillSession = async function( sessionType ){
   const SQL = `SELECT * FROM teamInfo WHERE ${sessionType}='--';`
   try{
     const countNull = await db.execute(SQL, {});
-    return countNull===null? true:false;
+    return countNull.length===0? true:false;
   } catch (err) {
     throw err
   }
 }
 
 module.exports = Team;
-// Team.prototype.update = async function (name, department) {
-//   const TAG = "[TeamUpdate]";
-//   const logger = new Logger();
-//   if (this.token.adim !== "team") {
-//     logger.error(
-//       TAG,
-//       `Adiminister (${this.token.adim}) has no access to ${TAG}.`
-//     );
-//     return exception.PermissionError("Permission Deny", "have no access");
-//   }
-//   const team_id = await (async () => {
-//     const SQL = `
-//             SELECT 
-//                 team_id
-//             FROM teamInfo
-//             WHERE 1 = 1
-//             AND user_id = ${this.token.user_id}
-//         ;`;
-//     const result = await db.execute(SQL, {});
-//     console.log(result);
-//     return result.length > 0 ? result[0]["team_id"] : undefined;
-//   })();
-
-//   if (team_id === undefined) {
-//     logger.error(TAG, `User (${this.token.user_id}) has no access to ${TAG}.`);
-//     return exception.PermissionError("Permission Deny", "Have no access");
-//   }
-
-//   if (name.length === 0) {
-//     logger.error(TAG, `Name can not be empty.`);
-//     throw exception.BadRequestError("BAD_REQUEST", "Name can not be empty.");
-//   } else if (!tool.isVaildDepartment(department)) {
-//     logger.error(TAG, `Department(${department}) is not valid.`);
-//     throw exception.BadRequestError(
-//       "BAD_REQUEST",
-//       `Department(${department}) is not valid.`
-//     );
-// }

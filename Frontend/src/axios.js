@@ -343,20 +343,20 @@ export const Team = {
     }
   },
 
-  CheckFillSession: async(sessionType) => {
+  CheckFillSession: async( sessionType ) => {
     try{
       let response = await axios({
-        methos: "GET",
-        url: serverURL + "teams/checkFillsSession",
-        query: { sessionType },
-        header: { Authorization: token }
+        method: "GET",
+        url: serverURL + "teams/checkFillSession",
+        params: { sessionType },
+        headers: { Authorization: token }
       })
+      console.log("in axios, teams, checkFillSession: ", response)
       return response.data;
     } catch (err){
       throw err;
     }
   }
-
 };
 
 export const Time = {
@@ -430,6 +430,7 @@ export const Time = {
       return `[Error][Time][GetTime]` + err;
     }
   },
+  
 };
 
 export const Match = {
@@ -465,12 +466,12 @@ export const Match = {
     }
   },
 
-  Create: async (home, away, stage) => {
+  Create: async (home, away, stage, stage_session) => {
     try {
       let response = await axios({
         method: "POST",
         url: serverURL + "matches/create",
-        data: { home_id: home, away_id: away, stage: stage},
+        data: { home_id: home, away_id: away, stage: stage, stage_session: stage_session },
         headers: { Authorization: token },
       });
       return response.data;
@@ -495,7 +496,7 @@ export const Match = {
   DeleteSession: async( stage ) => {
     try{
       let response = await axios({
-        methos: "DELETE",
+        method: "DELETE",
         url: serverURL + "matches/deleteSession",
         params: { stage: stage },
         headers: { Authorization: token },
@@ -506,7 +507,6 @@ export const Match = {
     }
   },
   CheckIfStage: async( stage ) => {
-
     try{
       let response = await axios({
         method: "GET",

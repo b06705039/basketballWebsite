@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { Modal } from 'antd'
 import { Team, Match } from '../axios'
 
 
@@ -93,25 +94,67 @@ const PreGamgeProvider = ({children}) => {
     console.log("in usePreGame", preGameTable, cycle3, cycle4, mapDict)
 
 
-    const saveResult = () => {
+    const generateModal = (action) =>{
+        let secondsToGo = 5
+        const modal = Modal.success({
+            title: 'This is a notification message',
+            content: action==="result"?`${secondsToGo} 秒後跳轉至結果頁面`:`目前隊伍資訊已儲存`,
+        })
+        const timer = setInterval(() => {
+            secondsToGo -= 1
+            if(secondsToGo>=0 & action==="result"){
+                modal.update({
+                    content: `${secondsToGo} 秒後跳轉至結果頁面`,
+                })
+            }
+        }, 1000)
+        setTimeout(() => {
+            if(action==="result"){
+                clearInterval(timer)
+            }
+            modal.destroy()
+            setEditable(action==="result"?false:true)
+        }, (secondsToGo+1) * 1000);
+    }
+
+    const saveResult = async() => {
+        // update team session
+        // check if all team session fill
+        // if fill
+        //      if checkIfStage, delete match 
+        //      create match
+        // else, break & show not fill msg
+
         Object.entries(preGameTable).map(( team ) => {
             const res = Team.UpdateSession('session_preGame', team[1].key, team[1].session)
         })
 
-        Object.entries(mapDict).map((sessionGroup, index)=>{
-            let teams = Object.entries(sessionGroup[1])
-            console.log("in usePreGame, createMatch, teams: ", teams)
-
-            for (let i=0;i<teams.length;i++){
-                for (let j=i+1;j<teams.length;j++){
-                    if(i !== j){
-                        console.log("in usePreGame, createMatch, AMatch: ", teams[i][1].key, teams[j][1].key )
-                        const res = Match.Create( teams[i][1].key, teams[j][1].key, 'preGame')
-                        console.log("in saveResult, res:", res)
+        const teamSessionFill = await Team.CheckFillSession('session_preGame')
+        if ( teamSessionFill ) {
+            console.log("checkFillSession true")
+            const havePreGame = await Match.CheckIfStage('preGame')
+            if( havePreGame ){
+                console.log("into delete ")
+                await Match.DeleteSession('preGame')
+            }
+            Object.entries(mapDict).map((sessionGroup, index)=>{
+                let teams = Object.entries(sessionGroup[1])
+                console.log("teams: ", teams)
+                for (let i=0;i<teams.length;i++){
+                    for (let j=i+1;j<teams.length;j++){
+                        if(i !== j){
+                            const res = Match.Create( teams[i][1].key, teams[j][1].key, 'preGame', sessionGroup[0] )
+                        }
                     }
                 }
-            }
-        })
+            })
+
+            generateModal('result')
+            return
+        }else{
+            generateModal('not fill session yet')
+            return
+        }
     }
 
     const value = {
@@ -126,7 +169,8 @@ const PreGamgeProvider = ({children}) => {
         cycleDict,
         saveResult,
         editable,
-        setEditable
+        setEditable,
+        generateModal,
     }
 
     return (

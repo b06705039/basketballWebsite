@@ -73,7 +73,7 @@ const formItemLayout = {
 
 const PreGameDiv = () => {
 
-    const { saveResult, setCycle3, setCycle4, editable, setEditable } = usePreGame()
+    const { saveResult, setCycle3, setCycle4, editable, setEditable, generateModal } = usePreGame()
     const [ showChangeCycle, setShowChangeCycle ] = useState(false)
     
     const cycle3Ref = useRef()
@@ -87,26 +87,7 @@ const PreGameDiv = () => {
         setShowChangeCycle(false)
     }   
 
-    const generateModal = () =>{
-        let secondsToGo = 5
-        const modal = Modal.success({
-            title: 'This is a notification message',
-            content: `${secondsToGo} 秒後跳轉至結果頁面`,
-        })
-        const timer = setInterval(() => {
-            secondsToGo -= 1
-            modal.update({
-                content: `${secondsToGo} 秒後跳轉至結果頁面`,
-            })
-        }, 1000)
-        setTimeout(() => {
-            clearInterval(timer)
-            modal.destroy()
-            setEditable(false)
-        }, secondsToGo * 1000);
-
-        
-    }
+    
 
     return(
         <>
@@ -119,7 +100,6 @@ const PreGameDiv = () => {
                                                 <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
                                                 <StyledButton onClick={()=>{
                                                     saveResult()
-                                                    generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
                                                 <StyledButton onClick={()=>{setEditable(true)}}>更動預賽</StyledButton>

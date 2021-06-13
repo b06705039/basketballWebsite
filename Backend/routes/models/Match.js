@@ -18,7 +18,7 @@ class Match {
   }
 }
 
-Match.prototype.create = async function ( home_id, away_id, stage ) {
+Match.prototype.create = async function ( home_id, away_id, stage, stage_session ) {
     const TAG = '[MatchCreate]';
     const logger = new Logger();
     console.log(this.token);
@@ -44,10 +44,10 @@ Match.prototype.create = async function ( home_id, away_id, stage ) {
     //     match_id += 1;
 
     // const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, '${stage}');`
-    const SQL = `INSERT INTO matchInfo (home, away, stage) VALUE ( ${home_id}, ${away_id}, '${stage}');`
+    const SQL = `INSERT INTO matchInfo (home, away, stage, stage_session) VALUE ( ${home_id}, ${away_id}, '${stage}', '${stage_session}');`
     try {
         await db.execute(SQL);
-        return `INSERT INTO matchInfo ( ${home_id}, ${away_id}, ${stage}) success`;
+        return `INSERT INTO matchInfo ( ${home_id}, ${away_id}, ${stage}, ${stage_session}) success`;
         // return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success`;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);

@@ -12,8 +12,9 @@ router.post('/create', async(req, resp) => {
     const home_id = req.body.home_id || "";
     const away_id = req.body.away_id || "";
     const stage = req.body.stage || "";
+    const stage_session = req.body.stage_session || "";
     try {
-        const result = await new Match(token).create(home_id, away_id, stage);
+        const result = await new Match(token).create(home_id, away_id, stage, stage_session);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);
@@ -99,6 +100,7 @@ router.get("/checkIfStage", async(req, resp) => {
   console.log("in matches, checkIfStage: ", token, stage)
   try{
     const result = await new Match(token).checkIfStage( stage );
+    console.log("in controller, matches, result: ", result)
     return response.succ(resp, result);
   } catch (err){
     return response.fail(resp, err);
