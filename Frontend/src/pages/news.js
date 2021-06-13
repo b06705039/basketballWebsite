@@ -4,7 +4,7 @@ import { Carousel, Image, List, Typography, Divider } from 'antd';
 
 
 const LayoutContent = styled.div`
-    padding: 0 300px;
+    padding: 0 15%;
 `
 
 const ContentStyled = styled.div`

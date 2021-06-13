@@ -80,4 +80,28 @@ router.post("/update", async (req, resp) => {
   }
 });
 
+router.delete("/deleteSession", async(req, resp) => {
+  const token = req.body.token;
+  const stage = req.query.stage;
+  try{
+    const result = await new Match(token).deleteSession( stage );
+    return response.succ(resp, result);
+  } catch (err) {
+    return response.fail(resp, err);
+  }
+});
+
+
+router.get("/checkStage", async(req, resp) => {
+  const token = req.body.token;
+  const stage = req.query.stage;
+  try{
+    const result = await new Match(token).checkStage( stage );
+    return response.succ(resp, result);
+  } catch (err){
+    return response.fail(resp, err);
+  }
+})
+
+
 module.exports = router;

@@ -366,6 +366,22 @@ Team.prototype.updateSession = async function(sessionType, id, teamSession){
   }
 }
 
+Team.prototype.checkFillSession = async function( sessionType ){
+  const TAG = "[CheckFillSession]"
+  if (config.AdimLevel[this.token.adim] < 2) {
+    logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+    return exception.PermissionError('Permission Deny', 'have no access');
+  }
+
+  const SQL = `SELECT * FROM teamInfo WHERE ${sessionType}='--';`
+  try{
+    const countNull = await db.execute(SQL, {});
+    return countNull===null? true:false;
+  } catch (err) {
+    throw err
+  }
+}
+
 module.exports = Team;
 // Team.prototype.update = async function (name, department) {
 //   const TAG = "[TeamUpdate]";

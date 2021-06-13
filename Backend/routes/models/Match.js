@@ -12,7 +12,7 @@ class Match {
 
   static async IsVaildMatchID(id) {
     let check = await db.execute(
-      `SELECT match_id FROM matchInfo WHERE match_id = ${id}`
+      `SELECT match_id FROM matchInfo WHERE match_id = ${id};`
     );
     return check.length === 0 ? false : true;
   }
@@ -117,8 +117,9 @@ Match.prototype.delete = async function (match_id) {
       `Match ID (${match_id}) is invalid.`
     );
   }
-
+  
   const SQL = `DELETE FROM matchInfo WHERE match_id = ${match_id};`;
+  console.log(SQL)
   try {
     await db.execute(SQL, {});
     return { info: `Delete match ID ${match_id} Success` };
@@ -294,5 +295,51 @@ Match.prototype.update = async function (
     throw exception.BadRequestError("MYSQL Error", "" + err);
   }
 };
+
+Match.prototype.deleteSession = async function( stage ){
+  const TAG = "[DeleteSession]";
+  const logger = new Logger();
+
+  if (config.AdimLevel[this.token.adim] < 2) {
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
+  }
+  const SQL = `DELETE FROM matchInfo WHERE stage='${stage}'`;
+  try{
+    await db.execute(SQL, {})
+    return { info: `Delete stage= ${stage} Success` };
+  } catch (err) {
+    throw exception.BadRequestError("MYSQL Error", "" + err);
+  }
+};
+
+Match.prototype.checkStage = async function( stage ){
+  const TAG = "[CheckStage]";
+  const logger = new Logger();
+  if (config.AdimLevel[this.token.adim] < 2) {
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
+  }
+  const SQL=`SELECT * FROM matchInfo WHERE stage ='${stage}' `;
+  try{
+    const result = await db.execute(SQL, {})
+    console.log(result.length===0? false:true)
+    return result.length===0? false:true
+  } catch(err) {
+    throw exception.BadRequestError("MYSQL Error", "" + err);
+  }
+
+  
+
+
+}
+
+
 
 module.exports = Match;

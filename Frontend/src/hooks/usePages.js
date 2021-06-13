@@ -36,7 +36,7 @@ export function usePages() {
 
 const userForm = {  account: null,
                     active: null, 
-                    adim: 'public', 
+                    adim: 'administer', 
                     email: null, 
                     token: null,
                     user_id: null,
@@ -55,7 +55,6 @@ export function PagesProvider({children}){
     }
 
     useEffect(() => {
-        console.log("user Info: ", userInfo)
         const updateId = userInfo['adim']
         const updatePageList = idPage[updateId]
         setId(updateId)

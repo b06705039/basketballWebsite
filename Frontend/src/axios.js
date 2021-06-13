@@ -341,6 +341,20 @@ export const Team = {
     } catch (err) {
       return `[ERROR][Team][Update_session]` + err;
     }
+  },
+
+  CheckFillSession: async(sessionType) => {
+    try{
+      let response = await axios({
+        methos: "GET",
+        url: serverURL + "teams/checkFillsSession",
+        query: { sessionType },
+        header: { Authorization: token }
+      })
+      return response.data;
+    } catch (err){
+      throw err;
+    }
   }
 
 };
@@ -478,6 +492,34 @@ export const Match = {
       return `[Error][Match][CreateInterMatch]` + err;
     }
   },
+  DeleteSession: async( stage ) => {
+    try{
+      let response = await axios({
+        methos: "DELETE",
+        url: serverURL + "matches/deleteSession",
+        params: { stage: stage },
+        header: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  },
+  CheckStage: async( stage ) => {
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "matches/checkStage",
+        query: { stage },
+        header: { Authorization: token }
+      })
+      return response.data;
+    } catch (err) {
+      throw err
+    }
+  }
+
+
 
 
 };
