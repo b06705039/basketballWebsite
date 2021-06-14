@@ -296,6 +296,15 @@ class App extends React.Component {
   };
 
   checkMatches = (id, home, away, startDate, field) => {
+    let checkExist = this.state.appointments.find(
+      (x) =>
+        new Date(startDate).toISOString() ===
+          new Date(x.startDate).toISOString() && x.field === field
+    );
+    if (checkExist !== undefined) {
+      console.log(checkExist.startDate, startDate);
+      return false;
+    }
     let check = this.state.appointments.filter(
       //取得當天所有已排的的比賽
       (x) =>
@@ -359,6 +368,8 @@ class App extends React.Component {
     if (e.fromData.arranged === false) {
       const index = this.state.appointments.indexOf(e.fromData);
       let newappointments = this.state.appointments;
+      e.itemData.endDate = new Date(e.itemData.startDate);
+      e.itemData.endDate.setHours(e.itemData.startDate.getHours() + 1);
       newappointments[index] = e.itemData;
       newappointments[index].arranged = true;
       this.setState({
@@ -374,6 +385,7 @@ class App extends React.Component {
   };
 
   onAppointmentUpdating = (e) => {
+    console.log(e);
     if (this.uploading) {
       e.cancel = true;
       return;
