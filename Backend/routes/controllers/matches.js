@@ -9,10 +9,11 @@ router.use("*", aurthor.doAuthAction);
 
 router.post('/create', async(req, resp) => {
     const token = req.body.token;
-    const home_id = req.body.home_id || "";
-    const away_id = req.body.away_id || "";
+    const home_id = req.body.home_id || null;
+    const away_id = req.body.away_id || null;
     const stage = req.body.stage || "";
     const stage_session = req.body.stage_session || "";
+    console.log("in matches: ",home_id, away_id, stage, stage_session)
     try {
         const result = await new Match(token).create(home_id, away_id, stage, stage_session);
         return response.succ(resp, result);
@@ -21,16 +22,16 @@ router.post('/create', async(req, resp) => {
     }
 });
 
-router.post('/createInterMatch', async(req, resp) => {
-    const token = req.body.token;
-    console.log(token)
-    try {
-        const result = await new Match(token).createInterMatch(req.body.home_id, req.body.away_id, req.body.stage)
-        return response.succ(resp, result);
-    } catch (err){
-        return response.fail(resp, err)
-    }
-});
+// router.post('/createInterMatch', async(req, resp) => {
+//     const token = req.body.token;
+//     console.log(token)
+//     try {
+//         const result = await new Match(token).createInterMatch(req.body.home_id, req.body.away_id, req.body.stage)
+//         return response.succ(resp, result);
+//     } catch (err){
+//         return response.fail(resp, err)
+//     }
+// });
 
 router.delete('/delete', async (req, resp) => {
     const token = req.body.token;

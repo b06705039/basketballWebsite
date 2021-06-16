@@ -26,7 +26,7 @@ export default function LoginModel(props) {
   const usernameRef = useRef()
   const passwordRef = useRef()
   const emailRef = useRef()
-  const { setUserInfo } = usePages()
+  const { setUserInfo, me, setMe } = usePages()
 
   const [ showWarn, setShowWarn ] = useState(false);
   const [ showForgetPw, setShowForgetPw ] = useState(false);
@@ -37,6 +37,7 @@ export default function LoginModel(props) {
       // if( typeof(msg) !== "string"){
 
       try{
+        // setMe(()=>({userName: usernameRef.current.props.value, password: passwordRef.current.props.value}))
         const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
         setUserInfo(msg)
         props.setVisible(false)
@@ -96,7 +97,7 @@ export default function LoginModel(props) {
               <Form.Item
               name="username"
               label="Username">
-                <Input ref={usernameRef} />
+                <Input ref={usernameRef}/>
               </Form.Item>
             
               <Form.Item
@@ -108,7 +109,7 @@ export default function LoginModel(props) {
                   message: 'Please input your password!',
                 },
               ]}>
-                <Input.Password ref={passwordRef} />
+                <Input.Password ref={passwordRef}/>
               </Form.Item>
     
               <Form.Item>

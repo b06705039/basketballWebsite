@@ -45,12 +45,7 @@ const LeftBlock = styled.div`
     width: 25%;
     float:left;
 `
-const RightBlock = styled.div`
-    padding: 5px;
-    // border: 1px solid black;
-    width: 75%;
-    float:left;
-`
+
 
 const formItemLayout = {
     labelCol: {
@@ -79,6 +74,12 @@ const PreGameDiv = () => {
     const cycle3Ref = useRef()
     const cycle4Ref = useRef()
     const [ form ] = Form.useForm()
+
+    const RightBlock = styled.div`
+        padding: 5px;
+        width: ${editable?"75%":"100%"};
+        float:left;
+    `
 
     const handleOK = (e) => {
         setCycle3(cycle3Ref.current.props.value)

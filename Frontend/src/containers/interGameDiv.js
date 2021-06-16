@@ -46,12 +46,7 @@ const LeftBlock = styled.div`
     width: 25%;
     float:left;
 `
-const RightBlock = styled.div`
-    padding: 5px;
-    // border: 1px solid black;
-    width: 75%;
-    float:left;
-`
+
 
 const formItemLayout = {
     labelCol: {
@@ -76,10 +71,15 @@ const InterGameDiv = () => {
 
     // const { saveResult } = usePreGame()
     const [ showChangeTeamNum, setShowChangeTeamNum ] = useState(false)
-    const [ editable, setEditable ] = useState(true)
     const TeamNumRef = useRef()
     const [ form ] = Form.useForm()
-    const { setInterTeamNum, saveResult } = useInterGame()
+    const { setInterTeamNum, saveResult, editable, setEditable } = useInterGame()
+
+    const RightBlock = styled.div`
+        padding: 5px;
+        width: ${editable?"75%":"100%"};
+        float:left;
+    `
 
     const generateModal = () =>{
         let secondsToGo = 5

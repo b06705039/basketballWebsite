@@ -10,9 +10,11 @@ class Team {
   }
 
   static async IsVaildTeamID(id) {
-    let check = await db.execute(
-      `SELECT team_id FROM teamInfo WHERE team_id = ${id}`
-    );
+    if(id===null)return true
+    
+    const SQL = `SELECT team_id FROM teamInfo WHERE team_id = ${id}`
+    console.log("check team id: ", id, SQL)
+    let check = await db.execute( SQL );
     return check.length === 0 ? false : true;
   }
 }

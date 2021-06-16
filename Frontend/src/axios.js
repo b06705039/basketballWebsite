@@ -480,19 +480,19 @@ export const Match = {
     }
   },
 
-  CreateInterMatch: async( home, away, stage ) => {
-    try{
-      let response = await axios({
-        method: "POST",
-        url: serverURL + "matches/createInterMatch",
-        data: { home_id: home, away_id: away, stage: stage},
-        headers: { Authorization: token },
-      });
-      return response.data;
-    } catch (err){
-      return `[Error][Match][CreateInterMatch]` + err;
-    }
-  },
+  // CreateInterMatch: async( home, away, stage ) => {
+  //   try{
+  //     let response = await axios({
+  //       method: "POST",
+  //       url: serverURL + "matches/createInterMatch",
+  //       data: { home_id: home, away_id: away, stage: stage},
+  //       headers: { Authorization: token },
+  //     });
+  //     return response.data;
+  //   } catch (err){
+  //     return `[Error][Match][CreateInterMatch]` + err;
+  //   }
+  // },
   DeleteSession: async( stage ) => {
     try{
       let response = await axios({

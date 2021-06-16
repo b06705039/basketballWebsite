@@ -99,7 +99,7 @@ const InterGameTable = () => {
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
         console.log("interGame handleSave: ", newData)
-        setInterGameTable(newData);
+        setInterGameTable(()=>newData);
     };
 
     const components = {

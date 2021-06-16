@@ -14,7 +14,7 @@ const InterGameProvider = ({children}) => {
 
     const [ interGameTable, setInterGameTable ] = useState([])
     const [ interTeamNum, setInterTeamNum ] = useState(8)
-    // const [ keyinWarn, setKeyinWarn ] = useState(false)
+    const [ editable, setEditable ] = useState(false)
     const [ mapDict, setMapDict ] = useState({})
     let matchCount = 0
     
@@ -25,6 +25,16 @@ const InterGameProvider = ({children}) => {
         let newData = []
         Object.entries(interGameData).forEach((data) => newData.push({key:data[1].team_id, name:data[1].name, session:data[1].session_interGame }))
         setInterGameTable(newData)
+        setInterTeamNum(newData.length)
+
+        try{
+            const stage = 'interGame'
+            const ifStage = await Match.CheckIfStage(stage)
+            console.log("interGame, ifStage: ", ifStage)
+            setEditable(()=>ifStage?false:true)
+        } catch (err) {
+            console.log("in preGame, checkIfStage false")
+        }
     }, [])
 
 
@@ -37,29 +47,27 @@ const InterGameProvider = ({children}) => {
                 updateDict[i.toString()] = {session:i.toString()}
             }
             Object.entries(interGameTable).map((team, index)=>{
-                console.log("in assign mapDict: ", team)
                 if(team[1].session!=='--'){
                     updateDict[team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session}
                 }
             })
-            console.log('use Inter Game, updateDict:', updateDict)
             setMapDict(updateDict)
         }, 500);
         
     }, [ interTeamNum, interGameTable])
 
 
-    const createMatch = async(arr) => {
+    const createMatch = (arr) => {
         console.log("another createMatch, arr: ", arr, arr.length)
         if(arr.length === 1){
             matchCount += 1
             console.log("arr.length==1: ", null , arr[0][1].key, matchCount.toString())
-            const res = await Match.CreateInterMatch( null , arr[0][1].key, matchCount.toString())
+            const res = Match.Create( 0 , arr[0][1].key, 'interGame', matchCount.toString())
             console.log(res)
         }else if(arr.length === 2 ){
             matchCount += 1
             console.log("arr.length==2: ",arr[0][1].key , arr[1][1].key, matchCount.toString())
-            const res = await Match.CreateInterMatch( arr[0][1].key , arr[1][1].key, matchCount.toString())
+            const res = Match.Create( arr[0][1].key , arr[1][1].key, 'interGame', matchCount.toString())
             console.log(res)
         }else{
             const sepIndex = Math.ceil(arr.length/2)
@@ -69,14 +77,6 @@ const InterGameProvider = ({children}) => {
         }
     }
 
-    const completeKeyIn = () => {
-        console.log("into check complete key in")
-        Object.entries(interGameTable).map(team=> {
-            console.log("check complete team", team, team[1].session)
-            if(team[1].session === "--"){ return false }
-        })
-        return true
-    }
 
     const generateKeyinWarn = () =>{
         console.log("into generateKeyinWarn")
@@ -99,17 +99,27 @@ const InterGameProvider = ({children}) => {
 
 
     const saveResult = async() => {
-        console.log(" update interGame result: ", interGameTable)
+        // update team session
+        // check if all team session fill
+        // if fill
+        //      if checkIfStage, delete match 
+        //      create match
+        // else, break & show not fill msg
 
-        console.log(completeKeyIn())
-        if(!completeKeyIn()) {
-            // setKeyinWarn(true)
-            generateKeyinWarn()
-        }else{
-            Object.entries(interGameTable).map(async( team ) => {
-                console.log(" update session2: ", team, team[1].key, team[1].session)
-                await Team.UpdateSession('session_interGame', team[1].key, team[1].session)
-            })
+        Object.entries(interGameTable).map(( team ) => {
+            console.log(" update session2: ", team, team[1].key, team[1].session)
+            Team.UpdateSession('session_interGame', team[1].key, team[1].session)
+        })
+
+        const teamSessionFill = await Team.CheckFillSession('session_interGame')
+        if ( teamSessionFill ) {
+            console.log("checkFillSession true")
+            const havePreGame = await Match.CheckIfStage('interGame')
+            if( havePreGame ){
+                console.log("into delete ")
+                await Match.DeleteSession('interGame')
+            }
+
             let tempArr = []
             Object.entries(mapDict).map(async(team, index)=>{
                 tempArr.push(team)
@@ -128,8 +138,8 @@ const InterGameProvider = ({children}) => {
         mapDict,
         setMapDict,
         saveResult,
-        // keyinWarn,
-        // setKeyinWarn
+        editable,
+        setEditable
     }
 
     return (

@@ -1,6 +1,6 @@
 CREATE TABLE matches (
 	match_id INT NOT NULL UNIQUE,
-    home INT NOT NULL,
+    home INT,
     away INT NOT NULL,
     startDate DATE,
     endDate DATE,
