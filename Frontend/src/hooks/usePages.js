@@ -2,7 +2,6 @@ import React,{ useState, useContext, useMemo, useEffect } from 'react'
 import { pagesMenu } from './pagesMenu'
 
 
-const LOCALSTORAGE_KEY = "save-me";
 const defId = "public"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const { News, PreGame, Default, Try , Scheduler, Timer, InterGame} = pagesMenu()
@@ -46,8 +45,6 @@ const userForm = {  account: null,
 
 
 export function PagesProvider({children}){
-    const savedMe = localStorage.getItem(LOCALSTORAGE_KEY);
-    const [ me, setMe ] = useState(savedMe)
     const [ userInfo, setUserInfo ] = useState(userForm)
     const [ id, setId ] = useState(defId)
     const [ pageList, setPageList ] = useState(idPage[id])
@@ -57,6 +54,11 @@ export function PagesProvider({children}){
     const logout = () => {
         setUserInfo(userForm)
     }
+
+    useEffect(()=>{
+        const storageUserInfo = localStorage.getItem("userInfo")
+        setUserInfo(()=>JSON.parse(storageUserInfo))
+    },[])
 
     useEffect(() => {
         const updateId = userInfo['adim']
@@ -76,8 +78,6 @@ export function PagesProvider({children}){
         userInfo,
         setUserInfo, 
         logout,
-        me,
-        setMe
     }
 
     return(

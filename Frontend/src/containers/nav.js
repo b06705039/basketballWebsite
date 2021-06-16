@@ -42,14 +42,7 @@ function NavBar(){
             </Menu.Item>
           ))}
           <div style={{width:"-webkit-fill-available"}}></div>
-          <Menu.Item>
-            <Link to={"/profile"}>
-              <Avatar
-                style={{ backgroundColor: "#87d068" }}
-                icon={<UserOutlined />}
-              />
-            </Link>
-          </Menu.Item>
+          
           {id === "public" ? (
             <>
               <Menu.Item key="login" onClick={showLogin}>
@@ -60,9 +53,19 @@ function NavBar(){
               </Menu.Item>
             </>
           ) : (
+            <>
+              <Menu.Item>
+              <Link to={"/profile"}>
+                <Avatar
+                  style={{ backgroundColor: "#87d068" }}
+                  icon={<UserOutlined />}
+                />
+              </Link>
+            </Menu.Item>
             <Menu.Item key="logout" onClick={logout}>
               登出
             </Menu.Item>
+            </>
           )}
       </Menu>
       
