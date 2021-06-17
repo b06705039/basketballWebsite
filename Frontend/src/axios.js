@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ThemeProvider } from "styled-components";
 
 const serverURL = "http://localhost:4000/";
 
@@ -53,6 +54,22 @@ export const Login = async (account, password) => {
     throw err;
   }
 };
+
+export const CheckToken = async (storageToken) => {
+  token = storageToken.slice(1,-1);
+
+  try {
+    let response = await axios({
+      method: "GET",
+      url: serverURL + "users/checkToken",
+      headers: { Authorization: token },
+    });
+    return response.data.token;
+  } catch (err) {
+    throw err;
+  }
+}
+
 
 export const User = {
   Create: async (
@@ -202,6 +219,8 @@ export const User = {
       return `[Error][User][Update]` + err;
     }
   },
+
+  
 };
 
 export const Team = {

@@ -1,5 +1,6 @@
 import React,{ useState, useContext, useMemo, useEffect } from 'react'
 import { pagesMenu } from './pagesMenu'
+import { CheckToken } from '../axios'
 
 
 const defId = "public"
@@ -53,11 +54,22 @@ export function PagesProvider({children}){
     
     const logout = () => {
         setUserInfo(userForm)
+        localStorage.removeItem("userInfo")
     }
 
-    useEffect(()=>{
+    useEffect(async()=>{
         const storageUserInfo = localStorage.getItem("userInfo")
-        setUserInfo(()=>JSON.parse(storageUserInfo))
+        try{
+            const getUserInfo = await CheckToken(storageUserInfo)
+            if (JSON.stringify(getUserInfo) === '{}' | typeof(getUserInfo)==='undefined'){
+                setUserInfo(()=>userForm)
+            } else {
+                setUserInfo(()=>getUserInfo)
+            }
+        } catch(err) {
+            setUserInfo(()=>userForm)
+            localStorage.removeItem("userInfo")
+        }
     },[])
 
     useEffect(() => {

@@ -118,4 +118,13 @@ router.get("/register", async (_, res) => {
   }
 });
 
+router.get("/checkToken", async(req, res) => {
+  try {
+    const result = await new User(req.body.token);
+    return response.succ(res, result);
+  } catch (err) {
+    return response.fail(res, err);
+  }
+})
+
 module.exports = router;

@@ -25,9 +25,12 @@ function doAuthAction(req, resp, next) {
 
   let token = req.get("Authorization");
   try {
+    console.log("just get into aurthorize, token: ", token)
     req.body.token = jwt.verify(token, config.SECRET_KEY);
+    console.log("token verified")
     const expTime = req.body.token.exp;
     const nowTime = tool.getUnixTimestamp(Date.now());
+    console.log("befor get into if: ", nowTime, expTime)
     if (nowTime > expTime) {
       logger.error(
         TAG,

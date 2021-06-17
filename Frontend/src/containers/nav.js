@@ -6,10 +6,6 @@ import 'antd/dist/antd.css';
 import { usePages } from '../hooks/usePages';
 import LoginModel from '../components/loginModel';
 import SignupModel from '../components/signupModel';
-import styled from 'styled-components';
-
-
-
 
 function NavBar(){
     const [ loginVisible, setLoginVisible ] = useState(false)

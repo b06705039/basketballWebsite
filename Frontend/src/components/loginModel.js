@@ -36,7 +36,7 @@ export default function LoginModel(props) {
     if(!showForgetPw){
       try{
         const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
-        localStorage.setItem("userInfo", JSON.stringify(msg))
+        localStorage.setItem("userInfo", JSON.stringify(msg.token))
         setUserInfo(msg)
         props.setVisible(false)
         setShowWarn(false)
