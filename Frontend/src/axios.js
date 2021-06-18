@@ -1,8 +1,6 @@
 import axios from "axios";
-import { ThemeProvider } from "styled-components";
 
 const serverURL = "http://localhost:4000/";
-
 const testUsers = {
   adiminister: [
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJhY2NvdW50IjoidGhvbXNvbjg2MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbiIsImVtYWlsIjoidGhvbXNvbjg2MTEwNkBnbWFpbC5jb20iLCJhY3RpdmUiOjEsImFkaW0iOiJhZG1pbmlzdGVyIiwiaWF0IjoxNjIxNjU3MTE4LCJleHAiOjE2Mzk2NTcxMTh9.rx55CJNzevSUFJUP1EFjukPTgs47s2E42Ex-XHe_FdU",
@@ -675,5 +673,37 @@ const doSignup = async (SignUpObj) => {
   const msg = true;
   return msg;
 };
+
+
+export const Post = {
+  Create: async ( type, title_category, title_content, content ) => {
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "posts/create",
+        data: { type, title_category, title_content, content },
+        headers: { Authorization: token },
+      })
+      return response.data
+    } catch (err) {
+      return err
+    }
+  },
+  GetTypeContent: async( type ) => {
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "posts/getType",
+        params: { type },
+        header: { Authorization: token }
+      })
+      console.log("in axios post: ", response.data )
+      return response.data
+    } catch (err) {
+      return `[Error][Post][GetTypeContent]`
+    }
+  }
+}
+
 
 export { doLogin, doSignup };

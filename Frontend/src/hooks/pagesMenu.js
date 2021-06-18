@@ -6,6 +6,7 @@ import Timer from "../pages/Timer";
 import Try from "../pages/tryTable";
 import InterGame from '../pages/interGame'
 import { UserEditor } from "../pages/editor";
+import PostNews from "../pages/postNews";
 // import <pageName> ...
 
 export const pagesMenu = () => {
@@ -17,7 +18,8 @@ export const pagesMenu = () => {
     Scheduler,
     Timer,
     UserEditor,
-    InterGame
+    InterGame,
+    PostNews
     // pageNmae
   };
 };

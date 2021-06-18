@@ -20,6 +20,7 @@ class Team {
 }
 
 Team.prototype.create = async function (name, department) {
+  console.log("in team: ", name, department)
   const TAG = "[TeamCreate]";
   const logger = new Logger();
   if (this.token.adim !== "team") {

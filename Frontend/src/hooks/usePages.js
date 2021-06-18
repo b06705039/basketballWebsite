@@ -1,11 +1,18 @@
 import React,{ useState, useContext, useMemo, useEffect } from 'react'
 import { pagesMenu } from './pagesMenu'
-import { CheckToken } from '../axios'
+import { CheckToken, Post } from '../axios'
 
 
 const defId = "public"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
-const { News, PreGame, Default, Try , Scheduler, Timer, InterGame} = pagesMenu()
+const { News, 
+        PreGame, 
+        Default, 
+        Try , 
+        Scheduler, 
+        Timer, 
+        InterGame, 
+        PostNews } = pagesMenu()
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
@@ -18,7 +25,7 @@ const zhPage = {
   teamInfo: ["球隊資訊", Try],
   preGame: ["安排預賽賽程", PreGame],
   interGame: ["安排複賽循環", InterGame],
-  annouce: ["發布消息", Default],
+  annouce: ["發布消息", PostNews],
   inChargeGame: ["負責賽事", Default],
   register: ["報名", Default],
   scheduleTime: ["填寫賽程時間", Timer],
@@ -58,6 +65,9 @@ export function PagesProvider({children}){
     }
 
     useEffect(async()=>{
+
+        // await Post.Create("image", "圖片", "圖片", "https://scontent-tpe1-1.xx.fbcdn.net/v/t1.6435-9/83997674_2685836374784733_2001928069626986496_n.jpg?_nc_cat=106&ccb=1-3&_nc_sid=e3f864&_nc_ohc=NQtpUyNvY9oAX8myP0k&tn=mFYE-wBXf4Mdg2TI&_nc_ht=scontent-tpe1-1.xx&oh=9ac5c63576dffbbdd3605735b6dbb3cb&oe=60CF84BA")
+
         const storageUserInfo = localStorage.getItem("userInfo")
         try{
             const getUserInfo = await CheckToken(storageUserInfo)
@@ -70,7 +80,9 @@ export function PagesProvider({children}){
             setUserInfo(()=>userForm)
             localStorage.removeItem("userInfo")
         }
+
     },[])
+
 
     useEffect(() => {
         const updateId = userInfo['adim']

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import NavBar from "./nav";
 import { Layout } from "antd";
 import { usePages } from "../hooks/usePages";
@@ -27,7 +27,9 @@ function Temp() {
           <NavBar />
         </Header>
         <Switch>
-          <Route exact path="/" component={News} />
+          <Route exact path="/">
+            <Redirect to={"/" + zhPageList[0][0]} />
+          </Route>
           {zhPageList.map((page, index) => (
             <Route key={index} path={"/" + page[0]} component={page[1]} />
           ))}
