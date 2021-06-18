@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { Carousel, Image, List, Typography, Divider } from 'antd'
+import { Carousel, Image } from 'antd'
 import { Post } from '../axios'
 import { usePages } from '../hooks/usePages'
+import List_component from '../components/list'
 
 
 const LayoutContent = styled.div`
@@ -60,19 +61,24 @@ export default function News() {
                                                             <StyledImage preview={false} src={image.content}></StyledImage>
                                                         </ContentStyled> })}
                 </Carousel>
-                <Divider orientation="left">News</Divider>
+                {/* <Divider orientation="left">News</Divider>
                     <List
-                    // header={<div>Header</div>}
-                    // footer={<div>Footer</div>}
                     bordered
                     dataSource={news}
                     renderItem={anews => (
                         <List.Item>
-                            {anews.createtime.slice(0,10)}
+                            {anews['createtime'].slice(0,10)}
                             <Typography.Text style={{"margin":"0 10px"}} mark>[{anews.title_category}]</Typography.Text> 
                             {anews.title_content}
                         </List.Item>
                     )}
+                    /> */}
+                <List_component 
+                    titleName={'News'}
+                    dataSource={news}
+                    catagoryColName={'title_category'}
+                    contentColName={'title_content'}
+                    urlColName={''}
                 />
             </LayoutContent>
         </div>

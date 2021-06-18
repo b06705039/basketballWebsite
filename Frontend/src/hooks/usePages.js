@@ -66,8 +66,6 @@ export function PagesProvider({children}){
 
     useEffect(async()=>{
 
-        // await Post.Create("image", "圖片", "圖片", "https://scontent-tpe1-1.xx.fbcdn.net/v/t1.6435-9/83997674_2685836374784733_2001928069626986496_n.jpg?_nc_cat=106&ccb=1-3&_nc_sid=e3f864&_nc_ohc=NQtpUyNvY9oAX8myP0k&tn=mFYE-wBXf4Mdg2TI&_nc_ht=scontent-tpe1-1.xx&oh=9ac5c63576dffbbdd3605735b6dbb3cb&oe=60CF84BA")
-
         const storageUserInfo = localStorage.getItem("userInfo")
         try{
             const getUserInfo = await CheckToken(storageUserInfo)
