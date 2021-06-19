@@ -1,94 +1,95 @@
-#scroll .dx-draggable{
-    display:flex;
-    flex-direction:row;
-    text-align: center
-  }
-  .item {
-      box-sizing: border-box;
-      padding: 10px 20px;
-      margin-bottom: 10px;
-  }
-  
-  #scheduler {
-      margin-left: 50px;
-      margin-right: 50px;
-  }
-  
-  .dx-draggable-source {
-      opacity: 0.5;
-  }
-  
-  .dx-draggable-dragging > * {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 6px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .showtime-preview > div:first-child {
-    font-size: 12px;
-    white-space: normal;
-  }
-  
-  .showtime-preview > div:not(:first-child) {
-    font-size: 11px;
-    text-align: center;
-    white-space: normal;
-  }
-  
-  .movie-tooltip .movie-info {
-    display: inline-block;
-    margin-left: 10px;
-    vertical-align: top;
-    text-align: left;
-  }
-  
-  .movie-tooltip img {
-    height: 200px;
-    margin-bottom: 10px;
-  }
-  
-  .movie-tooltip .movie-title {
-    font-size: 2em;
-    line-height: 40px;
-  }
-  
-  .movie-tooltip{
-      width: 400px;
-      margin: 0 auto;
-  }
-  
-  .dx-scheduler-all-day-panel{
-      display: none;
-  }
-  .dx-scheduler-all-day-title{
-      display: none;
-  }
-  
-  .disable-date{
-    background-image: repeating-linear-gradient(135deg,
-      rgba(244, 67, 54, 0.1),
-      rgba(244, 67, 54, 0.1) 4px,
-      transparent 4px,
-      transparent 9px);
-    text-align: center;
-    color: #9B6467;
-  }
+#scroll .dx-draggable {
+  display: flex;
+}
+.item {
+  box-sizing: border-box;
+  padding: 10px 30px;
+  margin-bottom: 10px;
+}
 
-  .unable-date{
-    background-image: repeating-linear-gradient(135deg,
-      rgba(255, 17, 0, 0.1),
-      rgba(255, 17, 0, 0.1) 4px,
-      transparent 4px,
-      transparent 9px);
-    text-align: center;
-    color: #ff000d;
-  }
+#scheduler {
+  margin-left: 50px;
+  margin-right: 50px;
+}
 
+.dx-draggable-source {
+  opacity: 0.5;
+}
 
-  .appointment-detail{
-    margin-top: 30px;
-    margin-bottom: 30px;
-  }
+.dx-draggable-dragging > * {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 6px 8px rgba(0, 0, 0, 0.2);
+}
 
-  .appointment-detail td{
-    border: 1px solid #333;
-    width: 1200px;
-  }
+.showtime-preview > div:first-child {
+  font-size: 12px;
+  white-space: normal;
+}
+
+.showtime-preview > div:not(:first-child) {
+  font-size: 11px;
+  text-align: center;
+  white-space: normal;
+}
+
+.movie-tooltip .movie-info {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.movie-tooltip img {
+  height: 200px;
+  margin-bottom: 10px;
+}
+
+.movie-tooltip .movie-title {
+  font-size: 2em;
+  line-height: 40px;
+}
+
+.movie-tooltip {
+  width: 400px;
+  margin: 0 auto;
+}
+
+.dx-scheduler-all-day-panel {
+  display: none;
+}
+.dx-scheduler-all-day-title {
+  display: none;
+}
+
+.disable-date {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(244, 67, 54, 0.1),
+    rgba(244, 67, 54, 0.1) 4px,
+    transparent 4px,
+    transparent 9px
+  );
+  text-align: center;
+  color: #9b6467;
+}
+
+.unable-date {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 17, 0, 0.1),
+    rgba(255, 17, 0, 0.1) 4px,
+    transparent 4px,
+    transparent 9px
+  );
+  text-align: center;
+  color: #ff000d;
+}
+
+.appointment-detail {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.appointment-detail td {
+  border: 1px solid #333;
+  width: 1200px;
+}

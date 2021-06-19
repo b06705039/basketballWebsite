@@ -18,44 +18,58 @@ class Match {
   }
 }
 
-Match.prototype.create = async function ( home_id, away_id, stage, stage_session ) {
-    const TAG = '[MatchCreate]';
-    const logger = new Logger();
-    console.log(this.token);
-    if (config.AdimLevel[this.token.adim] < 2) {
-        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return exception.PermissionError('Permission Deny', 'have no access');
-    }
+Match.prototype.create = async function (
+  home_id,
+  away_id,
+  stage,
+  stage_session
+) {
+  const TAG = "[MatchCreate]";
+  const logger = new Logger();
+  console.log(this.token);
+  if (config.AdimLevel[this.token.adim] < 2) {
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
+  }
 
-    console.log("create match: ", home_id, away_id)
-    if ( !(home_id===null || await Team.IsVaildTeamID(home_id)) ) {
-        logger.error(TAG, `Invalid Home ID (${home_id}).`);
-        throw exception.BadRequestError('BAD_REQUEST', `Invalid Home ID (${home_id}).`);
-    }
+  console.log("create match: ", home_id, away_id);
+  if (!(home_id === null || (await Team.IsVaildTeamID(home_id)))) {
+    logger.error(TAG, `Invalid Home ID (${home_id}).`);
+    throw exception.BadRequestError(
+      "BAD_REQUEST",
+      `Invalid Home ID (${home_id}).`
+    );
+  }
 
-    if ( !(away_id===null || await Team.IsVaildTeamID(away_id)) ) {
-        logger.error(TAG, `Invalid Away ID (${away_id}).`);
-        throw exception.BadRequestError('BAD_REQUEST', `Invalid Away ID (${away_id}).`);
-    }
+  if (!(away_id === null || (await Team.IsVaildTeamID(away_id)))) {
+    logger.error(TAG, `Invalid Away ID (${away_id}).`);
+    throw exception.BadRequestError(
+      "BAD_REQUEST",
+      `Invalid Away ID (${away_id}).`
+    );
+  }
 
-    // let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0]['MAX(match_id)'];
-    // if (tool.isNull(match_id))
-    //     match_id = 1;
-    // else
-    //     match_id += 1;
+  // let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0]['MAX(match_id)'];
+  // if (tool.isNull(match_id))
+  //     match_id = 1;
+  // else
+  //     match_id += 1;
 
-    // const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, '${stage}');`
-    const SQL = `INSERT INTO matchInfo (home, away, stage, stage_session) VALUE ( ${home_id}, ${away_id}, '${stage}', '${stage_session}');`
-    console.log("in Match, SQL: ", SQL)
-    try {
-        await db.execute(SQL);
-        return `INSERT INTO matchInfo ( ${home_id}, ${away_id}, ${stage}, ${stage_session}) success`;
-        // return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success`;
-    } catch (err) {
-        logger.error(TAG, `Execute MySQL Failed.`);
-        throw exception.BadRequestError('MySQL Server Error', '' + err);
-    }
-}
+  // const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, '${stage}');`
+  const SQL = `INSERT INTO matchInfo (home, away, stage, stage_session) VALUE ( ${home_id}, ${away_id}, '${stage}', '${stage_session}');`;
+  console.log("in Match, SQL: ", SQL);
+  try {
+    await db.execute(SQL);
+    return `INSERT INTO matchInfo ( ${home_id}, ${away_id}, ${stage}, ${stage_session}) success`;
+    // return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success`;
+  } catch (err) {
+    logger.error(TAG, `Execute MySQL Failed.`);
+    throw exception.BadRequestError("MySQL Server Error", "" + err);
+  }
+};
 
 // Match.prototype.createInterMatch = async function ( home_id, away_id, stage ) {
 //     const TAG = '[MatchCreateInterMatch]';
@@ -73,7 +87,7 @@ Match.prototype.create = async function ( home_id, away_id, stage, stage_session
 //         `Invalid Home ID (${home_id}).`
 //       );
 //     }
-  
+
 //     if (!(await Team.IsVaildTeamID(away_id))) {
 //       logger.error(TAG, `Invalid Away ID (${away_id}).`);
 //       throw exception.BadRequestError(
@@ -99,7 +113,6 @@ Match.prototype.create = async function ( home_id, away_id, stage, stage_session
 
 // };
 
-
 Match.prototype.delete = async function (match_id) {
   const TAG = "[MatchDelete]";
   const logger = new Logger();
@@ -119,9 +132,9 @@ Match.prototype.delete = async function (match_id) {
       `Match ID (${match_id}) is invalid.`
     );
   }
-  
+
   const SQL = `DELETE FROM matchInfo WHERE match_id = ${match_id};`;
-  console.log(SQL)
+  console.log(SQL);
   try {
     await db.execute(SQL, {});
     return { info: `Delete match ID ${match_id} Success` };
@@ -226,6 +239,7 @@ Match.prototype.getALL = async function () {
             matchInfo.field AS field,
             matchInfo.recorder AS recorder_id,
             recorderInfo.name AS recorder,
+            matchInfo.stage AS stage,
             matchInfo.winner AS winner
             FROM matchInfo
         LEFT JOIN teamInfo AS Home ON 
@@ -298,7 +312,7 @@ Match.prototype.update = async function (
   }
 };
 
-Match.prototype.deleteSession = async function( stage ){
+Match.prototype.deleteSession = async function (stage) {
   const TAG = "[DeleteSession]";
   const logger = new Logger();
 
@@ -310,35 +324,35 @@ Match.prototype.deleteSession = async function( stage ){
     return exception.PermissionError("Permission Deny", "have no access");
   }
   const SQL = `DELETE FROM matchInfo WHERE stage='${stage}'`;
-  try{
-    await db.execute(SQL, {})
+  try {
+    await db.execute(SQL, {});
     return { info: `Delete stage= ${stage} Success` };
   } catch (err) {
     throw exception.BadRequestError("MYSQL Error", "" + err);
   }
 };
 
-Match.prototype.checkIfStage = async function( stage ){
+Match.prototype.checkIfStage = async function (stage) {
   const TAG = "[CheckIfStage]";
   const logger = new Logger();
-  
 
   if (config.AdimLevel[this.token.adim] < 2) {
-    logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-    return exception.PermissionError('Permission Deny', 'have no access');
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
   }
 
-  const SQL=`SELECT * FROM matchInfo WHERE stage ='${stage}' `;
-  console.log(SQL)
-  try{
-    const result = await db.execute(SQL, {})
-    console.log(result.length===0? false:true)
-    return result.length===0? false:true
-  } catch(err) {
+  const SQL = `SELECT * FROM matchInfo WHERE stage ='${stage}' `;
+  console.log(SQL);
+  try {
+    const result = await db.execute(SQL, {});
+    console.log(result.length === 0 ? false : true);
+    return result.length === 0 ? false : true;
+  } catch (err) {
     throw exception.BadRequestError("MYSQL Error", "" + err);
   }
 };
-
-
 
 module.exports = Match;
