@@ -4,7 +4,7 @@ import { pagesMenu } from './pagesMenu'
 const defId = "admin"
 const defCurPage = "news"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
-const { News, PreGame, Default, Try , Scheduler, Timer} = pagesMenu()
+const { News, PreGame, Default, Try , Scheduler, Timer, Checkteam} = pagesMenu()
 
 
 // 找到相對應頁面，改後面的component
@@ -21,14 +21,15 @@ const zhPage = {
     'annouce':['發布消息', Default],
     'inChargeGame':['負責賽事', Default],
     'register':['報名', Default],
-    'scheduleTime':['填寫賽程時間', Timer]
+    'scheduleTime':['填寫賽程時間', Timer],
+    'Checkteam': ['確認隊伍資訊', Checkteam]
 };
 const idPage = {
     'testPublic':['news','schedule'],
     'public':['news','schedule','gameResult','adminInfo','contact'],
-    'admin':['main','teamInfo','schedule','preGame','interGame','annouce'],
+    'admin':['main','teamInfo','schedule','preGame','interGame','annouce', 'Checkteam'],
     'scoring':['main','inChargeGame'],
-    'team':['main','register','scheduleTime']
+    'team':['main','register','scheduleTime', 'Checkteam']
 }
 
 const Pages = React.createContext()
@@ -37,15 +38,11 @@ export function usePages(){
     return useContext(Pages)
 }
 
-
 export function PagesProvider({children}){
     const [id, setId] = useState(defId);
     const [pageList, setPageList] = useState(idPage[id])
     const [zhPageList, setZhPageList] = useState(pageList.map(page=>zhPage[page]))
     const [curPage, setCurPage] = useState(zhPageList[0])
-
-
-
 
     useEffect(() => {
         setPageList(idPage[id])
@@ -57,8 +54,6 @@ export function PagesProvider({children}){
         setCurPage(zhPage[pageList[0]])
     }, [pageList])
 
-
-
     const value = {
         id,
         setId,
@@ -66,7 +61,6 @@ export function PagesProvider({children}){
         curPage,
         setCurPage
     }
-
 
     return(
         

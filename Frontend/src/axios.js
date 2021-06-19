@@ -53,6 +53,65 @@ export const Login = async (account, password) => {
   }
 };
 
+export const Player = {
+  Create: async (
+    studentID,
+    team,
+    grade,
+  ) => {
+    // [Must] studentID            學號
+    // [Must] department           隊伍 
+    // [Must] grade                年級
+    // [Q]    PhotoURL?
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "/players/create",
+        data: {
+          studentID,
+          team,
+          grade
+        },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Player][Create]` + err;
+    }
+  },
+
+  Delete: async (id) => {
+    // [Must] id       User ID
+    // [Must] token    使用者登入憑證 {adim: administer}
+
+    try {
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "players/delete",
+        data: { studentID: id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Player][Delete]` + err;
+    }
+  },
+
+  GetAllPlayerByTeamID: async(team_id) => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "players/getAllPlayerByTeamId",
+        params: {team_id},
+        headers: { Authorization: token }
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Player][GetAllPlayerByTeamID]` + err;
+    }
+  }
+}
+
 export const User = {
   Create: async (
     account,

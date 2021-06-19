@@ -4,6 +4,7 @@ import PreGame from '../pages/preGame'
 import Scheduler from '../pages/scheduler'
 import Timer from '../pages/Timer'
 import Try from '../pages/tryTable'
+import Checkteam from '../pages/Checkteam'
 // import <pageName> ...
 
 
@@ -16,7 +17,7 @@ export const pagesMenu = () => {
         Default,
         Try,
         Scheduler,
-        Timer
-        // pageNmae
+        Timer,
+        Checkteam
     }
 }

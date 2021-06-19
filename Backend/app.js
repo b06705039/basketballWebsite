@@ -11,6 +11,7 @@ var logger = require('morgan');
 var db = require(global.__MODULE_BASE__ + 'database');
 
 var usersRouter = require(global.__CONTROLLER_BASE__ + 'users');
+var playersRouter = require(global.__CONTROLLER_BASE__ + 'players');
 var postRouter = require(global.__CONTROLLER_BASE__ + 'posts');
 var teamRouter = require(global.__CONTROLLER_BASE__ + 'teams');
 var recorderRouter = require(global.__CONTROLLER_BASE__ + 'recorders');
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/users', usersRouter);
+app.use('/players', playersRouter);
 app.use('/posts', postRouter);
 app.use('/teams', teamRouter);
 app.use('/recorders', recorderRouter);

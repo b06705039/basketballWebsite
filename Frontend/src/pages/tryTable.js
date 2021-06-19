@@ -165,7 +165,6 @@ class EditableTable extends React.Component {
     }
   }
 
-
 // const Default = () => {
 //     return(
 //         <div className="ant-layout-content" style={{ height: '1000px'}}>
@@ -175,7 +174,6 @@ class EditableTable extends React.Component {
 //         </div>
 //     )
 // }
-
 
 export default EditableTable
 

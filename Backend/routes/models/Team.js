@@ -202,6 +202,67 @@ Team.prototype.getALL = async function () {
     }
 }
 
+// Team.prototype.update = async function (name, department) {
+//     const TAG = "[TeamUpdate]";
+//     const logger = new Logger();
+//     if (this.token.adim !== 'team') {
+//         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+//         return exception.PermissionError('Permission Deny', 'have no access');
+//     }
+//     const team_id = await (async () => {
+//         const SQL = `
+//             SELECT 
+//                 team_id
+//             FROM teamInfo
+//             WHERE 1 = 1
+//             AND user_id = ${this.token.user_id}
+//         ;`;
+//         const result = await db.execute(SQL, {});
+//         console.log(result)
+//         return (result.length > 0) ? result[0]['team_id'] : undefined;
+//     })();
+
+//     if (team_id === undefined) {
+//         logger.error(TAG, `User (${this.token.user_id}) has no access to ${TAG}.`);
+//         return exception.PermissionError('Permission Deny', 'Have no access');
+//     }
+
+//     if (name.length === 0) {
+//         logger.error(TAG, `Name can not be empty.`);
+//         throw exception.BadRequestError('BAD_REQUEST', 'Name can not be empty.');
+//     } else if (!tool.isVaildDepartment(department)) {
+//         logger.error(TAG, `Department(${department}) is not valid.`);
+//         throw exception.BadRequestError('BAD_REQUEST', `Department(${department}) is not valid.`);
+//     }
+
+//     const isUniqueNameAndDeparment = await (async () => {
+//         const SQL = `
+//             SELECT 
+//                 COUNT(1)
+//             FROM teamInfo
+//             WHERE 1 = 1
+//             AND (name = ${db.escape(name)} OR department=${db.escape(department)})
+//             AND team_id != ${team_id}
+//         ;`;
+//         const result = await db.execute(SQL, {});
+//         return result[0]['COUNT(1)'] > 0 ? false : true;
+//     })();
+
+//     if (!isUniqueNameAndDeparment) {
+//         logger.error(TAG, `Invalid Team Name (${name}): Name already existed.`);
+//         throw exception.BadRequestError('BAD_REQUEST', `Name (${name}) already existed.`);
+//     }
+
+//     const SQL = `UPDATE teamInfo SET name=${db.escape(name)}, department=${db.escape(department)} WHERE team_id=${team_id};`
+//     try {
+//         await db.execute(SQL, {});
+//         return { info: `Update team ${team_id} Success` };
+//     } catch (err) {
+//         logger.error(TAG, `Execute MYSQL Failed.`);
+//         throw exception.BadRequestError('MYSQL Error', '' + err);
+//     }
+// }
+
 Team.prototype.update = async function (name, department) {
     const TAG = "[TeamUpdate]";
     const logger = new Logger();
@@ -262,5 +323,6 @@ Team.prototype.update = async function (name, department) {
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
 }
+
 
 module.exports = Team;

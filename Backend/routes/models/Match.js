@@ -3,8 +3,11 @@ const Logger = require(global.__MODULE_BASE__ + 'logger');
 const exception = require(global.__MODULE_BASE__ + 'exception');
 const tool = require(global.__MODULE_BASE__ + 'tool');
 const config = require(global.__MODULE_BASE__ + 'config');
+
 const Team = require('./Team')
+
 const Recorder = require('./Recorder')
+
 class Match {
     constructor(token) {
         this.token = token;
