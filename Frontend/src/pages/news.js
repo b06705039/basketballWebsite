@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Carousel, Image } from 'antd'
 import { Post } from '../axios'
 import { usePages } from '../hooks/usePages'
-import List_component from '../components/list'
+import List from '../components/list'
 
 
 const LayoutContent = styled.div`
@@ -17,7 +17,6 @@ const ContentStyled = styled.div`
     color: #fff;
     line-height: 160px;
     text-align: center;
-    // background-color: #364d79;
 `
 
 const StyledImage = styled(Image)`
@@ -73,7 +72,7 @@ export default function News() {
                         </List.Item>
                     )}
                     /> */}
-                <List_component 
+                <List 
                     titleName={'News'}
                     dataSource={news}
                     catagoryColName={'title_category'}

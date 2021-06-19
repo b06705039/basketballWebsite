@@ -262,4 +262,35 @@ Recorder.prototype.update = async function (name, department) {
     }
 }
 
+Recorder.prototype.getInChargeByID = async function (recorder_id) {
+    console.log("into models,")
+    const TAG = '[RecorderGetInCharge]';
+    const logger = new Logger();
+
+    if (config.AdimLevel[this.token.adim] < 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
+    // if (!(await recorder.IsVaildrecorderID(recorder_id))) {
+    //     logger.error(TAG, `Invalid recorder_id : ${recorder_id} does not existed.`);
+    //     throw exception.BadRequestError('BAD_REQUEST', 'recorder ID (${recorder_id}) is invalid.');
+    // }
+
+    let SQL =
+        `SELECT * FROM matchInfo 
+        LEFT JOIN (SELECT team_id AS home, name AS homeName FROM teamInfo) AS team ON matchInfo.home=team.home
+        LEFT JOIN (SELECT team_id AS away, name AS awayName FROM teamInfo) AS team2 ON matchInfo.away=team2.away
+        WHERE recorder=${recorder_id}`;
+    try {
+        let result = await db.execute(SQL, {})
+        return result
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+}
+
+
+
 module.exports = Recorder;

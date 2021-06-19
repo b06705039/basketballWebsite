@@ -645,7 +645,22 @@ export const Recorder = {
       return `[Error][Recorder][Update]` + err;
     }
   },
+  InCharge: async( id ) => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "recorders/Incharge",
+        params: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][Incharge]` + err;
+    }
+  }
 };
+
+
 
 const doLogin = async (username, password) => {
   const msg = { userid: 1, identity: "admin" };
@@ -695,12 +710,27 @@ export const Post = {
         method: "GET",
         url: serverURL + "posts/getType",
         params: { type },
-        header: { Authorization: token }
+        // headers: { Authorization: token }
       })
-      console.log("in axios post: ", response.data )
       return response.data
     } catch (err) {
       return `[Error][Post][GetTypeContent]`
+    }
+  }
+}
+
+export const Record = {
+  CreateTeamRecord: async( match_id, team_id ) => {
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "records/createTeamRecord",
+        data: { match_id, team_id },
+        headers: { Authorization: token }
+      })
+      console.log("in createTeamRecord, res: ", response)
+    } catch (err) {
+      return `[Error][Record][CreateTeamRecord]`
     }
   }
 }

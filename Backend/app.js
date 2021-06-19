@@ -16,6 +16,7 @@ var teamRouter = require(global.__CONTROLLER_BASE__ + 'teams');
 var recorderRouter = require(global.__CONTROLLER_BASE__ + 'recorders');
 var matchRouter = require(global.__CONTROLLER_BASE__ + 'matches');
 var timeRouter = require(global.__CONTROLLER_BASE__ + 'times');
+var recordRouter = require(global.__CONTROLLER_BASE__ + 'records')
 var cors = require('cors');
 
 var app = express();
@@ -38,6 +39,7 @@ app.use('/teams', teamRouter);
 app.use('/recorders', recorderRouter);
 app.use('/matches', matchRouter);
 app.use('/time', timeRouter);
+app.use('/records', recordRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

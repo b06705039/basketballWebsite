@@ -5,7 +5,6 @@ import NavBar from "./nav";
 import { Layout } from "antd";
 import { usePages } from "../hooks/usePages";
 import { pagesMenu } from "../hooks/pagesMenu";
-import { UserEditor } from "../pages/editor";
 const { Header, Footer } = Layout;
 
 const TempBack = styled.div`
@@ -17,7 +16,7 @@ const TempBack = styled.div`
 
 function Temp() {
   const { zhPageList } = usePages();
-  const { News } = pagesMenu();
+  const { News, RecordTeam, UserEditor } = pagesMenu();
 
   return (
     <Router>
@@ -34,6 +33,7 @@ function Temp() {
             <Route key={index} path={"/" + page[0]} component={page[1]} />
           ))}
           <Route exact path="/profile" component={UserEditor} />
+          <Route exact path="/recordTeam" component={RecordTeam} />
         </Switch>
         <Footer style={{ textAlign: "center" }}>
           Online Basketball Web design by{" "}

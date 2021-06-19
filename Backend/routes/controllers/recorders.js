@@ -75,6 +75,18 @@ router.post('/update', async (req, resp) => {
     }
 });
 
+router.get('/Incharge', async(req, resp) => {
+    console.log("into router incharge")
+    const token = req.body.token;
+    const recorder_id = req.query.id || "";
+    try {
+        const result = await new Recorder(token).getInChargeByID(recorder_id);
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+})
+
 
 
 module.exports = router;

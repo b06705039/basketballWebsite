@@ -59,7 +59,9 @@ function NavBar(){
               </Link>
             </Menu.Item>
             <Menu.Item key="logout" onClick={logout}>
-              登出
+              <Link to={"/"+zhPageList[0][0]}>
+                登出
+              </Link> 
             </Menu.Item>
             </>
           )}

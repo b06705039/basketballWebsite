@@ -29,10 +29,7 @@ Post.prototype.create = async function( type, title_category, title_content, con
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
-    const currentDate = new Date()
-    // .toJSON().slice(0,10).replace(/-/g,'-');
     const SQL = `INSERT INTO post ( createtime, type, title_category, title_content, content) VALUE (NOW(), "${type}", "${title_category}", "${title_content}", "${content}");`;
-    console.log("SQL: ", SQL)
     try{
         await db.execute(SQL);
         return `INSERT INTO post success`;
@@ -46,19 +43,14 @@ Post.prototype.getType = async function( type ){
     const TAG = "[PostGetType]"
     const logger = new Logger()
 
-
     const SQL = `SELECT * FROM post WHERE type='${type}';`
-    console.log("post getType SQL: ", SQL)
     try{
         const result = await db.execute(SQL, {})
-        console.log("in Post: ", result)
         return result
     } catch(err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError("MySQL Server Error", "" + err)
     }
-
-
 }
 
 

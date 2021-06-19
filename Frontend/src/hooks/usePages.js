@@ -12,7 +12,9 @@ const { News,
         Scheduler, 
         Timer, 
         InterGame, 
-        PostNews } = pagesMenu()
+        PostNews,
+        InChargeGame,
+        RecordTeam } = pagesMenu()
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
@@ -26,14 +28,14 @@ const zhPage = {
   preGame: ["安排預賽賽程", PreGame],
   interGame: ["安排複賽循環", InterGame],
   annouce: ["發布消息", PostNews],
-  inChargeGame: ["負責賽事", Default],
+  inChargeGame: ["負責賽事", InChargeGame],
   register: ["報名", Default],
   scheduleTime: ["填寫賽程時間", Timer],
 };
 const idPage = {
-    'public':['news','schedule','gameResult','adminInfo','contact'],
+    'public':['main','schedule','gameResult','adminInfo','contact'],
     'administer':['main','teamInfo','schedule','preGame','interGame','annouce'],
-    'recorder':['main','inChargeGame'],
+    'recorder':['main','inChargeGame','scheduleTime'],
     'team':['main','register','scheduleTime']
 }
 
@@ -62,6 +64,7 @@ export function PagesProvider({children}){
     const logout = () => {
         setUserInfo(userForm)
         localStorage.removeItem("userInfo")
+
     }
 
     useEffect(async()=>{
