@@ -148,6 +148,7 @@ User.prototype.create = async (
             "${adim}", NOW(), false, "${email}", "${deparment}");`;
   try {
     await db.execute(SQL, {});
+    await emailer.SendCreateEmail({ username, email });
     return {
       info: `Insert Data (${user_id}, ${account}, ${username}, ${email}, ${deparment}) to userInfo Success`,
     };
@@ -335,7 +336,7 @@ User.prototype.getALL = async function () {
 
   const target =
     config.AdimLevel[this.token.adim] === 2
-      ? "user_id, account,  username, adim, createtime, active, email, department"
+      ? "user_id, account,  username, adim, createtime, email, department, active"
       : "username, adim, email, department";
 
   const SQL = `SELECT ${target} FROM userInfo;`;
@@ -376,6 +377,22 @@ User.prototype.remindInfo = async function (email) {
   } catch (err) {
     logger.error(TAG, `Sent Reminder email Failed.`);
     throw exception.BadRequestError("Email Error", "" + err);
+  }
+};
+
+User.prototype.getRegister = async function () {
+  const TAG = "[GetRegisterData]";
+  const logger = new Logger();
+  let SQL = "SELECT account, username, email FROM userInfo";
+  let output = {};
+  try {
+    output.user = await db.execute(SQL);
+    SQL = "SELECT name FROM teamInfo";
+    output.team = await db.execute(SQL);
+    return output;
+  } catch (err) {
+    logger.error(TAG, `Get Register Failed.`);
+    throw exception.BadRequestError("User Error", "" + err);
   }
 };
 

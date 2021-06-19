@@ -2,7 +2,9 @@ CREATE TABLE teamInfo (
 	team_id INT NOT NULL UNIQUE,
     name VARCHAR(50) NOT NULL,
     department VARCHAR(50) NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT "未報名"
+    status VARCHAR(20) NOT NULL DEFAULT "未報名",
+    session_preGame VARCHAR(5) NOT NULL DEFAULT "--",
+    session_interGame VARCHAR(5) NOT NULL DEFAULT "--"
 );
 
 CREATE TABLE teamRecord (

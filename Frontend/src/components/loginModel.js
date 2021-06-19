@@ -1,7 +1,8 @@
-import React,{ useRef, useState } from 'react'
-import { Modal, Button, Form, Input, Checkbox } from 'antd'
-import { login, useUser } from '../hooks/useUser'
+import React,{ useRef, useState, useEffect } from 'react'
+import { Modal, Form, Input } from 'antd'
 import { usePages } from '../hooks/usePages'
+import { Login, User } from '../axios'
+
 
 const formItemLayout = {
   labelCol: {
@@ -23,66 +24,101 @@ const formItemLayout = {
 };
 
 export default function LoginModel(props) {
-  const usernameRef = useRef();
-  const passwordRef = useRef();
-  const { status, login } = useUser();
-  const { setId } = usePages();
-  const [ LoginWarn, setLoginWarn ] = useState(false);
+  const usernameRef = useRef()
+  const passwordRef = useRef()
+  const emailRef = useRef()
+  const { setUserInfo, me, setMe } = usePages()
+
+  const [ showWarn, setShowWarn ] = useState(false);
+  const [ showForgetPw, setShowForgetPw ] = useState(false);
   const [ form ] = Form.useForm()
 
   const handleOK = async () => {
-    if(await login(usernameRef.current.value,passwordRef.current.value)){
-      console.log("in model, true")
-      props.setVisible(false)
-      setLoginWarn(false)
-      setId('admin')
-    } 
-    else{
-      console.log("in model, false")
-      setLoginWarn(true)
+    if(!showForgetPw){
+      try{
+        const msg = await Login(usernameRef.current.props.value, passwordRef.current.props.value)
+        localStorage.setItem("userInfo", JSON.stringify(msg.token))
+        setUserInfo(msg)
+        props.setVisible(false)
+        setShowWarn(false)
+      } catch {
+        setShowWarn(true)
+      }
+    }else{
+      try{
+        await User.SendRemindEmail(emailRef.current.props.value)
+        setShowWarn(false)
+      } catch{
+        setShowWarn(true)
+      }
     }
+      
     form.resetFields();
   }
 
-  const handleCancel = () =>{
-    props.setVisible(false)
+  const handleForgotPw = () => {
+    setShowForgetPw(true)
   }
+
+  useEffect(() => {
+    setShowWarn(false)
+  }, [ showForgetPw ])
 
   return(
     <div>
       <Modal 
       visible = { props.visible }
       onOk = { handleOK }
-      onCancel = { handleCancel } 
-      afterClose = { ()=>setLoginWarn(false) }
+      onCancel = { showForgetPw?()=>setShowForgetPw(false):
+                                ()=>props.setVisible(false)} 
+      afterClose = { ()=>{
+            setShowWarn(false)
+            setShowForgetPw(false)}}
+      cancelText={showForgetPw?"返回登入":"Cancel"}
       >
         <Form 
           {...formItemLayout}
           style={{textAlign:"center"}}
-          form={form}
-        >
-          <h2 style={{textAlign:"center"}}>登入</h2>
-          <h4 style={{textAlign:"center",visibility:LoginWarn?"":"hidden",color:"red"}} >登入失敗!</h4>
-          <Form.Item
-          name="username"
-          label="Username"
-        >
-          <Input ref={usernameRef} value={null} />
-          </Form.Item>
-        
-          <Form.Item
-          name="password"
-          label="Password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-          hasFeedback
-          >
-            <Input.Password ref={passwordRef} value={null}/>
-          </Form.Item>
+          form={form}>
+          {showForgetPw?(<>
+            <h2 style={{textAlign:"center"}}>寄密碼到您的信箱</h2>
+            <h4 style={{textAlign:"center",visibility:showWarn?"":"hidden",color:"red"}} >查無此信箱！</h4>
+            <Form.Item
+              name="email"
+              label="Email">
+                <Input ref={emailRef} />
+            </Form.Item>
+          
+          </>):(
+            <>
+              <h2 style={{textAlign:"center"}}>登入</h2>
+              <h4 style={{textAlign:"center",visibility:showWarn?"":"hidden",color:"red"}} >登入失敗!</h4>
+              <Form.Item
+              name="username"
+              label="Username">
+                <Input ref={usernameRef}/>
+              </Form.Item>
+            
+              <Form.Item
+              name="password"
+              label="Password"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your password!',
+                },
+              ]}>
+                <Input.Password ref={passwordRef}/>
+              </Form.Item>
+    
+              <Form.Item>
+                <a style={{'float':'right'}} onClick={handleForgotPw}>
+                  Forgot password?
+                </a>
+              </Form.Item>
+            </>
+          )}
+          
         </Form>
       </Modal>
     </div>

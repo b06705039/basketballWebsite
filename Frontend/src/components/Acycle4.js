@@ -15,8 +15,20 @@ const MiddleGraph = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    
+`
+const Graph = styled.div`
+    display:flex;
     font-size: 80px;
     font-weight: 50;
+    justify-content: center;
+    position: absolute;
+`
+const GroupSession = styled.div`
+    display:flex;   
+    justify-content: center;    
+    position: absolute;
+    margin-top: 10px;
 `
 
 const BottomLabel = styled.div`
@@ -43,7 +55,8 @@ const Acycle4 = (props) => {
                 <Teamname>{data[1][1].name || data[1][1].session}</Teamname>
             </BottomLabel>
             <MiddleGraph>
-                &#9634;
+                <Graph>&#9634;</Graph>
+                <GroupSession>{props.groupSession}</GroupSession>
             </MiddleGraph>
             <BottomLabel>
                 <Teamname>{data[2][1].name || data[2][1].session}</Teamname>

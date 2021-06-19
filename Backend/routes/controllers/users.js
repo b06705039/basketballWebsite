@@ -37,7 +37,7 @@ router.post("/create", async (req, res) => {
 router.post("/active", async (req, res) => {
   const user_id = req.body.id || "";
   try {
-    const result = await new User().active(user_id);
+    const result = await new User(req.body.token).active(user_id);
     return response.succ(res, result);
   } catch (err) {
     return response.fail(res, err);
@@ -108,5 +108,23 @@ router.post("/update", async (req, res) => {
     return response.fail(res, err);
   }
 });
+
+router.get("/register", async (_, res) => {
+  try {
+    const result = await new User().getRegister();
+    return response.succ(res, result);
+  } catch (err) {
+    return response.fail(res, err);
+  }
+});
+
+router.get("/checkToken", async(req, res) => {
+  try {
+    const result = await new User(req.body.token);
+    return response.succ(res, result);
+  } catch (err) {
+    return response.fail(res, err);
+  }
+})
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import React, { useState, useEffect } from "react";
 import { Team, Match, User, Recorder } from "../axios";
-import config from "../config";
+import config from "./config";
 
 /*
 <table type='users'>  => 使用者資料
@@ -28,8 +28,10 @@ const extension = {
   team_id: 130,
   recorder_id: 130,
   match_id: 130,
-  id: 130,
+  id: 80,
   startDate: 200,
+  homeDepartment: 150,
+  awayDepartment: 150,
 };
 
 const filters = {
@@ -43,7 +45,16 @@ const filters = {
       value: config.department.info[part]["zh"],
     })),
   },
-  teams: {},
+  teams: {
+    status: config.teamstatus.map((status) => ({
+      text: status,
+      value: status,
+    })),
+    department: Object.keys(config.department.info).map((part) => ({
+      text: config.department.info[part]["zh"],
+      value: config.department.info[part]["zh"],
+    })),
+  },
   recorders: {},
   matches: {},
 };
@@ -55,12 +66,12 @@ function Activator(props) {
     setactive(active === "已啟用" ? "未啟用" : "已啟用");
   };
   return props.data.adim !== "主辦單位" ? (
-    <a
+    <h4
       onClick={sendactive}
-      style={{ color: active === "未啟用" ? "red" : undefined }}
+      style={{ color: active === "未啟用" ? "red" : "blue" }}
     >
       {active}
-    </a>
+    </h4>
   ) : (
     <h4>{active}</h4>
   );
@@ -68,7 +79,7 @@ function Activator(props) {
 
 let special = {
   active: {
-    title: "Activator",
+    title: "啟用狀態",
     dataIndex: "",
     render: (data) => <Activator data={data} />,
   },
@@ -96,6 +107,8 @@ export default function (props) {
             if (item in config.translateItem) {
               element[item] = config.translateItem[item](element[item]);
             }
+            if (element[item] === null || element[item] === undefined)
+              element[item] = "NONE";
           }
           element["key"] = index;
           return element;

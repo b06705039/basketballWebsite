@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const serverURL = "http://localhost:4000/";
-
 const testUsers = {
   adiminister: [
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJhY2NvdW50IjoidGhvbXNvbjg2MTEwNiIsInVzZXJuYW1lIjoidGhvbXNvbiIsImVtYWlsIjoidGhvbXNvbjg2MTEwNkBnbWFpbC5jb20iLCJhY3RpdmUiOjEsImFkaW0iOiJhZG1pbmlzdGVyIiwiaWF0IjoxNjIxNjU3MTE4LCJleHAiOjE2Mzk2NTcxMTh9.rx55CJNzevSUFJUP1EFjukPTgs47s2E42Ex-XHe_FdU",
@@ -43,13 +42,14 @@ export const Login = async (account, password) => {
   try {
     let response = await axios({
       method: "PUT",
-      url: serverURL + "/login",
+      url: serverURL + "users/login",
       data: { account, password },
     });
     token = response.data.token;
     return response.data;
   } catch (err) {
-    return `[Login][Error]` + err;
+    // return `[Login][Error]` + err;
+    throw err;
   }
 };
 
@@ -112,6 +112,22 @@ export const Player = {
   }
 }
 
+export const CheckToken = async (storageToken) => {
+  token = storageToken.slice(1,-1);
+
+  try {
+    let response = await axios({
+      method: "GET",
+      url: serverURL + "users/checkToken",
+      headers: { Authorization: token },
+    });
+    return response.data.token;
+  } catch (err) {
+    throw err;
+  }
+}
+
+
 export const User = {
   Create: async (
     account,
@@ -132,7 +148,7 @@ export const User = {
     try {
       let response = await axios({
         method: "POST",
-        url: serverURL + "/users/create",
+        url: serverURL + "users/create",
         data: {
           account,
           username,
@@ -157,7 +173,7 @@ export const User = {
       let response = await axios({
         method: "POST",
         url: serverURL + "users/active",
-        data: { user_id: id },
+        data: { id: id },
         headers: { Authorization: token },
       });
       return response.data;
@@ -165,7 +181,17 @@ export const User = {
       return `[Error][User][Active]` + err;
     }
   },
-
+  GetRegisterData: async () => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "users/register",
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][User][GetRegisterData]` + err;
+    }
+  },
   AccountDelete: async (id) => {
     // [Must] id       User ID
     // [Must] token    使用者登入憑證 {adim: administer}
@@ -215,7 +241,6 @@ export const User = {
       return `[Error][User][GetALLData]` + err;
     }
   },
-
   SendRemindEmail: async (email) => {
     // [Must] email    使用者信箱
 
@@ -228,7 +253,8 @@ export const User = {
       });
       return response.data;
     } catch (err) {
-      return `[Error][User][SendRemindInfo]` + err;
+      // return `[Error][User][SendRemindInfo]` + err;
+      throw err;
     }
   },
 
@@ -250,6 +276,8 @@ export const User = {
       return `[Error][User][Update]` + err;
     }
   },
+
+  
 };
 
 export const Team = {
@@ -339,17 +367,31 @@ export const Team = {
       return `[Error][Team][GetALL]` + err;
     }
   },
+  GetInterGame: async () => {
+    // [Must] token {adim: adiminister}
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/getInterGame",
+        headers: { Authorization: token },
+      });
+      console.log("in axios", response)
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][GetInterGame]` + err;
+    }
+  },
 
-  Update: async (id, name) => {
-    // [Must] id       Team ID
-    // [Must] name     Team Name
-    // [Myst] token    {adim:team}
+  Update: async (name, department) => {
+    // [Must] id       Team name
+    // [Must] name     Team department
+    // [Must] token    {adim:team}
 
     try {
       let response = await axios({
         method: "POST",
         url: serverURL + "teams/update",
-        data: { id, name },
+        data: { name, department },
         headers: { Authorization: token },
       });
       return response.data;
@@ -357,6 +399,40 @@ export const Team = {
       return `[Error][Team][Update]` + err;
     }
   },
+
+  UpdateSession: async(sessionType, id, teamSession) => {
+    // [Must] sessionType     preGame || interGame
+    // [Must] id              Team ID
+    // [Must] teamSession     Team assined session
+    // [Must] token           {adim: adimister} 
+
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/update_session",
+        data: { sessionType, id, teamSession },
+        headers: { Authorization: token }
+      });
+      return response.data;
+    } catch (err) {
+      return `[ERROR][Team][Update_session]` + err;
+    }
+  },
+
+  CheckFillSession: async( sessionType ) => {
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/checkFillSession",
+        params: { sessionType },
+        headers: { Authorization: token }
+      })
+      console.log("in axios, teams, checkFillSession: ", response)
+      return response.data;
+    } catch (err){
+      throw err;
+    }
+  }
 };
 
 export const Time = {
@@ -430,6 +506,7 @@ export const Time = {
       return `[Error][Time][GetTime]` + err;
     }
   },
+  
 };
 
 export const Match = {
@@ -446,7 +523,7 @@ export const Match = {
     }
   },
 
-  Update: async (id, startDate, field, recorder) => {
+  Update: async (id, startDate, field, recorder_id) => {
     try {
       let response = await axios({
         method: "POST",
@@ -455,7 +532,7 @@ export const Match = {
           match_id: id,
           startDate: DateConverter(startDate) || null,
           field: field,
-          recorder: recorder,
+          recorder_id: recorder_id,
         },
         headers: { Authorization: token },
       });
@@ -465,20 +542,62 @@ export const Match = {
     }
   },
 
-  Create: async (home, away) => {
+  Create: async (home, away, stage, stage_session) => {
     try {
       let response = await axios({
         method: "POST",
         url: serverURL + "matches/create",
-        data: { home_id: home, away_id: away },
+        data: { home_id: home, away_id: away, stage: stage, stage_session: stage_session },
         headers: { Authorization: token },
       });
       return response.data;
     } catch (err) {
-      return `[Error][Match][AddMatch]` + err;
+      return `[Error][Match][Create]` + err;
     }
   },
+
+  // CreateInterMatch: async( home, away, stage ) => {
+  //   try{
+  //     let response = await axios({
+  //       method: "POST",
+  //       url: serverURL + "matches/createInterMatch",
+  //       data: { home_id: home, away_id: away, stage: stage},
+  //       headers: { Authorization: token },
+  //     });
+  //     return response.data;
+  //   } catch (err){
+  //     return `[Error][Match][CreateInterMatch]` + err;
+  //   }
+  // },
+  DeleteSession: async( stage ) => {
+    try{
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "matches/deleteSession",
+        params: { stage: stage },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  },
+  CheckIfStage: async( stage ) => {
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "matches/checkIfStage",
+        params: { stage }, 
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      throw err
+    }
+  },
+
 };
+
 
 export const Recorder = {
   Create: async (name, department) => {
@@ -585,16 +704,95 @@ export const Recorder = {
       return `[Error][Recorder][Update]` + err;
     }
   },
+  InCharge: async( id ) => {
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "recorders/Incharge",
+        params: { id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Recorder][Incharge]` + err;
+    }
+  }
 };
+
+
 
 const doLogin = async (username, password) => {
   const msg = { userid: 1, identity: "admin" };
   return msg;
 };
 
-const doSignup = async (department, username, identity, password) => {
+const doSignup = async (SignUpObj) => {
+  const { account, username, password, identity, email, department } =
+    SignUpObj;
+  await User.Create(
+    account,
+    username,
+    password,
+    password,
+    identity,
+    email,
+    department
+  );
+  if (SignUpObj["identity"] === "team") {
+    const { teamname, teamdepartment } = SignUpObj;
+    await Team.Create(teamname, teamdepartment);
+  } else if (SignUpObj["identity"] === "recorder") {
+    await Recorder.Create(username, department);
+  }
   const msg = true;
   return msg;
 };
+
+
+export const Post = {
+  Create: async ( type, title_category, title_content, content ) => {
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "posts/create",
+        data: { type, title_category, title_content, content },
+        headers: { Authorization: token },
+      })
+      return response.data
+    } catch (err) {
+      return err
+    }
+  },
+  GetTypeContent: async( type ) => {
+    try{
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "posts/getType",
+        params: { type },
+        // headers: { Authorization: token }
+      })
+      return response.data
+    } catch (err) {
+      return `[Error][Post][GetTypeContent]`
+    }
+  }
+}
+
+export const Record = {
+  CreateTeamRecord: async( match_id, team_id ) => {
+    try{
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "records/createTeamRecord",
+        data: { match_id, team_id },
+        headers: { Authorization: token }
+      })
+      console.log("in createTeamRecord, res: ", response)
+    } catch (err) {
+      return `[Error][Record][CreateTeamRecord]`
+    }
+  }
+}
+
 
 export { doLogin, doSignup };

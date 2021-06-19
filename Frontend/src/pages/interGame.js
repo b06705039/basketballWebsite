@@ -1,14 +1,13 @@
 import React from 'react'
-
+import InterGameDiv from '../containers/interGameDiv'
+import InterGameProider from '../hooks/useInterGame'
 
 
 const InterGame = () => {
     return(
-        <div className="ant-layout-content" style={{ height: '1000px'}}>
-            <div className="site-layout-content" style={{ padding: '0 50px'}}>
-                <p> This is default page</p>
-            </div>
-        </div>
+        <InterGameProider>
+            <InterGameDiv />
+        </InterGameProider>
     )
 }
 

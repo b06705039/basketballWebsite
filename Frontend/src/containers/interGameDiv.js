@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
-import { Button } from 'antd'
-import PreGameTable from '../components/preGameTable'
-import Cycles from '../components/Cycles'
-import { usePreGame } from '../hooks/usePreGame'
-import { Form, Input, Modal } from 'antd'
+import { Button, Select } from 'antd'
+import InterGameTable from '../components/interGameTable'
+import Kickout from '../components/kickout'
+import { Form, Modal } from 'antd'
+import { useInterGame } from '../hooks/useInterGame'
+const { Option } = Select;
 
 const ContentBackground = styled.div`
     height: 1000px;
@@ -31,7 +32,7 @@ const ButtonDiv = styled.div`
     float: right;
     display: flex;
     justify-content: space-between;
-    width: 225px;
+    width: 250px;
 `
 const StyledButton = styled(Button)`
     height: 33px;
@@ -66,14 +67,13 @@ const formItemLayout = {
     },
   };
 
-const PreGameDiv = () => {
+const InterGameDiv = () => {
 
-    const { saveResult, setCycle3, setCycle4, editable, setEditable, generateModal } = usePreGame()
-    const [ showChangeCycle, setShowChangeCycle ] = useState(false)
-    
-    const cycle3Ref = useRef()
-    const cycle4Ref = useRef()
+    // const { saveResult } = usePreGame()
+    const [ showChangeTeamNum, setShowChangeTeamNum ] = useState(false)
+    const TeamNumRef = useRef()
     const [ form ] = Form.useForm()
+    const { setInterTeamNum, saveResult, editable, setEditable } = useInterGame()
 
     const RightBlock = styled.div`
         padding: 5px;
@@ -81,39 +81,51 @@ const PreGameDiv = () => {
         float:left;
     `
 
-    const handleOK = (e) => {
-        setCycle3(cycle3Ref.current.props.value)
-        setCycle4(cycle4Ref.current.props.value)
-        form.resetFields()
-        setShowChangeCycle(false)
-    }   
+    const generateModal = () =>{
+        let secondsToGo = 5
+        const modal = Modal.success({
+            title: 'This is a notification message',
+            content: `${secondsToGo} 秒後跳轉至結果頁面`,
+        })
+        const timer = setInterval(() => {
+            secondsToGo -= 1
+            modal.update({
+                content: `${secondsToGo} 秒後跳轉至結果頁面`,
+            })
+        }, 1000)
+        setTimeout(() => {
+            clearInterval(timer)
+            modal.destroy()
+            setEditable(false)
+        }, secondsToGo * 1000);
+    }
 
-    
 
     return(
         <>
             <ContentBackground className="ant-layout-content" >
                 <ContentBody className="site-layout-content">
                    <TopDiv>
-                        <Title>預賽安排</Title>
+                        <Title>複賽安排</Title>
                         <ButtonDiv style={{"justifyContent": editable?" space-between":"flex-end"}}>
                             { editable? (<>
-                                                <StyledButton onClick={()=>setShowChangeCycle(true)}>更改循環數目</StyledButton>
+                                                <StyledButton onClick={()=>setShowChangeTeamNum(true)}>更改複賽隊伍數目</StyledButton>
                                                 <StyledButton onClick={()=>{
                                                     saveResult()
+                                                    generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
-                                                <StyledButton onClick={()=>{setEditable(true)}}>更動預賽</StyledButton>
+                                                <StyledButton onClick={()=>{setEditable(true)}}>更動複賽</StyledButton>
                                         )
                             }
                         </ButtonDiv>
                     </TopDiv>
                     <BottomDiv>
                         { editable && ( <LeftBlock>
-                                            <PreGameTable />
+                                            <InterGameTable />
                                         </LeftBlock>)}
                         <RightBlock>
-                            <Cycles />
+                            <Kickout />
                         </RightBlock>
                     </BottomDiv>
                     
@@ -122,9 +134,11 @@ const PreGameDiv = () => {
 
             <>
                 <Modal 
-                visible = { showChangeCycle }
-                onOk = { (e)=>handleOK(e) }
-                onCancel = { ()=>setShowChangeCycle(false) } 
+                visible = { showChangeTeamNum }
+                onOk = { () =>{
+                        setInterTeamNum(TeamNumRef.current.props.value)
+                        setShowChangeTeamNum(false)}}
+                onCancel = { ()=>setShowChangeTeamNum(false) } 
                 >
                     <Form 
                         {...formItemLayout}
@@ -133,18 +147,23 @@ const PreGameDiv = () => {
                         >
                         <h2 style={{textAlign:"center"}}>更改循環數</h2>
                         <Form.Item
-                            name="cycle3Num"
-                            label="三循環數目"
+                            name="Number of Team"
+                            label="numOfTeam"
+                            rules={[ { required: true,}, ]}
                             >
-                            <Input ref={cycle3Ref} />
-                        </Form.Item>
-                        
-                        <Form.Item
-                            name="cycle4Num"
-                            label="四循環數目"
+                            <Select
+                                placeholder="選擇預賽隊伍數"
+                                // onChange={this.onGenderChange}
+                                ref={TeamNumRef}
+                                allowClear
                             >
-                            <Input ref={cycle4Ref} />
-                        </Form.Item>
+                                <Option value="8">8</Option>
+                                <Option value="9">9</Option>
+                                <Option value="10">10</Option>
+                                <Option value="11">11</Option>
+                                <Option value="12">12</Option>
+                            </Select>
+                            </Form.Item>
                     </Form>
                 </Modal>
             </>
@@ -153,4 +172,4 @@ const PreGameDiv = () => {
 }
 
 
-export default PreGameDiv
+export default InterGameDiv
