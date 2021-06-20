@@ -64,6 +64,20 @@ router.get('/getALL', async (req, resp) => {
     }
 });
 
+router.get('/GetTeamIDbyUser', async (req, resp) => {
+    const token = req.body.token;
+    const user_id = req.body.token.user_id
+    console.log('789')
+    console.log(req)
+    console.log(user_id)
+    try {
+        const result = await new Team(token).GetTeamIDbyUser(user_id);
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
 router.get('/getInterGame', async(req, resp) => {
     const token = req.body.token;
     try{

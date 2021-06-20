@@ -51,7 +51,7 @@ export default function News() {
         setNews(()=>newsResult)
     }, [userInfo])
 
-
+    console.log(images)
     return (
         <div className="ant-layout-content" style={{ height: '1000px'}}>
             <LayoutContent className="site-layout-content">

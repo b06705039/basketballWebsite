@@ -3,7 +3,7 @@ import { pagesMenu } from './pagesMenu'
 import { CheckToken, Post } from '../axios'
 
 
-const defId = "public"
+const defId = "administer"
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const { News, 
         PreGame, 

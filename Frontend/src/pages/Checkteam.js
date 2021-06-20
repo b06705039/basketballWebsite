@@ -2,7 +2,9 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Table, Input, Button, Popconfirm, Form, Select} from 'antd';
 import PlayerTable from '../components/PlayerDBtable' 
 import { department } from '../data/data.js'
-import { Team } from '../axios'
+import { usePages } from '../hooks/usePages'
+import { Team, gettoken } from '../axios'
+
 
 const { Option } = Select
 
@@ -13,8 +15,6 @@ async function callAsync(func) {
 }
 
 const EditableContext = React.createContext(null);
-
-
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -116,34 +116,34 @@ class EditableTable extends React.Component {
         title: '隊伍名',
         dataIndex: 'name',
         width: '20%',
-        editable: true,
+        editable: false,
         range: false,
       },
       {
         title: '系所',
         dataIndex: 'department',
         width: '20%',
-        editable: true,
+        editable: false,
         range: false,
       },
       {
         title: '聯絡人',
         dataIndex: 'owner',
         width: '30%',
-        editable: true,
+        editable: false,
         range: false,
       },
       {
         title: '球員名單',
         dataIndex: 'squad',
         range: false,
-        render: (_, record) => <Button type="primary" onClick={()=>this.handleVisible(record.key)}>檢視/修改</Button>
+        render: (_, record) => <Button type="primary" onClick={()=>this.handleVisible(record.key)}>檢視</Button>
       },
       {
         title: '繳費狀態',
         dataIndex: 'status',
         range: ['已繳費', '未繳費', '未報名'],
-        editable: true,
+        editable: false,
       },
       {
         title: '刪除',
@@ -168,11 +168,23 @@ class EditableTable extends React.Component {
   }
 
   async componentDidMount(){
+
     let data = await callAsync(Team.GetALLTeam);
     for(let i = 0; i < data.length; i ++){
       data[i].key = i
     }
+    console.log(456)
     this.setState({dataSource:data, count:data.length})
+    console.log(this.props)
+    if(this.props.adim == 'team'){
+      console.log(this.props.user_id)
+      let team_id = await Team.GetTeamIDbyUser(this.props.user_id)
+      console.log(team_id)
+      this.setState((state, props) => {return {team_id}})
+    }
+    else{
+      console.log(777)
+    }
   }
 
   handleDelete = (key) => {
@@ -198,7 +210,8 @@ class EditableTable extends React.Component {
       dataSource: [...dataSource, newData],
       count: count + 1,
     });
-  };  
+  }; 
+
   handleSave = (row) => {
     const newData = [...this.state.dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
@@ -208,20 +221,25 @@ class EditableTable extends React.Component {
       dataSource: newData,
     });
   };
+
   handleModifiedteam = (key) => {
     if(!this.state.modify_key.includes(key) && !this.state.create_key.includes(key)){
       this.state.modify_key.push(key)
       this.setState({modify_key: this.state.modify_key})
     }
   }
+
   handleCreateteam = (key) => {
     this.state.create_key.push(key)
     this.setState({create_key: this.state.create_key})
   }
+
   handleVisible = (key) => {
     const dataSource = [...this.state.dataSource]
     const index = dataSource.findIndex((item) => key === item.key);
+    console.log(index)
     let team_id = dataSource[index].team_id
+    console.log(team_id)
     this.setState({team_id, visible:!this.state.visible})
   }
 
@@ -244,7 +262,7 @@ class EditableTable extends React.Component {
   }
 
   render() {
-    // console.log('124213')
+    // console.log(gettoken())
     const { dataSource } = this.state;
     const components = {
       body: {
@@ -270,27 +288,10 @@ class EditableTable extends React.Component {
         }),
       };
     });
-    if(this.state.visible){
+    if(this.props.adim == 'administer'){
+      if(this.state.visible){
         return (
             <div>
-              <Button
-                onClick={this.handleAdd}
-                type="primary"
-                style={{
-                  marginBottom: 16,
-                }}
-              >
-                增加新球隊
-              </Button>
-              <Button
-                onClick={this.saveDB}
-                type="primary"
-                style={{
-                  marginBottom: 16,
-                }}
-              >
-                儲存結果
-              </Button>
               <Table
                 components={components}
                 rowClassName={() => 'editable-row'}
@@ -300,11 +301,21 @@ class EditableTable extends React.Component {
               />
             </div>
           );
+      }
+      else{
+          return(
+          <div>
+              <PlayerTable backpage={this.handleBackpage} team_id={this.state.team_id} adim={this.props.adim}/>
+          </div>)
+      }
     }
-    else{
-        return(
+    else if(this.props.adim == 'team'){
+      if(this.state.team_id == null){
+        return(<div>loading</div>)
+      }
+      return(
         <div>
-            <PlayerTable backpage={this.handleBackpage} team_id={this.state.team_id}/>
+            <PlayerTable backpage={this.handleBackpage} team_id={this.state.team_id} adim={this.props.adim}/>
         </div>)
     }
     }

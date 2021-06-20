@@ -15,7 +15,7 @@ class Player {
     }
 }
 
-Player.prototype.create = async function (studentID, teamID, name, grade, number) {
+Player.prototype.create = async function (number, name, team_id, grade, student_id) {
     const TAG = '[PlayerCreate]';
     const logger = new Logger();
     if (this.token.adim !== 'team') {
@@ -23,18 +23,24 @@ Player.prototype.create = async function (studentID, teamID, name, grade, number
         return exception.PermissionError('Permission Deny', 'have no access');
     }
 
-    if (studentID.length === 0) {
+    if (student_id.length === 0) {
         logger.error(TAG, `studentID can not be empty.`);
         throw exception.BadRequestError('BAD_REQUEST', 'studentID can not be empty.');
-    } else if (teamID.length === 0) {
+    } else if (team_id.length === 0) {
         logger.error(TAG, `teamID can not be empty.`);
         throw exception.BadRequestError('BAD_REQUEST', 'teamID can not be empty.');
     }
 
-    const SQL = `INSERT INTO playerInfo (team_id, name) VALUE (${team_id}, "${name}");`
+    let player_id = (await db.execute("SELECT MAX(player_id) FROM playerInfo;"))[0]['MAX(player_id)'];
+    if (tool.isNull(player_id))
+        player_id = 1;
+    else
+        player_id += 1;
+
+    const SQL = `INSERT INTO playerInfo (player_id, team_id, name, number, student_id, grade) VALUE (${player_id}, ${team_id}, "${name}", ${number}, "${student_id}", ${grade});`
     try {
         await db.execute(SQL);
-        return `INSERT INTO playerInfo VALUE (${player_id}, ${name}) success`;
+        return`INSERT INTO playerInfo (player_id, team_id, name, number, student_id, grade) VALUE (${player_id}, ${team_id}, "${name}", ${number}, "${student_id}", ${grade}) success`;
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);
@@ -46,14 +52,9 @@ Player.prototype.delete = async function (player_id) {
     const TAG = '[PlayerDelete]';
     const logger = new Logger();
 
-    if (config.AdimLevel[this.token.adim] < 2) {
+    if (config.AdimLevel[this.token.adim] < 1) {
         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
         return exception.PermissionError('Permission Deny', 'have no access');
-    }
-
-    if (!(await Team.IsVaildTeamID(team_id))) {
-        logger.error(TAG, `Invalid team_id : ${player_id} does not existed.`);
-        throw exception.BadRequestError('BAD_REQUEST', 'Player ID (${player_id}) is invalid.');
     }
 
     const SQL = `DELETE FROM playerInfo WHERE player_id = ${player_id};`;
@@ -93,7 +94,7 @@ Player.prototype.getAllbyTeam = async function (team_id) {
     }
 }
 
-Player.prototype.update = async function (player_id, student_id, number, photo_url, grade, name) {
+Player.prototype.update = async function ({player_id, student_id, number, grade, name}) {
     const TAG = "[TeamUpdate]";
     const logger = new Logger();
     if (this.token.adim !== 'team') {
@@ -102,8 +103,8 @@ Player.prototype.update = async function (player_id, student_id, number, photo_u
     }
 
     const SQL = `UPDATE playerInfo SET student_id=${db.escape(student_id)}, 
-                 number=${db.escape(number)}, photo_url=${db.escape(photo_url)}, grade=${db.escape(grade)},
-                 name=${db.escape(name)},
+                 number=${db.escape(number)}, grade=${db.escape(grade)},
+                 name=${db.escape(name)}
                  WHERE player_id=${player_id};`
     try {
         await db.execute(SQL, {});

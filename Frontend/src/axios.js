@@ -23,6 +23,9 @@ const testUsers = {
 // 調整這去改變目前使用者身分 Ex: testUser.team[0] (0號系隊使用者)
 let token = testUsers.adiminister[0];
 
+export const gettoken = () => {
+  return token
+}
 function DateConverter(date) {
   return date !== null ? new Date(date).toISOString() : null;
 }
@@ -55,24 +58,29 @@ export const Login = async (account, password) => {
 
 export const Player = {
   Create: async (
-    studentID,
-    team,
+    {name,
+    number,
+    student_id,
     grade,
+    team_id}
   ) => {
     // [Must] studentID            學號
     // [Must] department           隊伍 
     // [Must] grade                年級
     // [Q]    PhotoURL?
-
+    console.log(name)
     try {
       let response = await axios({
         method: "POST",
-        url: serverURL + "/players/create",
+        url: serverURL + "players/create",
         data: {
-          studentID,
-          team,
-          grade
+          name,
+          number,
+          student_id,
+          grade,
+          team_id
         },
+        headers: { Authorization: token }
       });
       return response.data;
     } catch (err) {
@@ -80,15 +88,16 @@ export const Player = {
     }
   },
 
-  Delete: async (id) => {
+  Delete: async ({player_id}) => {
     // [Must] id       User ID
     // [Must] token    使用者登入憑證 {adim: administer}
-
+    // player_id = player_id.player_id
+    console.log(player_id)
     try {
       let response = await axios({
         method: "DELETE",
         url: serverURL + "players/delete",
-        data: { studentID: id },
+        data: { player_id },
         headers: { Authorization: token },
       });
       return response.data;
@@ -108,6 +117,24 @@ export const Player = {
       return response.data;
     } catch (err) {
       return `[Error][Player][GetAllPlayerByTeamID]` + err;
+    }
+  },
+
+  Update: async ({player_id, name, number, student_id, grade, team_id}) => {
+    // [Must] id       Team name
+    // [Must] name     Team department
+    // [Must] token    {adim:team}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "players/update",
+        data: { player_id, name, number, student_id, grade, team_id  },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][Update]` + err;
     }
   }
 }
@@ -365,6 +392,21 @@ export const Team = {
       return response.data;
     } catch (err) {
       return `[Error][Team][GetALL]` + err;
+    }
+  },
+  GetTeamIDbyUser: async (user_id) => {
+    // [Must] token    {adim:adimister}
+    console.log(user_id)
+    try {
+      let response = await axios({
+        method: "GET",
+        url: serverURL + "teams/GetTeamIDbyUser",
+        headers: { Authorization: token },
+        query: {user_id}
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][GetTeamIDbyUser]` + err;
     }
   },
   GetInterGame: async () => {

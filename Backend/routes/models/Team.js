@@ -225,9 +225,9 @@ Team.prototype.getALL = async function () {
     );
     return exception.PermissionError("Permission Deny", "have no access");
   }
-
+///
   const SQL = `SELECT 
-            ${config.AdimLevel[this.token.adim] >= 2 ? "team_id, status," : ""}
+            ${config.AdimLevel[this.token.adim] >= 1 ? "team_id, status," : ""}
             userInfo.username AS owner,
             userInfo.department AS ownerDepartment,
             userInfo.email AS email,
@@ -442,6 +442,24 @@ Team.prototype.checkFillSession = async function( sessionType ){
     const countNull = await db.execute(SQL, {});
     return countNull.length===0? true:false;
   } catch (err) {
+    throw err
+  }
+}
+
+Team.prototype.GetTeamIDbyUser = async function(user_id) {
+  const TAG = "[getTeamIDbyUser]"
+  console.log(user_id)
+  if (config.AdimLevel[this.token.adim] < 1){
+    logger.error(TAG, `Public (${this.token.adim}) has no access to ${TAG}.`);
+    return exception.PermissionError('Permission Deny', 'have no access');
+  }
+  const SQL = `SELECT team_id FROM teamInfo WHERE user_id=${user_id};`
+  console.log(TAG)
+  console.log(SQL)
+  try{
+    const result = await db.execute(SQL, {});
+    return result[0]['team_id']
+  } catch(err){
     throw err
   }
 }

@@ -96,25 +96,32 @@ class EditableTable extends React.Component {
     super(props);
     this.columns = [
       {
-        title: 'name',
-        dataIndex: 'name',
+        title: '背號',
+        dataIndex: 'number',
         width: '30%',
         editable: true,
       },
       {
-        title: 'age',
-        dataIndex: 'age',
+        title: '球員名',
+        dataIndex: 'name',
+        editable: true
       },
       {
-        title: 'address',
-        dataIndex: 'address',
+        title: '學號',
+        dataIndex: 'student_id',
+        editable: true
+      },
+      {
+        title: '年級',
+        dataIndex: 'grade',
+        editable: true
       },
       {
         title: 'operation',
         dataIndex: 'operation',
         render: (_, record) =>
           this.state.dataSource.length >= 1 ? (
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
+            <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
               <a>Delete</a>
             </Popconfirm>
           ) : null,
@@ -123,27 +130,32 @@ class EditableTable extends React.Component {
     this.state = {
       dataSource: [],
       count: 0,
+      update_player_id: [],
+      create_key: []
     };
   }
 
   async componentDidMount(){
-    console.log('123')
     let data = await Player.GetAllPlayerByTeamID(this.props.team_id);
-    console.log(data)
     for(let i = 0; i < data.length; i ++){
       data[i].key = i
     }
-    console.log(data)
     this.setState({dataSource:data, count:data.length})
     console.log(this.state)
   }
 
-  handleDelete = (key) => {
+  handleDelete = async (record) => {
     const dataSource = [...this.state.dataSource];
+    let delete_player_id = record.player_id
+    let delete_data = dataSource.filter((item) => item.player_id == delete_player_id)
+    let data = delete_data[0]
+    console.log(data)
+    let result = await Player.Delete(data)
     this.setState({
-      dataSource: dataSource.filter((item) => item.key !== key),
+      dataSource: dataSource.filter((item) => item.key !== record.key),
     });
   };
+
   handleAdd = () => {
     console.log(123)
     const { count, dataSource } = this.state;
@@ -151,26 +163,61 @@ class EditableTable extends React.Component {
     console.log(dataSource)
     const newData = {
       key: count,
-      name: `Edward King ${count}`,
-      age: '32',
-      address: `London, Park Lane no. ${count}`,
+      name: `王大明`,
+      number: '77',
+      team_id: this.props.team_id,
+      student_id: `B09123456`,
+      grade: 1
     };
+    let create_key_tmp = [...this.state.create_key]
+    create_key_tmp.push(count)
     this.setState({
       dataSource: [...dataSource, newData],
       count: count + 1,
+      create_key: create_key_tmp
     });
   };
+
   handleSave = (row) => {
     const newData = [...this.state.dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, { ...item, ...row });
+    let update_player_id = [...this.state.update_player_id]
+    if(!update_player_id.includes(row.player_id)){
+      update_player_id.push(row.player_id)
+    }
     this.setState({
       dataSource: newData,
+      update_player_id
     });
   };
-  
+
+  saveDB = async () => {
+    const dataSource = [...this.state.dataSource]
+    console.log(dataSource)
+    let update_data = dataSource.filter((item) => this.state.update_player_id.includes(item.player_id))
+    let create_data = dataSource.filter((item) => this.state.create_key.includes(item.key))
+    // let delete_data = dataSource.filter((item) => this.state.delete_player_id.includes(item.player_id))
+    console.log(update_data)
+    for(let i = 0; i < update_data.length ; i++){
+      let data = update_data[i]
+      let result = await Player.Update(data)
+    }
+    for(let j = 0; j < create_data.length ; j++){
+      let data = create_data[j]
+      let result = await Player.Create(data)
+    }
+    // for(let k = 0; k < delete_data.length ; k++){
+    //   let data = delete_data[k]
+    //   console.log(data)
+    //   let result = await Player.Delete({data})
+    // }
+  }
+
   render() {
+    console.log(this.props)
+    console.log(this.state)
     const { dataSource } = this.state;
     const components = {
       body: {
@@ -194,9 +241,19 @@ class EditableTable extends React.Component {
         }),
       };
     });
+    if(this.props.adim == 'administer'){
+      return(<div>
+        <Table
+          components={components}
+          rowClassName={() => 'editable-row'}
+          bordered
+          dataSource={dataSource}
+          columns={columns}
+        />
+      </div>)
+    }
     return (
       <div>
-        <Button onClick={() => this.props.backpage()} type="primary"style={{marginBottom: 16,}}>回上頁</Button>
         <Button
           onClick={this.handleAdd}
           type="primary"
@@ -227,4 +284,4 @@ class EditableTable extends React.Component {
   }
 }
 
-export default EditableTable;
+export default EditableTable; 
