@@ -33,7 +33,8 @@ config.translate = {
 const time = ["下午12:30", "晚上6:30", "晚上7:30"];
 
 function Getdepartment(part) {
-  return Department.info[part]["zh"];
+  if (part in Department.info) return Department.info[part]["zh"];
+  else return "NULL";
 }
 function SpecialDate(date) {
   if (date === null) return "NONE";

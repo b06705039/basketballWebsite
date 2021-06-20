@@ -3,6 +3,7 @@ import { User } from "../axios";
 import DepartmentInfo from "../department.json";
 import { Form, Input, Button, Typography, Select, Spin, Card } from "antd";
 import Table from "../components/table";
+import { usePages } from "../hooks/usePages";
 const { Text } = Typography;
 const { Option } = Select;
 const layout = {
@@ -21,6 +22,7 @@ const tailLayout = {
 };
 
 export const UserEditor = () => {
+  const { userInfo } = usePages();
   const [username, setUsername] = useState("");
   const [account, setAccount] = useState("");
   const [email, setEmail] = useState("");
@@ -29,7 +31,8 @@ export const UserEditor = () => {
 
   useEffect(() => {
     (async () => {
-      let response = await User.GetAccountByID(1);
+      if (!userInfo.user_id) return;
+      let response = await User.GetAccountByID(userInfo.user_id);
       setUsername(response.username);
       setAccount(response.account);
       setEmail(response.email);

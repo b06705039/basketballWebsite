@@ -63,7 +63,9 @@ class App extends React.Component {
 
   componentDidMount = () => {
     (async () => {
-      let allmatches = await Match.GetALLMatch();
+      let allmatches = (await Match.GetALLMatch()).filter(
+        (x) => x.stage === "preGame"
+      );
       allmatches.forEach((match, index) => {
         match.text = `${match.home} vs ${match.away}`;
         match.startDate = new Date(match.startDate);
@@ -198,6 +200,9 @@ class App extends React.Component {
             height={50}
             width={"100%"}
             bounceEnabled={true}
+            showScrollbar="always"
+            useNative={false}
+            direction="horizontal"
           >
             <Draggable
               id="DragList"
@@ -298,8 +303,13 @@ class App extends React.Component {
   checkMatches = (id, home, away, startDate, field) => {
     let checkExist = this.state.appointments.find(
       (x) =>
+        startDate !== null &&
+        startDate !== undefined &&
+        x.startDate !== null &&
+        x.startDate !== undefined &&
         new Date(startDate).toISOString() ===
-          new Date(x.startDate).toISOString() && x.field === field
+          new Date(x.startDate).toISOString() &&
+        x.field === field
     );
     if (checkExist !== undefined) {
       console.log(checkExist.startDate, startDate);
@@ -385,11 +395,11 @@ class App extends React.Component {
   };
 
   onAppointmentUpdating = (e) => {
-    console.log(e);
     if (this.uploading) {
       e.cancel = true;
       return;
     }
+    if (e.oldData.recorder_id !== e.newData.recorder_id) return;
     if (e.newData.allDay) e.cancel = true;
     if (e.newData.startDate.getHours() === 0) {
       e.cancel = true;
