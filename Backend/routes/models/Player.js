@@ -58,7 +58,6 @@ Player.prototype.delete = async function (player_id) {
     }
 
     const SQL = `DELETE FROM playerInfo WHERE player_id = ${player_id};`;
-    console.log(SQL);
     try {
         await db.execute(SQL, {});
         return { info: `Delete player ${player_id} Success` };

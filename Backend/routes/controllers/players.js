@@ -11,8 +11,6 @@ router.use('*', aurthor.doAuthAction);
 router.post('/create', async (req, resp) => {
     const token = req.body.token;
     const {number, name, team_id, grade, student_id} = req.body;
-    console.log(req.body)
-    console.log(team_id)
     const photo_url = req.body.photo_url || "";
 
     try {
@@ -25,7 +23,6 @@ router.post('/create', async (req, resp) => {
 
 router.delete('/delete', async (req, resp) => {
     const token = req.body.token;
-    console.log(req)
     const player_id = req.body.player_id || "";
     try {
         const result = await new Player(token).delete(player_id);
@@ -47,7 +44,6 @@ router.get('/data', async (req, resp) => {
 });
 
 router.get('/getAllPlayerByTeamId', async (req, resp) => {
-    console.log('123')
     const token = req.body.token;
     const team_id = req.query.team_id;
     try {

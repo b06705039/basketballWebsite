@@ -312,7 +312,6 @@ class App extends React.Component {
         x.field === field
     );
     if (checkExist !== undefined) {
-      console.log(checkExist.startDate, startDate);
       return false;
     }
     let check = this.state.appointments.filter(

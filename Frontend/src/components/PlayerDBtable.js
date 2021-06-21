@@ -94,39 +94,71 @@ const EditableCell = ({
 class EditableTable extends React.Component {
   constructor(props) {
     super(props);
-    this.columns = [
-      {
-        title: '背號',
-        dataIndex: 'number',
-        width: '30%',
-        editable: true,
-      },
-      {
-        title: '球員名',
-        dataIndex: 'name',
-        editable: true
-      },
-      {
-        title: '學號',
-        dataIndex: 'student_id',
-        editable: true
-      },
-      {
-        title: '年級',
-        dataIndex: 'grade',
-        editable: true
-      },
-      {
-        title: 'operation',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          this.state.dataSource.length >= 1 ? (
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
-              <a>Delete</a>
-            </Popconfirm>
-          ) : null,
-      },
-    ];
+    let isEditable = true
+    if(props.adim == 'administer'){
+      isEditable = false
+    }
+    if(isEditable){
+      this.columns = [
+        {
+          title: '背號',
+          dataIndex: 'number',
+          width: '30%',
+          editable: isEditable,
+        },
+        {
+          title: '球員名',
+          dataIndex: 'name',
+          editable: isEditable
+        },
+        {
+          title: '學號',
+          dataIndex: 'student_id',
+          editable: isEditable
+        },
+        {
+          title: '年級',
+          dataIndex: 'grade',
+          editable: isEditable
+        },
+        {
+          title: 'operation',
+          dataIndex: 'operation',
+          render: (_, record) =>
+            this.state.dataSource.length >= 1 ? (
+              <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
+                <a>Delete</a>
+              </Popconfirm>
+            ) : null,
+        },
+      ];
+    }
+    else{
+      this.columns = [
+        {
+          title: '背號',
+          dataIndex: 'number',
+          width: '30%',
+          editable: isEditable,
+        },
+        {
+          title: '球員名',
+          dataIndex: 'name',
+          editable: isEditable
+        },
+        {
+          title: '學號',
+          dataIndex: 'student_id',
+          editable: isEditable
+        },
+        {
+          title: '年級',
+          dataIndex: 'grade',
+          editable: isEditable
+        }
+      ];
+    };
+    
     this.state = {
       dataSource: [],
       count: 0,
@@ -243,6 +275,15 @@ class EditableTable extends React.Component {
     });
     if(this.props.adim == 'administer'){
       return(<div>
+        <Button
+          onClick={this.props.backpage}
+          type="primary"
+          style={{
+            marginBottom: 16,
+          }}
+        >
+          回上頁
+        </Button>
         <Table
           components={components}
           rowClassName={() => 'editable-row'}

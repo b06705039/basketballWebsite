@@ -143,18 +143,8 @@ class EditableTable extends React.Component {
         title: '繳費狀態',
         dataIndex: 'status',
         range: ['已繳費', '未繳費', '未報名'],
-        editable: false,
-      },
-      {
-        title: '刪除',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          this.state.dataSource.length >= 1 ? (
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-              <a>刪除</a>
-            </Popconfirm>
-          ) : null,
-      },
+        editable: true,
+      }
     ];
     let data = []
     this.state = {
@@ -173,17 +163,10 @@ class EditableTable extends React.Component {
     for(let i = 0; i < data.length; i ++){
       data[i].key = i
     }
-    console.log(456)
     this.setState({dataSource:data, count:data.length})
-    console.log(this.props)
     if(this.props.adim == 'team'){
-      console.log(this.props.user_id)
       let team_id = await Team.GetTeamIDbyUser(this.props.user_id)
-      console.log(team_id)
       this.setState((state, props) => {return {team_id}})
-    }
-    else{
-      console.log(777)
     }
   }
 
@@ -212,11 +195,14 @@ class EditableTable extends React.Component {
     });
   }; 
 
-  handleSave = (row) => {
+  handleSave = async (row) => {
     const newData = [...this.state.dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, { ...item, ...row });
+    let team_id = row.team_id
+    let status = row.status
+    let result = await Team.UpdatePaid(team_id, status)
     this.setState({
       dataSource: newData,
     });

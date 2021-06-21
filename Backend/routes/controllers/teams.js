@@ -67,9 +67,6 @@ router.get('/getALL', async (req, resp) => {
 router.get('/GetTeamIDbyUser', async (req, resp) => {
     const token = req.body.token;
     const user_id = req.body.token.user_id
-    console.log('789')
-    console.log(req)
-    console.log(user_id)
     try {
         const result = await new Team(token).GetTeamIDbyUser(user_id);
         return response.succ(resp, result);
@@ -93,6 +90,17 @@ router.post('/update', async (req, resp) => {
     const { name, department } = req.body;
     try {
         const result = await new Team(token).update(name, department);
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
+router.post('/updatePaid', async (req, resp) => {
+    const token = req.body.token;
+    const { team_id, status } = req.body;
+    try {
+        const result = await new Team(token).updatePaid(team_id, status);
         return response.succ(resp, result);
     } catch (err) {
         return response.fail(resp, err);

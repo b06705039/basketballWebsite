@@ -441,6 +441,23 @@ export const Team = {
       return `[Error][Team][Update]` + err;
     }
   },
+  UpdatePaid: async (team_id, status) => {
+    // [Must] id       Team name
+    // [Must] name     Team department
+    // [Must] token    {adim:team}
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: serverURL + "teams/updatePaid",
+        data: { team_id, status },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Team][UpdatePaid]` + err;
+    }
+  },
 
   UpdateSession: async(sessionType, id, teamSession) => {
     // [Must] sessionType     preGame || interGame
