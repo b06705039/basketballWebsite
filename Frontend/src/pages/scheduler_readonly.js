@@ -74,7 +74,10 @@ class App extends React.Component {
       }));
     })();
   };
-
+  onAppointmentFormOpening = (e) => {
+    e.cancel = true;
+    return;
+  };
   render() {
     const { appointments } = this.state;
     return (

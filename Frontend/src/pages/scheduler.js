@@ -457,6 +457,10 @@ class App extends React.Component {
   onAppointmentFormOpening = (data) => {
     const { homeDepartment, awayDepartment, startDate, recorder_id } =
       data.appointmentData;
+    if (!homeDepartment) {
+      data.cancel = true;
+      return;
+    }
     if (this.checkIfNoGame(startDate)) {
       data.cancel = true;
       return;

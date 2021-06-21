@@ -1,27 +1,30 @@
-import React,{ useState, useContext, useMemo, useEffect } from 'react'
-import { pagesMenu } from './pagesMenu'
-import { CheckToken, Post } from '../axios'
+import React, { useState, useContext, useMemo, useEffect } from "react";
+import { pagesMenu } from "./pagesMenu";
+import { CheckToken, Post } from "../axios";
 
-
-const defId = "administer"
+const defId = "administer";
 // 加入下面這行 const { ..., pageName } = pagesMenu()
-const { News, 
-        PreGame, 
-        Default, 
-        Try , 
-        Scheduler, 
-        Timer, 
-        InterGame, 
-        PostNews,
-        InChargeGame,
-        RecordTeam,
-        Checkteam,
-        GameResult } = pagesMenu()
+const {
+  News,
+  PreGame,
+  Default,
+  Try,
+  Scheduler,
+  Timer,
+  InterGame,
+  PostNews,
+  InChargeGame,
+  RecordTeam,
+  Checkteam,
+  GameResult,
+  SchedulerRead,
+} = pagesMenu();
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
   news: ["最新消息", News],
   schedule: ["賽程時間表", Scheduler],
+  scheduleRead: ["賽程時間表", SchedulerRead],
   gameResult: ["比賽結果", GameResult],
   adminInfo: ["主辦介紹", Default],
   contact: ["聯絡資訊", Default],
@@ -33,14 +36,21 @@ const zhPage = {
   inChargeGame: ["負責賽事", InChargeGame],
   register: ["報名", Default],
   scheduleTime: ["填寫賽程時間", Timer],
-  Checkteam: ['確認隊伍資訊', Checkteam]
+  Checkteam: ["確認隊伍資訊", Checkteam],
 };
 const idPage = {
-    'public':['main','schedule','gameResult','adminInfo','contact'],
-    'administer':['main','teamInfo','schedule','preGame','interGame','annouce', 'Checkteam'],
-    'recorder':['main','inChargeGame','scheduleTime'],
-    'team':['main','register','scheduleTime', 'Checkteam']
-}
+  public: ["main", "scheduleRead", "gameResult", "adminInfo", "contact"],
+  administer: [
+    "main",
+    "schedule",
+    "preGame",
+    "interGame",
+    "annouce",
+    "Checkteam",
+  ],
+  recorder: ["main", "inChargeGame", "scheduleTime", "scheduleRead"],
+  team: ["main", "register", "scheduleTime", "Checkteam", "scheduleRead"],
+};
 
 const Pages = React.createContext();
 
@@ -48,69 +58,67 @@ export function usePages() {
   return useContext(Pages);
 }
 
-const userForm = {  account: null,
-                    active: null, 
-                    adim: 'public', 
-                    email: null, 
-                    token: null,
-                    user_id: null,
-                    username: null }
+const userForm = {
+  account: null,
+  active: null,
+  adim: "public",
+  email: null,
+  token: null,
+  user_id: null,
+  username: null,
+};
 
+export function PagesProvider({ children }) {
+  const [userInfo, setUserInfo] = useState(userForm);
+  const [id, setId] = useState(defId);
+  const [pageList, setPageList] = useState(idPage[id]);
+  const [zhPageList, setZhPageList] = useState(
+    pageList.map((page) => zhPage[page])
+  );
+  const [curPage, setCurPage] = useState(zhPageList[0]);
 
-export function PagesProvider({children}){
-    const [ userInfo, setUserInfo ] = useState(userForm)
-    const [ id, setId ] = useState(defId)
-    const [ pageList, setPageList ] = useState(idPage[id])
-    const [ zhPageList, setZhPageList ] = useState(pageList.map(page=>zhPage[page]))
-    const [ curPage, setCurPage ] = useState(zhPageList[0])
-    
-    const logout = () => {
-        setUserInfo(userForm)
-        localStorage.removeItem("userInfo")
+  const logout = () => {
+    setUserInfo(userForm);
+    localStorage.removeItem("userInfo");
+  };
 
+  useEffect(async () => {
+    const storageUserInfo = localStorage.getItem("userInfo");
+    try {
+      const getUserInfo = await CheckToken(storageUserInfo);
+      if (
+        (JSON.stringify(getUserInfo) === "{}") |
+        (typeof getUserInfo === "undefined")
+      ) {
+        setUserInfo(() => userForm);
+      } else {
+        setUserInfo(() => getUserInfo);
+      }
+    } catch (err) {
+      setUserInfo(() => userForm);
+      localStorage.removeItem("userInfo");
     }
+  }, []);
 
-    useEffect(async()=>{
+  useEffect(() => {
+    const updateId = userInfo["adim"];
+    const updatePageList = idPage[updateId];
+    setId(updateId);
+    setPageList(updatePageList);
+    setZhPageList(updatePageList.map((page) => zhPage[page]));
+    setCurPage(zhPage[updatePageList[0]]);
+  }, [userInfo]);
 
-        const storageUserInfo = localStorage.getItem("userInfo")
-        try{
-            const getUserInfo = await CheckToken(storageUserInfo)
-            if (JSON.stringify(getUserInfo) === '{}' | typeof(getUserInfo)==='undefined'){
-                setUserInfo(()=>userForm)
-            } else {
-                setUserInfo(()=>getUserInfo)
-            }
-        } catch(err) {
-            setUserInfo(()=>userForm)
-            localStorage.removeItem("userInfo")
-        }
+  const value = {
+    id,
+    setId,
+    zhPageList,
+    curPage,
+    setCurPage,
+    userInfo,
+    setUserInfo,
+    logout,
+  };
 
-    },[])
-
-
-    useEffect(() => {
-        const updateId = userInfo['adim']
-        const updatePageList = idPage[updateId]
-        setId(updateId)
-        setPageList(updatePageList)
-        setZhPageList(updatePageList.map(page=>zhPage[page]))
-        setCurPage(zhPage[updatePageList[0]])
-      }, [userInfo])
-
-    const value = {
-        id,
-        setId,
-        zhPageList, 
-        curPage,
-        setCurPage,
-        userInfo,
-        setUserInfo, 
-        logout,
-    }
-
-    return(
-        <Pages.Provider value={value}>
-            {children}
-        </Pages.Provider>
-    )
+  return <Pages.Provider value={value}>{children}</Pages.Provider>;
 }
