@@ -10,6 +10,7 @@ import PostNews from "../pages/postNews";
 import InChargeGame from "../pages/inChargeGame"
 import RecordTeam from "../pages/recordTeam"
 import Checkteam from "../pages/Checkteam"
+import GameResult from "../pages/gameResult"
 // import <pageName> ...
 
 export const pagesMenu = () => {
@@ -25,7 +26,8 @@ export const pagesMenu = () => {
     PostNews,
     InChargeGame,
     RecordTeam,
-    Checkteam
+    Checkteam,
+    GameResult
     // pageNmae
   };
 };
