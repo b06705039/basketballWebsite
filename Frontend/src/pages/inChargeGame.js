@@ -4,7 +4,7 @@ import { Recorder } from '../axios'
 import { List, Divider, Typography } from 'antd'
 import { Link } from 'react-router-dom';
 
-const inChargeGame = () => {
+const InChargeGame = () => {
 
     const [ dataSource, setDataSource ] = useState()
 
@@ -42,4 +42,4 @@ const inChargeGame = () => {
     )
 }
 
-export default inChargeGame
+export default InChargeGame

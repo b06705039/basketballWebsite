@@ -65,11 +65,16 @@ const PostNews = () => {
     const title_contentRef = useRef()
     const urlRef = useRef()
     const [ form ] = Form.useForm()
+
+
     const postNews = async() => {
         try{
-            
-            await Post.Create(createType, title_cateRef.current.props.value || "", 
-                title_contentRef.current.props.value || "",urlRef.current.props.value)
+            if(createType==='news'){
+                await Post.Create(createType, title_cateRef.current.props.value , 
+                title_contentRef.current.props.value ,urlRef.current.props.value)
+            } else {
+                await Post.Create(createType, "圖片" , "圖片",urlRef.current.props.value)
+            }
             form.resetFields()
         } catch(err) {
             throw err

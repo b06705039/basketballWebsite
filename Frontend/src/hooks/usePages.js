@@ -14,13 +14,14 @@ const { News,
         InterGame, 
         PostNews,
         InChargeGame,
-        RecordTeam } = pagesMenu()
+        RecordTeam,
+        GameResult } = pagesMenu()
 
 // 找到相對應頁面，改後面的component
 const zhPage = {
   news: ["最新消息", News],
   schedule: ["賽程時間表", Scheduler],
-  gameResult: ["比賽結果", Default],
+  gameResult: ["比賽結果", GameResult],
   adminInfo: ["主辦介紹", Default],
   contact: ["聯絡資訊", Default],
   main: ["首頁", News],

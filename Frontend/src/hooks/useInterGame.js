@@ -39,9 +39,9 @@ const InterGameProvider = ({children}) => {
 
 
 
-    useMemo(() => {
+    useMemo(async() => {
 
-        setTimeout(() => {
+        // setTimeout(() => {
             let updateDict = {}
             for(let i=1; i<=interTeamNum; i++){
                 updateDict[i.toString()] = {session:i.toString()}
@@ -51,8 +51,8 @@ const InterGameProvider = ({children}) => {
                     updateDict[team[1].session] = {key:team[1].key, name:team[1].name, session:team[1].session}
                 }
             })
-            setMapDict(updateDict)
-        }, 500);
+            await setMapDict(updateDict)
+        // }, 500);
         
     }, [ interTeamNum, interGameTable])
 

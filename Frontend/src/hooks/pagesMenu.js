@@ -9,6 +9,7 @@ import { UserEditor } from "../pages/editor";
 import PostNews from "../pages/postNews";
 import InChargeGame from "../pages/inChargeGame"
 import RecordTeam from "../pages/recordTeam"
+import GameResult from "../pages/gameResult"
 // import <pageName> ...
 
 export const pagesMenu = () => {
@@ -23,7 +24,8 @@ export const pagesMenu = () => {
     InterGame,
     PostNews,
     InChargeGame,
-    RecordTeam
+    RecordTeam,
+    GameResult
     // pageNmae
   };
 };
