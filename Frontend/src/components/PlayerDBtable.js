@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
+import { message, Table, Input, Button, Popconfirm, Form } from 'antd';
 import { Player } from '../axios'
+
 
 const EditableContext = React.createContext(null);
 
@@ -126,8 +127,8 @@ class EditableTable extends React.Component {
           dataIndex: 'operation',
           render: (_, record) =>
             this.state.dataSource.length >= 1 ? (
-              <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
-                <a>Delete</a>
+              <Popconfirm title="確定要刪除嗎?" onConfirm={() => this.handleDelete(record)}>
+                <a>刪除</a>
               </Popconfirm>
             ) : null,
         },
@@ -163,16 +164,22 @@ class EditableTable extends React.Component {
       dataSource: [],
       count: 0,
       update_player_id: [],
-      create_key: []
+      create_key: [],
+      max_number: 0
     };
   }
 
   async componentDidMount(){
     let data = await Player.GetAllPlayerByTeamID(this.props.team_id);
+    let max_number = this.state.max_number
     for(let i = 0; i < data.length; i ++){
       data[i].key = i
+      if(data[i].number > max_number){
+        max_number = data[i].number
+      }
     }
-    this.setState({dataSource:data, count:data.length})
+    max_number = max_number + 1
+    this.setState({dataSource:data, count:data.length, max_number})
     console.log(this.state)
   }
 
@@ -190,13 +197,13 @@ class EditableTable extends React.Component {
 
   handleAdd = () => {
     console.log(123)
-    const { count, dataSource } = this.state;
+    const { count, dataSource, max_number} = this.state;
     console.log(count)
     console.log(dataSource)
     const newData = {
       key: count,
       name: `王大明`,
-      number: '77',
+      number: max_number,
       team_id: this.props.team_id,
       student_id: `B09123456`,
       grade: 1
@@ -206,7 +213,8 @@ class EditableTable extends React.Component {
     this.setState({
       dataSource: [...dataSource, newData],
       count: count + 1,
-      create_key: create_key_tmp
+      create_key: create_key_tmp,
+      max_number: max_number + 1
     });
   };
 
@@ -232,19 +240,29 @@ class EditableTable extends React.Component {
     let create_data = dataSource.filter((item) => this.state.create_key.includes(item.key))
     // let delete_data = dataSource.filter((item) => this.state.delete_player_id.includes(item.player_id))
     console.log(update_data)
+    let flag = false
     for(let i = 0; i < update_data.length ; i++){
       let data = update_data[i]
       let result = await Player.Update(data)
+      if(result.includes('[Error]')){
+        flag = true
+      }
     }
     for(let j = 0; j < create_data.length ; j++){
       let data = create_data[j]
       let result = await Player.Create(data)
+      console.log(result)
+      if(result.includes('[Error]')){
+        flag = true
+      }
     }
-    // for(let k = 0; k < delete_data.length ; k++){
-    //   let data = delete_data[k]
-    //   console.log(data)
-    //   let result = await Player.Delete({data})
-    // }
+    if(!flag){
+      message.info('更新成功!')
+    }
+    else{
+      message.info('更新失敗!')
+    }
+    
   }
 
   render() {

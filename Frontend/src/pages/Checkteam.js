@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Table, Input, Button, Popconfirm, Form, Select} from 'antd';
+import { message, Table, Input, Button, Popconfirm, Form, Select} from 'antd';
 import PlayerTable from '../components/PlayerDBtable' 
 import { department } from '../data/data.js'
 import { usePages } from '../hooks/usePages'
@@ -137,13 +137,27 @@ class EditableTable extends React.Component {
         title: '球員名單',
         dataIndex: 'squad',
         range: false,
+        align: 'center',
         render: (_, record) => <Button type="primary" onClick={()=>this.handleVisible(record.key)}>檢視</Button>
       },
       {
         title: '繳費狀態',
         dataIndex: 'status',
-        range: ['已繳費', '未繳費', '未報名'],
-        editable: true,
+        // editable: true,
+        align: 'middle',
+        render: (_, record) => (<Form.Item
+        // className="editable-cell-value-wrap"
+        style={{
+          paddingTop: 25
+        }}
+        hasFeedback
+        rules={[{ required: true, message: 'Please select!' }]}
+        >
+            <Select defaultValue={record.status} placeholder="Please select" onChange={(value) => { record.status = value;
+                                                                       this.handleSave(record)}}>
+                {this.state.range.map((item) => <Option value={item}>{item}</Option>)}
+            </Select>
+        </Form.Item>)
       }
     ];
     let data = []
@@ -153,7 +167,8 @@ class EditableTable extends React.Component {
       visible: true,
       team_id: null,
       modify_key: [],
-      create_key: []
+      create_key: [],
+      range: ['已繳費', '未繳費', '未報名'],
     };
   }
 
@@ -203,6 +218,13 @@ class EditableTable extends React.Component {
     let team_id = row.team_id
     let status = row.status
     let result = await Team.UpdatePaid(team_id, status)
+    console.log(result)
+    if(result.info.includes('[Error]')){
+      message.info('更新失敗!')
+    }
+    else{
+      message.info('更新成功!')
+    }
     this.setState({
       dataSource: newData,
     });
