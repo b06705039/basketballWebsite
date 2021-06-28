@@ -120,6 +120,20 @@ export const Player = {
     }
   },
 
+  DeleteAllPlayerByTeamID: async(team_id) => {
+    try {
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "players/deleteAllPlayerByTeamID",
+        data: {team_id},
+        headers: { Authorization: token }
+      });
+      return response.data;
+    } catch (err) {
+      return `[Error][Player][DeleteAllPlayerByTeamID]` + err;
+    }
+  },
+
   Update: async ({player_id, name, number, student_id, grade, team_id}) => {
     // [Must] id       Team name
     // [Must] name     Team department

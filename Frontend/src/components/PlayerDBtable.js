@@ -123,7 +123,7 @@ class EditableTable extends React.Component {
           editable: isEditable
         },
         {
-          title: 'operation',
+          title: '操作',
           dataIndex: 'operation',
           render: (_, record) =>
             this.state.dataSource.length >= 1 ? (
@@ -195,8 +195,24 @@ class EditableTable extends React.Component {
     });
   };
 
+  deleteAll = async() => {
+    let result = await Player.DeleteAllPlayerByTeamID(this.props.team_id)
+    console.log(result)
+    if(result.includes('[Error]')){
+      message.info('刪除失敗!')
+    }
+    else{
+      this.setState(
+        {dataSource: [],
+        count: 0,
+        update_player_id: [],
+        create_key: [],
+        max_number: 0})
+      message.info('刪除成功!')
+    }
+  }
+
   handleAdd = () => {
-    console.log(123)
     const { count, dataSource, max_number} = this.state;
     console.log(count)
     console.log(dataSource)
@@ -330,6 +346,15 @@ class EditableTable extends React.Component {
           }}
         >
           儲存結果
+        </Button>
+        <Button
+          onClick={this.deleteAll}
+          type="primary"
+          style={{
+            marginBottom: 16,
+          }}
+        >
+          刪除全部
         </Button>
         <Table
           components={components}

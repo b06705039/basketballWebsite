@@ -32,6 +32,17 @@ router.delete('/delete', async (req, resp) => {
     }
 });
 
+router.delete('/deleteAllPlayerByTeamID', async (req, resp) => {
+    const token = req.body.token;
+    const team_id = req.body.team_id || "";
+    try {
+        const result = await new Player(token).deleteAllPlayerByTeamID(team_id);
+        return response.succ(resp, result);
+    } catch (err) {
+        return response.fail(resp, err);
+    }
+});
+
 router.get('/data', async (req, resp) => {
     const token = req.body.token;
     const player_id = req.query.player_id || "";

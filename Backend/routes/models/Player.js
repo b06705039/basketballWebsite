@@ -60,13 +60,32 @@ Player.prototype.delete = async function (player_id) {
     const SQL = `DELETE FROM playerInfo WHERE player_id = ${player_id};`;
     try {
         await db.execute(SQL, {});
-        return { info: `Delete player ${player_id} Success` };
+        return `Delete player ${player_id} Success`;
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
     }
 
-}
+},
+Player.prototype.deleteAllPlayerByTeamID = async function (team_id) {
+    const TAG = '[PlayerDelete]';
+    const logger = new Logger();
+
+    if (config.AdimLevel[this.token.adim] != 1) {
+        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
+        return exception.PermissionError('Permission Deny', 'have no access');
+    }
+
+    const SQL = `DELETE FROM playerInfo WHERE team_id = ${team_id};`;
+    try {
+        await db.execute(SQL, {});
+        return `Delete all player from team ${team_id} Success`;
+    } catch (err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError('MYSQL Error', '' + err);
+    }
+
+},
 
 Player.prototype.getAllbyTeam = async function (team_id) {
     const TAG = `[TeamGetALL]`
@@ -107,7 +126,7 @@ Player.prototype.update = async function ({player_id, student_id, number, grade,
                  WHERE player_id=${player_id};`
     try {
         await db.execute(SQL, {});
-        return { info: `Update player ${player_id} Success` };
+        return `Update player ${player_id} Success`;
     } catch (err) {
         logger.error(TAG, `Execute MYSQL Failed.`);
         throw exception.BadRequestError('MYSQL Error', '' + err);
