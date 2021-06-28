@@ -40,7 +40,7 @@ Player.prototype.create = async function (number, name, team_id, grade, student_
     const SQL = `INSERT INTO playerInfo (player_id, team_id, name, number, student_id, grade) VALUE (${player_id}, ${team_id}, "${name}", ${number}, "${student_id}", ${grade});`
     try {
         await db.execute(SQL);
-        return`INSERT INTO playerInfo (player_id, team_id, name, number, student_id, grade) VALUE (${player_id}, ${team_id}, "${name}", ${number}, "${student_id}", ${grade}) success`;
+        return {'info': 'success', 'player_id': player_id};
     } catch (err) {
         logger.error(TAG, `Execute MySQL Failed.`);
         throw exception.BadRequestError('MySQL Server Error', '' + err);

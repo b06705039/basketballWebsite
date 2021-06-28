@@ -163,7 +163,7 @@ class EditableTable extends React.Component {
     this.state = {
       dataSource: [],
       count: 0,
-      update_player_id: [],
+      update_player_key: [],
       create_key: [],
       max_number: 0
     };
@@ -239,20 +239,20 @@ class EditableTable extends React.Component {
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, { ...item, ...row });
-    let update_player_id = [...this.state.update_player_id]
-    if(!update_player_id.includes(row.player_id)){
-      update_player_id.push(row.player_id)
+    let update_player_key = [...this.state.update_player_key]
+    if(!update_player_key.includes(row.key) && !this.state.create_key.includes(row.key)){
+      update_player_key.push(row.key)
     }
     this.setState({
       dataSource: newData,
-      update_player_id
+      update_player_key
     });
   };
 
   saveDB = async () => {
     const dataSource = [...this.state.dataSource]
     console.log(dataSource)
-    let update_data = dataSource.filter((item) => this.state.update_player_id.includes(item.player_id))
+    let update_data = dataSource.filter((item) => this.state.update_player_key.includes(item.key))
     let create_data = dataSource.filter((item) => this.state.create_key.includes(item.key))
     // let delete_data = dataSource.filter((item) => this.state.delete_player_id.includes(item.player_id))
     console.log(update_data)
@@ -266,13 +266,17 @@ class EditableTable extends React.Component {
     }
     for(let j = 0; j < create_data.length ; j++){
       let data = create_data[j]
-      let result = await Player.Create(data)
-      console.log(result)
-      if(result.includes('[Error]')){
+      let {info, player_id} = await Player.Create(data)
+      if(info.includes('[Error]')){
         flag = true
+      }
+      else{
+        let index = dataSource.findIndex(x => x.key == data.key)
+        dataSource[index].player_id = player_id
       }
     }
     if(!flag){
+      this.setState(dataSource)
       message.info('更新成功!')
     }
     else{
