@@ -57,7 +57,6 @@ const Teamname = styled.div`
 const Acycle3 = (props) => {
 
     const data = Object.entries(props.data)
-    console.log("in cycle3, ", data)
 
     return (
         <BodyDiv>

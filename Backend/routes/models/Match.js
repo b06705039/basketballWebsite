@@ -71,47 +71,6 @@ Match.prototype.create = async function (
   }
 };
 
-// Match.prototype.createInterMatch = async function ( home_id, away_id, stage ) {
-//     const TAG = '[MatchCreateInterMatch]';
-//     const logger = new Logger();
-//     console.log(this.token);
-//     if (config.AdimLevel[this.token.adim] < 2) {
-//         logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-//         return exception.PermissionError('Permission Deny', 'have no access');
-//     }
-
-//     if (!(await Team.IsVaildTeamID(home_id))) {
-//       logger.error(TAG, `Invalid Home ID (${home_id}).`);
-//       throw exception.BadRequestError(
-//         "BAD_REQUEST",
-//         `Invalid Home ID (${home_id}).`
-//       );
-//     }
-
-//     if (!(await Team.IsVaildTeamID(away_id))) {
-//       logger.error(TAG, `Invalid Away ID (${away_id}).`);
-//       throw exception.BadRequestError(
-//         "BAD_REQUEST",
-//         `Invalid Away ID (${away_id}).`
-//       );
-//     }
-
-//     let match_id = (await db.execute("SELECT MAX(match_id) FROM matchInfo;"))[0][
-//       "MAX(match_id)"
-//     ];
-//     if (tool.isNull(match_id)) match_id = 1;
-//     else match_id += 1;
-
-//     const SQL = `INSERT INTO matchInfo (match_id, home, away, stage) VALUE (${match_id}, ${home_id}, ${away_id}, ${stage});`
-//     try {
-//         await db.execute(SQL);
-//         return `INSERT INTO matchInfo (${match_id}, ${home_id}, ${away_id}, ${stage}) success(createInterMatch)`;
-//     } catch (err) {
-//         logger.error(TAG, `Execute MySQL Failed.`);
-//         throw exception.BadRequestError('MySQL Server Error', '' + err);
-//     }
-
-// };
 
 Match.prototype.delete = async function (match_id) {
   const TAG = "[MatchDelete]";

@@ -1,9 +1,8 @@
 import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
-import { Button, Select } from 'antd'
+import { Button, Select, Form, Modal } from 'antd'
 import InterGameTable from '../components/interGameTable'
 import Kickout from '../components/kickout'
-import { Form, Modal } from 'antd'
 import { useInterGame } from '../hooks/useInterGame'
 const { Option } = Select;
 
@@ -81,24 +80,7 @@ const InterGameDiv = () => {
         float:left;
     `
 
-    const generateModal = () =>{
-        let secondsToGo = 5
-        const modal = Modal.success({
-            title: 'This is a notification message',
-            content: `${secondsToGo} 秒後跳轉至結果頁面`,
-        })
-        const timer = setInterval(() => {
-            secondsToGo -= 1
-            modal.update({
-                content: `${secondsToGo} 秒後跳轉至結果頁面`,
-            })
-        }, 1000)
-        setTimeout(() => {
-            clearInterval(timer)
-            modal.destroy()
-            setEditable(false)
-        }, secondsToGo * 1000);
-    }
+    
 
 
     return(
@@ -112,7 +94,6 @@ const InterGameDiv = () => {
                                                 <StyledButton onClick={()=>setShowChangeTeamNum(true)}>更改複賽隊伍數目</StyledButton>
                                                 <StyledButton onClick={()=>{
                                                     saveResult()
-                                                    generateModal()
                                                 }}>輸出結果</StyledButton>
                                         </>):(
                                                 <StyledButton onClick={()=>{setEditable(true)}}>更動複賽</StyledButton>

@@ -22,24 +22,32 @@ const tailLayout = {
 };
 
 export const UserEditor = () => {
-  const { userInfo } = usePages();
+  const { userInfo, id } = usePages();
   const [username, setUsername] = useState("");
   const [account, setAccount] = useState("");
   const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("ME");
   const [onEdit, setEditMode] = useState();
 
-  useEffect(() => {
-    (async () => {
-      if (!userInfo.user_id) return;
-      let response = await User.GetAccountByID(userInfo.user_id);
+  useEffect(async() => {
+      let response = {}
+      if(id==='public'){
+        console.log("into id===public")
+        response = await User.GetAccountByID(1);
+        console.log("into id===public, response: ", response)
+      }else{
+        console.log("into id!==public", userInfo.user_id)
+        response = await User.GetAccountByID(userInfo.user_id);
+        console.log("into id!==public, response: ", response)
+      }
       setUsername(response.username);
       setAccount(response.account);
       setEmail(response.email);
       setDepartment(response.department);
       setEditMode(false);
-    })();
   }, []);
+
+
   return onEdit === undefined ? (
     <Spin size="large" style={{ marginTop: 30 }} />
   ) : (
@@ -118,25 +126,25 @@ export const UserEditor = () => {
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                if (onEdit)
-                  (async () =>
-                    await User.Update(account, username, email, department))();
-                setEditMode((mode) => !mode);
-              }}
-            >
-              {onEdit ? "Submit" : "Edit"}
-            </Button>
+            {id!=='public' && <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={() => {
+                                  if (onEdit)
+                                    (async () =>
+                                      await User.Update(account, username, email, department))();
+                                  setEditMode((mode) => !mode);
+                                }}
+                              >
+                                {onEdit ? "Submit" : "Edit"}
+                              </Button>}
           </Form.Item>
         </Form>
       </Card>
-      <Table type="users" />
+      {/* <Table type="users" />
       <Table type="teams" />
       <Table type="recorders" />
-      <Table type="matches" />
+      <Table type="matches" /> */}
     </>
   );
 };

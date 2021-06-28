@@ -92,7 +92,6 @@ const PreGameTable = () => {
     
     const [ columns, setColumns ] = useState(PreGameCol)
     const { preGameTable, setPreGameTable } = usePreGame()
-    console.log("in preGameTable", preGameTable)
 
     const handleSave = (row) => {
         const newData = JSON.parse(JSON.stringify(preGameTable))

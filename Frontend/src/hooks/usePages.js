@@ -18,6 +18,7 @@ const {
   Checkteam,
   GameResult,
   SchedulerRead,
+  UserEditor
 } = pagesMenu();
 
 // 找到相對應頁面，改後面的component
@@ -27,7 +28,7 @@ const zhPage = {
   scheduleRead: ["賽程時間表", SchedulerRead],
   gameResult: ["比賽結果", GameResult],
   adminInfo: ["主辦介紹", Default],
-  contact: ["聯絡資訊", Default],
+  contact: ["聯絡資訊", UserEditor],
   main: ["首頁", News],
   teamInfo: ["球隊資訊", Try],
   preGame: ["安排預賽賽程", PreGame],
@@ -39,7 +40,12 @@ const zhPage = {
   Checkteam: ["確認隊伍資訊", Checkteam],
 };
 const idPage = {
-  public: ["main", "scheduleRead", "gameResult", "adminInfo", "contact"],
+  public: [
+    "main", 
+    "scheduleRead", 
+    "gameResult", 
+    // "adminInfo", 
+    "contact"],
   administer: [
     "main",
     "schedule",
@@ -49,7 +55,7 @@ const idPage = {
     "Checkteam",
   ],
   recorder: ["main", "inChargeGame", "scheduleTime", "scheduleRead"],
-  team: ["main", "register", "scheduleTime", "Checkteam", "scheduleRead"],
+  team: ["main", "register", "Checkteam", "scheduleTime", "scheduleRead"],
 };
 
 const Pages = React.createContext();
@@ -81,7 +87,7 @@ export function PagesProvider({ children }) {
     setUserInfo(userForm);
     localStorage.removeItem("userInfo");
   };
-
+  console.log(curPage)
   useEffect(async () => {
     const storageUserInfo = localStorage.getItem("userInfo");
     try {

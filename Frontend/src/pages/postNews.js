@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { Form, Card, Input, Select, Typography, Button } from 'antd'
+import { Form, Input, Select, Typography, Button, Modal } from 'antd'
 import styled from 'styled-components'
 import { Post } from '../axios'
 
@@ -44,8 +44,6 @@ const StyledButton = styled(Button)`
     display: flex;
 `
 
-
-
 const layout = {
     labelCol: {
       span: 4,
@@ -76,9 +74,17 @@ const PostNews = () => {
                 await Post.Create(createType, "圖片" , "圖片",urlRef.current.props.value)
             }
             form.resetFields()
+            generateModal()
         } catch(err) {
             throw err
         }
+    }
+
+    const generateModal = () => {
+        Modal.success({
+            title: '成功',
+            content: '成功新增消息'
+        })
     }
 
     return(
@@ -91,7 +97,15 @@ const PostNews = () => {
                             <StyledButton onClick={()=>postNews()}>發布消息</StyledButton>
                         </ButtonDiv>
                     </TopDiv>
-                    <Form.Item label="更新類型" name="type" labelAlign="left">
+                    <Form.Item label="更新類型" 
+                                name="type" 
+                                labelAlign="left"
+                                rules={[
+                                    {
+                                      required: true,
+                                      message: "Please select a type!",
+                                    }
+                                  ]}>
                         <Select
                             showSearch
                             style={{ width: 200 }}
@@ -105,7 +119,15 @@ const PostNews = () => {
                     </Form.Item>
                     {createType==='news' && (
                         <>
-                            <Form.Item label="消息分類" name="title_category" labelAlign="left">
+                            <Form.Item label="消息分類" 
+                                        name="title_category" 
+                                        labelAlign="left"
+                                        rules={[
+                                            {
+                                              required: true,
+                                              message: "Please select a category!",
+                                            }
+                                          ]}>
                                 <Select
                                     showSearch
                                     style={{ width: 200 }}
@@ -121,13 +143,30 @@ const PostNews = () => {
                                     <Option value="消息">消息</Option>
                                 </Select>
                             </Form.Item>
-                            <Form.Item label="標題" name="title_content" labelAlign="left">
+                            <Form.Item label="標題" 
+                                        name="title_content" 
+                                        labelAlign="left"
+                                        rules={[
+                                            {
+                                              required: true,
+                                              message: "Please input title!",
+                                            }
+                                          ]}>
                                     <Input ref={title_contentRef} />
                             </Form.Item>
                         </>
                     )}
                     
-                    <Form.Item label="連結" name="url" labelAlign="left">
+                    <Form.Item label="連結" 
+                                name="url" 
+                                labelAlign="left"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please input an url!",
+                                        type: 'url'
+                                    }
+                                  ]}>
                             <Input ref={urlRef} />
                     </Form.Item>
                     

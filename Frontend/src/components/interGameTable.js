@@ -21,6 +21,7 @@ const GameCol = [
 const EditableContext = React.createContext(null);
 
 const EditableRow = ({ index, ...props }) => {
+  console.log("in interGameTable, EditableRow: ", index, props)
   const [form] = Form.useForm();
   return (
     <Form form={form} component={false}>
@@ -40,6 +41,13 @@ const EditableCell = ({
       handleSave,
       ...restProps
   }) => {
+      console.log("in interGameTable, EditableCell: ", title,
+      editable,
+      children,
+      dataIndex,
+      record,
+      handleSave,
+      restProps)
       const [editing, setEditing] = useState(false);
       const inputRef = useRef(null);
       const form = useContext(EditableContext);
@@ -84,7 +92,6 @@ const EditableCell = ({
           </div>
       );
     }
-
     return <td {...restProps}>{childNode}</td>;
 };
 
@@ -98,7 +105,6 @@ const InterGameTable = () => {
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
-        console.log("interGame handleSave: ", newData)
         setInterGameTable(()=>newData);
     };
 

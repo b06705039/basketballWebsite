@@ -125,7 +125,7 @@ const PreGamgeProvider = ({children}) => {
         //      create match
         // else, break & show not fill msg
 
-        Object.entries(preGameTable).map(( team ) => {
+        await Object.entries(preGameTable).map(( team ) => {
             const res = Team.UpdateSession('session_preGame', team[1].key, team[1].session)
         })
 
@@ -148,10 +148,10 @@ const PreGamgeProvider = ({children}) => {
                     }
                 }
             })
-
             generateModal('result')
             return
         }else{
+            await Match.DeleteSession('preGame')
             generateModal('not fill session yet')
             return
         }

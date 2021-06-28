@@ -18,7 +18,12 @@ const StyledItem = styled(List.Item)`
   float: center;
 `
 
-const List_component = ({titleName, dataSource, catagoryColName, contentColName, urlColName, edit}) => {
+const StyledA = styled.a`
+  color: black;
+  text-decoration: underline;
+`
+
+const List_component = ({titleName, dataSource, catagoryColName, contentColName, urlColName, edit, generateModal}) => {
 
 // dataSouce must contain property:
 // - createtime
@@ -32,10 +37,12 @@ const List_component = ({titleName, dataSource, catagoryColName, contentColName,
             renderItem={anews => (
                 <>
                   <StyledItem>
-                      <div>{anews.createtime.slice(0,10)}
-                      <Typography.Text style={{"margin":"0 10px"}} mark>[{anews[catagoryColName]}]</Typography.Text> 
-                      {anews[contentColName]}</div>
-                      {edit && <StyledButton>刪除</StyledButton>}
+                      <div>
+                        {anews.createtime.slice(0,10)}
+                        <Typography.Text style={{"margin":"0 10px"}} mark>[{anews[catagoryColName]}]</Typography.Text> 
+                        <StyledA href={anews[urlColName]}>{anews[contentColName]}</StyledA>
+                      </div>
+                      {edit && <StyledButton onClick={()=>generateModal(anews['post_id'])}>刪除</StyledButton>}
                   </StyledItem>
                   
                 </>

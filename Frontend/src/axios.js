@@ -848,7 +848,21 @@ export const Post = {
     } catch (err) {
       return `[Error][Post][GetTypeContent]`
     }
-  }
+  },
+  DeletePost: async( post_id ) => {
+    try{
+      let response = await axios({
+        method: "DELETE",
+        url: serverURL + "posts/deletePost",
+        data: { post_id },
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
 }
 
 export const Record = {

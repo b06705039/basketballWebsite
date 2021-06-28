@@ -37,6 +37,16 @@ router.get("/getType", async(req, res) => {
     }
 })
 
+router.delete("/deletePost", async(req, res) => {
+    const token = req.body.token;
+    const post_id = req.body.post_id;
+    try{
+        const result = await new Post(token).deletePost( post_id )
+        return response.succ(res, result)
+    } catch(err) {
+        return response.fail(res, err)
+    }
+})
 
 
 module.exports = router;

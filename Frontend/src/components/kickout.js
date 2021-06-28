@@ -65,8 +65,6 @@ const Kickout = () => {
     setRenderDict(()=>handleRenderDict())
   }, [mapDict, interTeamNum])
 
-
-
   return (
     <>
         <StyledKickout

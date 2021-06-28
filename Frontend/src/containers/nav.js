@@ -19,7 +19,6 @@ function NavBar(){
         setSignupVisible(true)
     }
 
-
   return (
     <>
       <Menu
@@ -27,7 +26,6 @@ function NavBar(){
         style={{ flexFlow: "nowrap", height: "64px", rowGap: "0px" }}
         theme="dark"
         mode="horizontal"
-        defaultSelectedKeys={["0"]}
         onClick={(e) => {
           setCurPage(e.key);
         }}
@@ -42,7 +40,7 @@ function NavBar(){
           {id === "public" ? (
             <>
               <Menu.Item key="login" onClick={showLogin}>
-                登入
+                <Link to={"/"+zhPageList[0][0]}>登入</Link>
               </Menu.Item>
               <Menu.Item key="signup" onClick={showSignup}>
                 註冊

@@ -53,5 +53,20 @@ Post.prototype.getType = async function( type ){
     }
 }
 
+Post.prototype.deletePost = async function( post_id ){
+    const TAG = "[PostDeleteId]"
+    const logger = new Logger()
+
+    const SQL = `DELETE FROM post WHERE post_id =${post_id}`
+    try{
+        await db.execute(SQL, {})
+        return { info: `Delete post ${post_id} Success` };
+    } catch(err) {
+        logger.error(TAG, `Execute MYSQL Failed.`);
+        throw exception.BadRequestError("MYSQL Server Error", "" + err)
+    }
+}
+
+
 
 module.exports = Post

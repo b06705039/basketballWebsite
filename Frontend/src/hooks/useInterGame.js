@@ -78,23 +78,65 @@ const InterGameProvider = ({children}) => {
     }
 
 
-    const generateKeyinWarn = () =>{
-        console.log("into generateKeyinWarn")
+    // const generateKeyinWarn = () =>{
+    //     console.log("into generateKeyinWarn")
+    //     let secondsToGo = 5
+    //     const modal = Modal.success({
+    //         title: 'This is a notification message',
+    //         content: `未輸入完整資訊`,
+    //     })
+    //     const timer = setInterval(() => {
+    //         secondsToGo -= 1
+    //         // modal.update({
+    //         //     content: `未輸入完整資訊`,
+    //         // })
+    //     }, 1000)
+    //     setTimeout(() => {
+    //         clearInterval(timer)
+    //         modal.destroy()
+    //     }, secondsToGo * 1000);
+    // }
+
+    // const generateModal = () =>{
+    //     let secondsToGo = 5
+    //     const modal = Modal.success({
+    //         title: 'This is a notification message',
+    //         content: `${secondsToGo} 秒後跳轉至結果頁面`,
+    //     })
+    //     const timer = setInterval(() => {
+    //         secondsToGo -= 1
+    //         modal.update({
+    //             content: `${secondsToGo} 秒後跳轉至結果頁面`,
+    //         })
+    //     }, 1000)
+    //     setTimeout(() => {
+    //         clearInterval(timer)
+    //         modal.destroy()
+    //         setEditable(false)
+    //     }, secondsToGo * 1000);
+    // }
+
+    const generateModal = (action) =>{
         let secondsToGo = 5
         const modal = Modal.success({
             title: 'This is a notification message',
-            content: `未輸入完整資訊`,
+            content: action==="result"?`${secondsToGo} 秒後跳轉至結果頁面`:`目前隊伍資訊已儲存`,
         })
         const timer = setInterval(() => {
             secondsToGo -= 1
-            // modal.update({
-            //     content: `未輸入完整資訊`,
-            // })
+            if(secondsToGo>=0 & action==="result"){
+                modal.update({
+                    content: `${secondsToGo} 秒後跳轉至結果頁面`,
+                })
+            }
         }, 1000)
         setTimeout(() => {
-            clearInterval(timer)
+            if(action==="result"){
+                clearInterval(timer)
+            }
             modal.destroy()
-        }, secondsToGo * 1000);
+            setEditable(action==="result"?false:true)
+        }, (secondsToGo+1) * 1000);
     }
 
 
@@ -106,9 +148,9 @@ const InterGameProvider = ({children}) => {
         //      create match
         // else, break & show not fill msg
 
-        Object.entries(interGameTable).map(( team ) => {
-            console.log(" update session2: ", team, team[1].key, team[1].session)
-            Team.UpdateSession('session_interGame', team[1].key, team[1].session)
+        await Object.entries(interGameTable).map( ( team ) => {
+            console.log(" update session2: ", team, team[1].key, team[1].session || '--')
+            Team.UpdateSession('session_interGame', team[1].key, team[1].session || '--')
         })
 
         const teamSessionFill = await Team.CheckFillSession('session_interGame')
@@ -126,7 +168,11 @@ const InterGameProvider = ({children}) => {
             })
             console.log("tempArr: ", tempArr)
             createMatch(tempArr)
+            generateModal('result')
             matchCount = 0
+        }else{
+            await Match.DeleteSession('interGame')
+            generateModal('not fill yet')
         }
     }
 
