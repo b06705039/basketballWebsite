@@ -26,6 +26,7 @@ const StyledGroupTeam = styled.div`
 
 const StyleP = styled.div`
   display: flex;
+  width: min-content;
   
 `
 
@@ -47,7 +48,6 @@ const Kickout = () => {
 
   function handleRenderDict() {
     const mapDictArr = Object.entries(mapDict)
-    console.log(mapDictArr)
     const numArr = groupTeamFunc(interTeamNum)
     let acumNum = 0
     let newMapDict = []
@@ -61,11 +61,11 @@ const Kickout = () => {
     return newMapDict
   }
 
-  useEffect(async () => {
-    await setRenderDict(()=>handleRenderDict())
+  useEffect(() => {
+    setRenderDict(()=>handleRenderDict())
   }, [mapDict, interTeamNum])
 
-  console.log("this is renderDic: ", renderDict)
+
 
   return (
     <>
@@ -76,9 +76,9 @@ const Kickout = () => {
         <BottomDiv>
             {/* {Object.entries(mapDict).map((item,index)=><p key={index}>{item[1].name || item[1].session}</p>)} */}
 
-            {renderDict.map((group,index)=>
+            {renderDict.map((group,index1)=>
               (<StyledGroupTeam>
-                {group.map((team,index)=> <StyleP key={index}>{team[1].name || team[1].session}</StyleP>)}
+                {group.map((team,index2)=> <StyleP key={index2}>{team[1].name || team[1].session}</StyleP>)}
               </StyledGroupTeam>)
             )}
         </BottomDiv>
