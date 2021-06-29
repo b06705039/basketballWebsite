@@ -202,7 +202,6 @@ class App extends React.Component {
             bounceEnabled={true}
             showScrollbar="always"
             useNative={false}
-            direction="horizontal"
           >
             <Draggable
               id="DragList"

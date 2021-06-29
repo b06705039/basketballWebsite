@@ -1,22 +1,17 @@
 import React from "react";
-import Scheduler, {
-  AppointmentDragging,
-  Resource,
-  View,
-} from "devextreme-react/scheduler";
-import Draggable from "devextreme-react/draggable";
-import ScrollView from "devextreme-react/scroll-view";
+import Scheduler, { Resource, View } from "devextreme-react/scheduler";
+
 import notify from "devextreme/ui/notify";
 import AppointmentFormat from "../components/Appointment";
 import AppointmentTooltip from "../components/AppointmentTooltip";
 import "devextreme/dist/css/dx.common.css";
 import "devextreme/dist/css/dx.light.css";
 import "../css/scheduler.css";
-import { Match, Time } from "../axios";
+import { Match } from "../axios";
 import { LoadPanel } from "devextreme-react/load-panel";
 const currentDate = new Date(2021, 4, 24);
 const views = ["workWeek"];
-const draggingGroupName = "appointmentsGroup";
+
 const TimeRangeObject = { 1: "12:30", 2: "18:30", 3: "19:30" };
 
 const FieldData = [

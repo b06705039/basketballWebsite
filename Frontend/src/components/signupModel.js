@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Form, Input, Select, Modal } from "antd";
 import { doSignup, User } from "../axios";
 import Department from "../department.json";
@@ -29,12 +29,12 @@ let CheckInfo = {
 };
 (async () => {
   let response = await User.GetRegisterData();
-  response.user.map((item) => {
+  response.user.forEach((item) => {
     CheckInfo.account.push(item.account);
     CheckInfo.username.push(item.username);
     CheckInfo.email.push(item.email);
   });
-  response.team.map((item) => {
+  response.team.forEach((item) => {
     CheckInfo.teamname.push(item["name"]);
   });
 })();
@@ -116,11 +116,13 @@ export default function SignupModel(props) {
         } else form.submit();
       }}
       onCancel={handleCancel}
-      afterClose={() => {setShowWarn(false)
-                        form.resetFields()}}
-      closable={issignup?false:true}
-      cancelButtonProps={issignup&& {style:{"display":"none"}}}
-      >
+      afterClose={() => {
+        setShowWarn(false);
+        form.resetFields();
+      }}
+      closable={issignup ? false : true}
+      cancelButtonProps={issignup && { style: { display: "none" } }}
+    >
       {issignup && <h2 style={{ textAlign: "center" }}>註冊成功</h2>}
       {!issignup && (
         <Form

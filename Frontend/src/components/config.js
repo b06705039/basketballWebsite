@@ -1,4 +1,3 @@
-import { Result } from "antd";
 import Department from "../department.json";
 const config = {};
 config.department = Department;
