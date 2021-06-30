@@ -1,6 +1,6 @@
-import React, { useState, useContext, useMemo, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { pagesMenu } from "./pagesMenu";
-import { CheckToken, Post } from "../axios";
+import { CheckToken } from "../axios";
 
 const defId = "administer";
 // 加入下面這行 const { ..., pageName } = pagesMenu()
@@ -14,7 +14,6 @@ const {
   InterGame,
   PostNews,
   InChargeGame,
-  RecordTeam,
   Checkteam,
   GameResult,
   SchedulerRead,

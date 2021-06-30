@@ -1,16 +1,13 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { message, Table, Input, Button, Popconfirm, Form, Select} from 'antd';
-import PlayerTable from '../components/PlayerDBtable' 
-import { department } from '../data/data.js'
-import { usePages } from '../hooks/usePages'
-import { Team, gettoken } from '../axios'
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { message, Table, Input, Button, Form, Select } from "antd";
+import PlayerTable from "../components/PlayerDBtable";
+import { Team } from "../axios";
 
-
-const { Option } = Select
+const { Option } = Select;
 
 async function callAsync(func) {
   var x = await func();
-  console.log(x)
+  console.log(x);
   return x;
 }
 
@@ -59,108 +56,129 @@ const EditableCell = ({
       const values = await form.validateFields();
       toggleEdit();
       handleSave({ ...record, ...values });
-      handleModifiedteam(record.key)
+      handleModifiedteam(record.key);
     } catch (errInfo) {
-      console.log('Save failed:', errInfo);
+      console.log("Save failed:", errInfo);
     }
   };
 
   let childNode = children;
 
-if (editable) {
+  if (editable) {
     if (editing) {
-        if(range) {
-            childNode = (<Form.Item
+      if (range) {
+        childNode = (
+          <Form.Item
             className="editable-cell-value-wrap"
             style={{
-            paddingRight: 24,
+              paddingRight: 24,
             }}
             name={dataIndex}
             hasFeedback
-            rules={[{ required: true, message: 'Please select!' }]}
-            >
-                <Select placeholder="Please select" ref={inputRef} onChange={save}>
-                    {range.map((item) => <Option value={item}>{item}</Option>)}
-                </Select>
-            </Form.Item>)
-            }
-        else{
-            childNode = (<Form.Item
+            rules={[{ required: true, message: "Please select!" }]}
+          >
+            <Select placeholder="Please select" ref={inputRef} onChange={save}>
+              {range.map((item) => (
+                <Option value={item}>{item}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        );
+      } else {
+        childNode = (
+          <Form.Item
             style={{
-            margin: 0,
+              margin: 0,
             }}
             name={dataIndex}
-            rules={[{required: true,message: `${title} is required.`,},]}
-            >
+            rules={[{ required: true, message: `${title} is required.` }]}
+          >
             <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-            </Form.Item>
-            )}
-            }
-    else{
-        childNode = (
-            <div className="editable-cell-value-wrap"
-            style={{paddingRight: 24,}}
-            onClick={toggleEdit}
-            >
-            {children}
-            </div>)
-            }
+          </Form.Item>
+        );
+      }
+    } else {
+      childNode = (
+        <div
+          className="editable-cell-value-wrap"
+          style={{ paddingRight: 24 }}
+          onClick={toggleEdit}
+        >
+          {children}
+        </div>
+      );
     }
-    return <td {...restProps}>{childNode}</td>;}
+  }
+  return <td {...restProps}>{childNode}</td>;
+};
 
 class EditableTable extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [
       {
-        title: '隊伍名',
-        dataIndex: 'name',
-        width: '20%',
+        title: "隊伍名",
+        dataIndex: "name",
+        width: "20%",
         editable: false,
         range: false,
       },
       {
-        title: '系所',
-        dataIndex: 'department',
-        width: '20%',
+        title: "系所",
+        dataIndex: "department",
+        width: "20%",
         editable: false,
         range: false,
       },
       {
-        title: '聯絡人',
-        dataIndex: 'owner',
-        width: '30%',
+        title: "聯絡人",
+        dataIndex: "owner",
+        width: "30%",
         editable: false,
         range: false,
       },
       {
-        title: '球員名單',
-        dataIndex: 'squad',
+        title: "球員名單",
+        dataIndex: "squad",
         range: false,
-        align: 'center',
-        render: (_, record) => <Button type="primary" onClick={()=>this.handleVisible(record.key)}>檢視</Button>
+        align: "center",
+        render: (_, record) => (
+          <Button type="primary" onClick={() => this.handleVisible(record.key)}>
+            檢視
+          </Button>
+        ),
       },
       {
-        title: '繳費狀態',
-        dataIndex: 'status',
+        title: "繳費狀態",
+        dataIndex: "status",
         // editable: true,
-        align: 'middle',
-        render: (_, record) => (<Form.Item
-        // className="editable-cell-value-wrap"
-        style={{
-          paddingTop: 25
-        }}
-        hasFeedback
-        rules={[{ required: true, message: 'Please select!' }]}
-        >
-            <Select defaultValue={record.status} placeholder="Please select" onChange={(value) => { record.status = value;
-                                                                       this.handleSave(record)}}>
-                {this.state.range.map((item) => <Option value={item}>{item}</Option>)}
+        align: "middle",
+        render: (_, record) => (
+          <Form.Item
+            // className="editable-cell-value-wrap"
+            style={{
+              paddingTop: 25,
+            }}
+            hasFeedback
+            rules={[{ required: true, message: "Please select!" }]}
+          >
+            <Select
+              defaultValue={record.status}
+              placeholder="Please select"
+              onChange={(value) => {
+                record.status = value;
+                this.handleSave(record);
+              }}
+            >
+              {this.state.range.map((item) => (
+                <Option value={item}>{item}</Option>
+              ))}
             </Select>
-        </Form.Item>)
-      }
+          </Form.Item>
+        ),
+      },
     ];
-    let data = []
+    let data = [];
     this.state = {
       dataSource: data,
       count: data.length + 1,
@@ -168,20 +186,21 @@ class EditableTable extends React.Component {
       team_id: null,
       modify_key: [],
       create_key: [],
-      range: ['已繳費', '未繳費', '未報名'],
+      range: ["已繳費", "未繳費", "未報名"],
     };
   }
 
-  async componentDidMount(){
-
+  async componentDidMount() {
     let data = await callAsync(Team.GetALLTeam);
-    for(let i = 0; i < data.length; i ++){
-      data[i].key = i
+    for (let i = 0; i < data.length; i++) {
+      data[i].key = i;
     }
-    this.setState({dataSource:data, count:data.length})
-    if(this.props.adim == 'team'){
-      let team_id = await Team.GetTeamIDbyUser(this.props.user_id)
-      this.setState((state, props) => {return {team_id}})
+    this.setState({ dataSource: data, count: data.length });
+    if (this.props.adim === "team") {
+      let team_id = await Team.GetTeamIDbyUser(this.props.user_id);
+      this.setState((state, props) => {
+        return { team_id };
+      });
     }
   }
 
@@ -192,7 +211,7 @@ class EditableTable extends React.Component {
     this.setState({
       dataSource: dataSource.filter((item) => item.key !== key),
       modify_key: modify_key.filter((item) => item !== key),
-      create_key: create_key.filter((item) => item !== key)
+      create_key: create_key.filter((item) => item !== key),
     });
   };
 
@@ -200,30 +219,29 @@ class EditableTable extends React.Component {
     const { count, dataSource } = this.state;
     const newData = {
       key: count,
-      name: '未指定',
-      owner: '未指定',
-      status: '未繳費',
+      name: "未指定",
+      owner: "未指定",
+      status: "未繳費",
     };
     this.setState({
       dataSource: [...dataSource, newData],
       count: count + 1,
     });
-  }; 
+  };
 
   handleSave = async (row) => {
     const newData = [...this.state.dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, { ...item, ...row });
-    let team_id = row.team_id
-    let status = row.status
-    let result = await Team.UpdatePaid(team_id, status)
-    console.log(result)
-    if(result.info.includes('[Error]')){
-      message.info('更新失敗!')
-    }
-    else{
-      message.info('更新成功!')
+    let team_id = row.team_id;
+    let status = row.status;
+    let result = await Team.UpdatePaid(team_id, status);
+    console.log(result);
+    if (result.info.includes("[Error]")) {
+      message.info("更新失敗!");
+    } else {
+      message.info("更新成功!");
     }
     this.setState({
       dataSource: newData,
@@ -231,43 +249,50 @@ class EditableTable extends React.Component {
   };
 
   handleModifiedteam = (key) => {
-    if(!this.state.modify_key.includes(key) && !this.state.create_key.includes(key)){
-      this.state.modify_key.push(key)
-      this.setState({modify_key: this.state.modify_key})
+    if (
+      !this.state.modify_key.includes(key) &&
+      !this.state.create_key.includes(key)
+    ) {
+      this.state.modify_key.push(key);
+      this.setState({ modify_key: this.state.modify_key });
     }
-  }
+  };
 
   handleCreateteam = (key) => {
-    this.state.create_key.push(key)
-    this.setState({create_key: this.state.create_key})
-  }
+    this.state.create_key.push(key);
+    this.setState({ create_key: this.state.create_key });
+  };
 
   handleVisible = (key) => {
-    const dataSource = [...this.state.dataSource]
+    const dataSource = [...this.state.dataSource];
     const index = dataSource.findIndex((item) => key === item.key);
-    console.log(index)
-    let team_id = dataSource[index].team_id
-    console.log(team_id)
-    this.setState({team_id, visible:!this.state.visible})
-  }
+    console.log(index);
+    let team_id = dataSource[index].team_id;
+    console.log(team_id);
+    this.setState({ team_id, visible: !this.state.visible });
+  };
 
   handleBackpage = () => {
-    this.setState({visible:!this.state.visible})
-  }
+    this.setState({ visible: !this.state.visible });
+  };
 
   saveDB = async () => {
-    const dataSource = [...this.state.dataSource]
-    let modify_data = dataSource.filter((item) => this.state.modify_key.includes(item.key))
-    let create_data = dataSource.filter((item) => this.state.modify_key.includes(item.key))
-    for(let i = 0; i < modify_data.length ; i++){
-      let data = modify_data[i]
-      let result = await Team.Create(data.name, data.department)
+    const dataSource = [...this.state.dataSource];
+    let modify_data = dataSource.filter((item) =>
+      this.state.modify_key.includes(item.key)
+    );
+    let create_data = dataSource.filter((item) =>
+      this.state.modify_key.includes(item.key)
+    );
+    for (let i = 0; i < modify_data.length; i++) {
+      let data = modify_data[i];
+      await Team.Create(data.name, data.department);
     }
-    for(let j = 0; j < create_data.length ; j++){
-      let data = create_data[j]
-      let result = await Team.update(data.name, data.department)
+    for (let j = 0; j < create_data.length; j++) {
+      let data = create_data[j];
+      await Team.update(data.name, data.department);
     }
-  }
+  };
 
   render() {
     // console.log(gettoken())
@@ -292,41 +317,49 @@ class EditableTable extends React.Component {
           title: col.title,
           range: col.range,
           handleSave: this.handleSave,
-          handleModifiedteam: this.handleModifiedteam
+          handleModifiedteam: this.handleModifiedteam,
         }),
       };
     });
-    if(this.props.adim == 'administer'){
-      if(this.state.visible){
+    if (this.props.adim === "administer") {
+      if (this.state.visible) {
         return (
-            <div>
-              <Table
-                components={components}
-                rowClassName={() => 'editable-row'}
-                bordered
-                dataSource={dataSource}
-                columns={columns}
-              />
-            </div>
-          );
-      }
-      else{
-          return(
           <div>
-              <PlayerTable backpage={this.handleBackpage} team_id={this.state.team_id} adim={this.props.adim}/>
-          </div>)
+            <Table
+              components={components}
+              rowClassName={() => "editable-row"}
+              bordered
+              dataSource={dataSource}
+              columns={columns}
+            />
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <PlayerTable
+              backpage={this.handleBackpage}
+              team_id={this.state.team_id}
+              adim={this.props.adim}
+            />
+          </div>
+        );
       }
-    }
-    else if(this.props.adim == 'team'){
-      if(this.state.team_id == null){
-        return(<div>loading</div>)
+    } else if (this.props.adim === "team") {
+      if (this.state.team_id === null) {
+        return <div>loading</div>;
       }
-      return(
+      return (
         <div>
-            <PlayerTable backpage={this.handleBackpage} team_id={this.state.team_id} adim={this.props.adim}/>
-        </div>)
-    }
+          <PlayerTable
+            backpage={this.handleBackpage}
+            team_id={this.state.team_id}
+            adim={this.props.adim}
+          />
+        </div>
+      );
     }
   }
+}
 export default EditableTable;
 // ReactDOM.render(<EditableTable />, mountNode);

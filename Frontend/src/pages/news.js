@@ -7,37 +7,35 @@ import List from '../components/list'
 
 
 const LayoutContent = styled.div`
-    padding: 0 15%;
-`
+  padding: 0 15%;
+`;
 
 const ContentStyled = styled.div`
-    display: block;
-    width: 100%;
-    height: 600px;
-    color: #fff;
-    line-height: 160px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    
-`
+  display: block;
+  width: 100%;
+  height: 600px;
+  color: #fff;
+  line-height: 160px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+`;
 
 const StyledImage = styled(Image)`
-    height: 100%;
-    width: 100%;
-    display: inline-block;
-    z-index: 0;
-`
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+  z-index: 0;
+`;
 
 const StyledButton = styled(Button)`
-    height: 33px;
-    background-color: #6b9abb;
-    border-radius: 10px;
-    float: right;
-    display: flex;
-    
-`
+  height: 33px;
+  background-color: #6b9abb;
+  border-radius: 10px;
+  float: right;
+  display: flex;
+`;
 
 const EditButton = styled(Button)`
     height: 33px;
@@ -131,4 +129,3 @@ export default function News() {
         </>
     )
 }
-

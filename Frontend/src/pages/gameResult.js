@@ -10,25 +10,24 @@ import InterGameProvider from '../hooks/useInterGame'
 const { Option } = Select;
 
 const ContentBackground = styled.div`
-    height: 1000px;
-    padding: 50px 100px;
-`
+  height: 1000px;
+  padding: 50px 100px;
+`;
 const ContentBody = styled.div`
-    padding: 50px;
-    border: 1px solid black;
-    flex-direction: column;
-    // justify-content: space-between;
-    height:100%;
-`
+  padding: 50px;
+  border: 1px solid black;
+  flex-direction: column;
+  // justify-content: space-between;
+  height: 100%;
+`;
 
 const StyledSelect = styled(Select)`
-    margin: 10px 0;
-`
+  margin: 10px 0;
+`;
 
 const StyledH1 = styled.h1`
-    margin: 15px 30px;
-`
-
+  margin: 15px 30px;
+`;
 
 const GameResult = () => {
 
@@ -63,7 +62,27 @@ const GameResult = () => {
                         ))}
                     </StyledSelect>
 
-                    {subComponent}
+  return (
+    <ContentBackground
+      className="ant-layout-content"
+      style={{ height: "1000px" }}
+    >
+      <ContentBody
+        className="site-layout-content"
+        style={{ padding: "0 50px" }}
+      >
+        <Router>
+          <StyledSelect
+            defaultValue="場次結果"
+            style={{ width: 120 }}
+            onChange={handleChange}
+          >
+            {Object.entries(map2dict).map((Aroute, index) => (
+              <Option key={index} value={Aroute[0]}>
+                {Aroute[0]}
+              </Option>
+            ))}
+          </StyledSelect>
 
                     <Switch>
                         {Object.entries(map2dict).map((Aroute,index)=>(
@@ -75,5 +94,4 @@ const GameResult = () => {
     )
 }
 
-
-export default GameResult
+export default GameResult;

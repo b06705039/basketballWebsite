@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
-// import List from '../components/list'
+import React, { useState, useEffect } from "react";
 import { Recorder } from '../axios'
 import { List, Divider, Typography, Spin } from 'antd'
 import { Link } from 'react-router-dom';
 
 const InChargeGame = () => {
+  const [dataSource, setDataSource] = useState();
 
-    const [ dataSource, setDataSource ] = useState()
+  useEffect(async () => {
+    try {
+      const result = await Recorder.InCharge(8);
+      setDataSource(() => result);
+    } catch (err) {
+      throw err;
+    }
+  }, []);
 
-    useEffect(async() => {
-        try{
-            const result = await Recorder.InCharge(8)
-            setDataSource(()=>result)
-        } catch(err) {
-            throw err
-        }
-    }, [])
-
-    console.log(dataSource)
 
 
     return(

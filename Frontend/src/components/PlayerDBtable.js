@@ -1,16 +1,8 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { message, Table, Input, Button, Popconfirm, Form } from 'antd';
-import { Player } from '../axios'
-
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { message, Table, Input, Button, Popconfirm, Form } from "antd";
+import { Player } from "../axios";
 
 const EditableContext = React.createContext(null);
-
-async function callAsync(func, params) {
-  console.log(params)
-  var x = await func(params);
-  console.log(x)
-  return x;
-}
 
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
@@ -54,7 +46,7 @@ const EditableCell = ({
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
-      console.log('Save failed:', errInfo);
+      console.log("Save failed:", errInfo);
     }
   };
 
@@ -95,142 +87,146 @@ const EditableCell = ({
 class EditableTable extends React.Component {
   constructor(props) {
     super(props);
-    let isEditable = true
-    if(props.adim == 'administer'){
-      isEditable = false
+    let isEditable = true;
+    if (props.adim === "administer") {
+      isEditable = false;
     }
-    if(isEditable){
+    if (isEditable) {
       this.columns = [
         {
-          title: '背號',
-          dataIndex: 'number',
-          width: '30%',
+          title: "背號",
+          dataIndex: "number",
+          width: "30%",
           editable: isEditable,
         },
         {
-          title: '球員名',
-          dataIndex: 'name',
-          editable: isEditable
+          title: "球員名",
+          dataIndex: "name",
+          editable: isEditable,
         },
         {
-          title: '學號',
-          dataIndex: 'student_id',
-          editable: isEditable
+          title: "學號",
+          dataIndex: "student_id",
+          editable: isEditable,
         },
         {
-          title: '年級',
-          dataIndex: 'grade',
-          editable: isEditable
+          title: "年級",
+          dataIndex: "grade",
+          editable: isEditable,
         },
         {
-          title: '操作',
-          dataIndex: 'operation',
+          title: "操作",
+          dataIndex: "operation",
           render: (_, record) =>
             this.state.dataSource.length >= 1 ? (
-              <Popconfirm title="確定要刪除嗎?" onConfirm={() => this.handleDelete(record)}>
-                <a>刪除</a>
+              <Popconfirm
+                title="確定要刪除嗎?"
+                onConfirm={() => this.handleDelete(record)}
+              >
+                <a href="\#">刪除</a>
               </Popconfirm>
             ) : null,
         },
       ];
-    }
-    else{
+    } else {
       this.columns = [
         {
-          title: '背號',
-          dataIndex: 'number',
-          width: '30%',
+          title: "背號",
+          dataIndex: "number",
+          width: "30%",
           editable: isEditable,
         },
         {
-          title: '球員名',
-          dataIndex: 'name',
-          editable: isEditable
+          title: "球員名",
+          dataIndex: "name",
+          editable: isEditable,
         },
         {
-          title: '學號',
-          dataIndex: 'student_id',
-          editable: isEditable
+          title: "學號",
+          dataIndex: "student_id",
+          editable: isEditable,
         },
         {
-          title: '年級',
-          dataIndex: 'grade',
-          editable: isEditable
-        }
+          title: "年級",
+          dataIndex: "grade",
+          editable: isEditable,
+        },
       ];
-    };
-    
+    }
+
     this.state = {
       dataSource: [],
       count: 0,
       update_player_key: [],
       create_key: [],
-      max_number: 0
+      max_number: 0,
     };
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     let data = await Player.GetAllPlayerByTeamID(this.props.team_id);
-    let max_number = this.state.max_number
-    for(let i = 0; i < data.length; i ++){
-      data[i].key = i
-      if(data[i].number > max_number){
-        max_number = data[i].number
+    let max_number = this.state.max_number;
+    for (let i = 0; i < data.length; i++) {
+      data[i].key = i;
+      if (data[i].number > max_number) {
+        max_number = data[i].number;
       }
     }
-    max_number = max_number + 1
-    this.setState({dataSource:data, count:data.length, max_number})
-    console.log(this.state)
+    max_number = max_number + 1;
+    this.setState({ dataSource: data, count: data.length, max_number });
+    console.log(this.state);
   }
 
   handleDelete = async (record) => {
     const dataSource = [...this.state.dataSource];
-    let delete_player_id = record.player_id
-    let delete_data = dataSource.filter((item) => item.player_id == delete_player_id)
-    let data = delete_data[0]
-    console.log(data)
-    let result = await Player.Delete(data)
+    let delete_player_id = record.player_id;
+    let delete_data = dataSource.filter(
+      (item) => item.player_id === delete_player_id
+    );
+    let data = delete_data[0];
+    console.log(data);
+    await Player.Delete(data);
     this.setState({
       dataSource: dataSource.filter((item) => item.key !== record.key),
     });
   };
 
-  deleteAll = async() => {
-    let result = await Player.DeleteAllPlayerByTeamID(this.props.team_id)
-    console.log(result)
-    if(result.includes('[Error]')){
-      message.info('刪除失敗!')
-    }
-    else{
-      this.setState(
-        {dataSource: [],
+  deleteAll = async () => {
+    let result = await Player.DeleteAllPlayerByTeamID(this.props.team_id);
+    console.log(result);
+    if (result.includes("[Error]")) {
+      message.info("刪除失敗!");
+    } else {
+      this.setState({
+        dataSource: [],
         count: 0,
         update_player_id: [],
         create_key: [],
-        max_number: 0})
-      message.info('刪除成功!')
+        max_number: 0,
+      });
+      message.info("刪除成功!");
     }
-  }
+  };
 
   handleAdd = () => {
-    const { count, dataSource, max_number} = this.state;
-    console.log(count)
-    console.log(dataSource)
+    const { count, dataSource, max_number } = this.state;
+    console.log(count);
+    console.log(dataSource);
     const newData = {
       key: count,
       name: `王大明`,
       number: max_number,
       team_id: this.props.team_id,
       student_id: `B09123456`,
-      grade: 1
+      grade: 1,
     };
-    let create_key_tmp = [...this.state.create_key]
-    create_key_tmp.push(count)
+    let create_key_tmp = [...this.state.create_key];
+    create_key_tmp.push(count);
     this.setState({
       dataSource: [...dataSource, newData],
       count: count + 1,
       create_key: create_key_tmp,
-      max_number: max_number + 1
+      max_number: max_number + 1,
     });
   };
 
@@ -239,55 +235,59 @@ class EditableTable extends React.Component {
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, { ...item, ...row });
-    let update_player_key = [...this.state.update_player_key]
-    if(!update_player_key.includes(row.key) && !this.state.create_key.includes(row.key)){
-      update_player_key.push(row.key)
+    let update_player_key = [...this.state.update_player_key];
+    if (
+      !update_player_key.includes(row.key) &&
+      !this.state.create_key.includes(row.key)
+    ) {
+      update_player_key.push(row.key);
     }
     this.setState({
       dataSource: newData,
-      update_player_key
+      update_player_key,
     });
   };
 
   saveDB = async () => {
-    const dataSource = [...this.state.dataSource]
-    console.log(dataSource)
-    let update_data = dataSource.filter((item) => this.state.update_player_key.includes(item.key))
-    let create_data = dataSource.filter((item) => this.state.create_key.includes(item.key))
+    const dataSource = [...this.state.dataSource];
+    console.log(dataSource);
+    let update_data = dataSource.filter((item) =>
+      this.state.update_player_key.includes(item.key)
+    );
+    let create_data = dataSource.filter((item) =>
+      this.state.create_key.includes(item.key)
+    );
     // let delete_data = dataSource.filter((item) => this.state.delete_player_id.includes(item.player_id))
-    console.log(update_data)
-    let flag = false
-    for(let i = 0; i < update_data.length ; i++){
-      let data = update_data[i]
-      let result = await Player.Update(data)
-      if(result.includes('[Error]')){
-        flag = true
+    console.log(update_data);
+    let flag = false;
+    for (let i = 0; i < update_data.length; i++) {
+      let data = update_data[i];
+      let result = await Player.Update(data);
+      if (result.includes("[Error]")) {
+        flag = true;
       }
     }
-    for(let j = 0; j < create_data.length ; j++){
-      let data = create_data[j]
-      let {info, player_id} = await Player.Create(data)
-      if(info.includes('[Error]')){
-        flag = true
+    for (let j = 0; j < create_data.length; j++) {
+      let data = create_data[j];
+      let { info, player_id } = await Player.Create(data);
+      if (info.includes("[Error]")) {
+        flag = true;
+      } else {
+        let index = dataSource.findIndex((x) => x.key === data.key);
+        dataSource[index].player_id = player_id;
       }
-      else{
-        let index = dataSource.findIndex(x => x.key == data.key)
-        dataSource[index].player_id = player_id
-      }
     }
-    if(!flag){
-      this.setState(dataSource)
-      message.info('更新成功!')
+    if (!flag) {
+      this.setState(dataSource);
+      message.info("更新成功!");
+    } else {
+      message.info("更新失敗!");
     }
-    else{
-      message.info('更新失敗!')
-    }
-    
-  }
+  };
 
   render() {
-    console.log(this.props)
-    console.log(this.state)
+    console.log(this.props);
+    console.log(this.state);
     const { dataSource } = this.state;
     const components = {
       body: {
@@ -311,25 +311,27 @@ class EditableTable extends React.Component {
         }),
       };
     });
-    if(this.props.adim == 'administer'){
-      return(<div>
-        <Button
-          onClick={this.props.backpage}
-          type="primary"
-          style={{
-            marginBottom: 16,
-          }}
-        >
-          回上頁
-        </Button>
-        <Table
-          components={components}
-          rowClassName={() => 'editable-row'}
-          bordered
-          dataSource={dataSource}
-          columns={columns}
-        />
-      </div>)
+    if (this.props.adim === "administer") {
+      return (
+        <div>
+          <Button
+            onClick={this.props.backpage}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            回上頁
+          </Button>
+          <Table
+            components={components}
+            rowClassName={() => "editable-row"}
+            bordered
+            dataSource={dataSource}
+            columns={columns}
+          />
+        </div>
+      );
     }
     return (
       <div>
@@ -362,7 +364,7 @@ class EditableTable extends React.Component {
         </Button>
         <Table
           components={components}
-          rowClassName={() => 'editable-row'}
+          rowClassName={() => "editable-row"}
           bordered
           dataSource={dataSource}
           columns={columns}
@@ -372,4 +374,4 @@ class EditableTable extends React.Component {
   }
 }
 
-export default EditableTable; 
+export default EditableTable;

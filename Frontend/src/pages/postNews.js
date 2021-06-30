@@ -3,39 +3,38 @@ import { Form, Input, Select, Typography, Button, Modal } from 'antd'
 import styled from 'styled-components'
 import { Post } from '../axios'
 
-const { Text } = Typography;
 const { Option } = Select;
 
 const ContentBackground = styled.div`
-    height: 1000px;
-    padding: 50px 100px;
-`
+  height: 1000px;
+  padding: 50px 100px;
+`;
 const TopDiv = styled.div`
-    height: 64px;
-    margin: 0 0 20px 0;
-`
+  height: 64px;
+  margin: 0 0 20px 0;
+`;
 
 const ContentBody = styled.div`
-    padding: 50px;
-    border: 1px solid black;
-    flex-direction: column;
-    // justify-content: space-between;
-    height:100%;
-`
+  padding: 50px;
+  border: 1px solid black;
+  flex-direction: column;
+  // justify-content: space-between;
+  height: 100%;
+`;
 
 const StyledForm = styled(Form)`
-    margin: 50px;
-`
+  margin: 50px;
+`;
 
 const Title = styled.h1`
-    float: left;
-`
+  float: left;
+`;
 const ButtonDiv = styled.div`
-    float: right;
-    display: flex;
-    justify-content: flex-end;
-    width: 225px;
-`
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  width: 225px;
+`;
 const StyledButton = styled(Button)`
     height: 33px;
     background-color: #6b9abb;
@@ -45,18 +44,15 @@ const StyledButton = styled(Button)`
 `
 
 const layout = {
-    labelCol: {
-      span: 4,
-    },
-    wrapperCol: {
-      span: 16,
-    },
+  labelCol: {
+    span: 4,
+  },
+  wrapperCol: {
+    span: 16,
+  },
 };
 
-
-
 const PostNews = () => {
-
 
     const [ createType, setCreateType ] = useState('news')
     const title_cateRef = useRef()
@@ -64,20 +60,25 @@ const PostNews = () => {
     const urlRef = useRef()
     const [ form ] = Form.useForm()
 
-
-    const postNews = async() => {
-        try{
-            if(createType==='news'){
-                await Post.Create(createType, title_cateRef.current.props.value , 
-                title_contentRef.current.props.value ,urlRef.current.props.value)
-            } else {
-                await Post.Create(createType, "圖片" , "圖片",urlRef.current.props.value)
-            }
-            form.resetFields()
-            generateModal()
-        } catch(err) {
-            throw err
-        }
+    try {
+      if (createType === "news") {
+        await Post.Create(
+          createType,
+          title_cateRef.current.props.value,
+          title_contentRef.current.props.value,
+          urlRef.current.props.value
+        );
+      } else {
+        await Post.Create(
+          createType,
+          "圖片",
+          "圖片",
+          urlRef.current.props.value
+        );
+      }
+      form.resetFields();
+    } catch (err) {
+      throw err;
     }
 
     const generateModal = () => {
