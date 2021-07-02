@@ -60,27 +60,31 @@ const PostNews = () => {
     const urlRef = useRef()
     const [ form ] = Form.useForm()
 
-    try {
-      if (createType === "news") {
-        await Post.Create(
-          createType,
-          title_cateRef.current.props.value,
-          title_contentRef.current.props.value,
-          urlRef.current.props.value
-        );
-      } else {
-        await Post.Create(
-          createType,
-          "圖片",
-          "圖片",
-          urlRef.current.props.value
-        );
+
+    const postNews = async() => {
+      try {
+        if (createType === "news") {
+          Post.Create(
+            createType,
+            title_cateRef.current.props.value,
+            title_contentRef.current.props.value,
+            urlRef.current.props.value
+          );
+        } else {
+          Post.Create(
+            createType,
+            "圖片",
+            "圖片",
+            urlRef.current.props.value
+          );
+        }
+        form.resetFields();
+      } catch (err) {
+        throw err;
       }
-      form.resetFields();
-    } catch (err) {
-      throw err;
     }
 
+    
     const generateModal = () => {
         Modal.success({
             title: '成功',
@@ -119,7 +123,7 @@ const PostNews = () => {
                         </Select>
                     </Form.Item>
                     {createType==='news' && (
-                        <>
+                        <React.Fragment>
                             <Form.Item label="消息分類" 
                                         name="title_category" 
                                         labelAlign="left"
@@ -155,7 +159,7 @@ const PostNews = () => {
                                           ]}>
                                     <Input ref={title_contentRef} />
                             </Form.Item>
-                        </>
+                        </React.Fragment>
                     )}
                     
                     <Form.Item label="連結" 

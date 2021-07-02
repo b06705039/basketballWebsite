@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Team, Match } from "../axios";
+import { Modal } from 'antd'
 
 const InterGameData = React.createContext();
 
@@ -94,6 +95,9 @@ const InterGameProvider = ({ children }) => {
             await Match.DeleteSession('interGame')
             generateModal('not fill yet')
         }
+  }
+
+  
   useMemo(async () => {
     // setTimeout(() => {
     let updateDict = {};

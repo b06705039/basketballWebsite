@@ -20,7 +20,7 @@ function NavBar(){
     }
 
   return (
-    <>
+    <React.Fragment>
       <Menu
         className="ant-row"
         style={{ flexFlow: "nowrap", height: "64px", rowGap: "0px" }}
@@ -38,16 +38,16 @@ function NavBar(){
           <div style={{width:"-webkit-fill-available"}}></div>
           
           {id === "public" ? (
-            <>
+            <React.Fragment>
               <Menu.Item key="login" onClick={showLogin}>
                 <Link to={"/"+zhPageList[0][0]}>登入</Link>
               </Menu.Item>
               <Menu.Item key="signup" onClick={showSignup}>
                 註冊
               </Menu.Item>
-            </>
+            </React.Fragment>
           ) : (
-            <>
+            <React.Fragment>
               <Menu.Item>
               <Link to={"/profile"}>
                 <Avatar
@@ -61,14 +61,14 @@ function NavBar(){
                 登出
               </Link> 
             </Menu.Item>
-            </>
+            </React.Fragment>
           )}
       </Menu>
       
 
       <LoginModel visible={loginVisible} setVisible={setLoginVisible} />
       <SignupModel visible={signupVisible} setVisible={setSignupVisible} />
-    </>
+    </React.Fragment>
   );
 }
 

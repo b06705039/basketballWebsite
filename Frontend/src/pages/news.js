@@ -87,7 +87,7 @@ export default function News() {
 
 
     return (
-        <>
+        <React.Fragment>
             <div className="ant-layout-content" style={{ height: '1000px'}}>
                 <LayoutContent className="site-layout-content">
 
@@ -126,6 +126,6 @@ export default function News() {
             </div>
 
         
-        </>
+        </React.Fragment>
     )
 }

@@ -46,7 +46,7 @@ export default function SignupModel(props) {
   const [showWarn, setShowWarn] = useState(false);
   const IdentityMode = {
     team: (
-      <>
+      <React.Fragment>
         <Form.Item
           name="teamname"
           label="隊伍名稱"
@@ -87,7 +87,7 @@ export default function SignupModel(props) {
             ))}
           </Select>
         </Form.Item>
-      </>
+      </React.Fragment>
     ),
   };
 

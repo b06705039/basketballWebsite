@@ -46,7 +46,7 @@ const PreGamgeProvider = ({ children }) => {
       } else {
         console.log("in preGame, error with the team number");
       }
-    } catch {
+    } catch(e) {
       console.log("in preGame, Signup teams count is below 3");
     }
   }, [preGameTable]);

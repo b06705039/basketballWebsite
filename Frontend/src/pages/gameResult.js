@@ -51,16 +51,6 @@ const GameResult = () => {
         setSubComponent(()=>map2dict[value])
     }
 
-    return(
-        <ContentBackground className="ant-layout-content" style={{ height: '1000px'}}>
-            <ContentBody className="site-layout-content" style={{ padding: '0 50px'}}>
-                <Router>
-
-                    <StyledSelect defaultValue="複賽" style={{ width: 120 }} onChange={handleChange}>
-                        {Object.entries(map2dict).map((Aroute,index)=>(
-                            <Option key={index} value={Aroute[0]}>{Aroute[0]}</Option>
-                        ))}
-                    </StyledSelect>
 
   return (
     <ContentBackground
@@ -88,10 +78,10 @@ const GameResult = () => {
                         {Object.entries(map2dict).map((Aroute,index)=>(
                             <Route key={index} path={"/比賽結果/"+Aroute[0]} component={Aroute[1][0]} />))}
                     </Switch>
-                </Router>
-            </ContentBody>
-        </ContentBackground>
-    )
+        </Router>
+      </ContentBody>
+    </ContentBackground>
+  )
 }
 
 export default GameResult;

@@ -88,7 +88,7 @@ const PreGameDiv = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <ContentBackground className="ant-layout-content">
         <ContentBody className="site-layout-content">
           <TopDiv>
@@ -99,7 +99,7 @@ const PreGameDiv = () => {
               }}
             >
               {editable ? (
-                <>
+                <React.Fragment>
                   <StyledButton onClick={() => setShowChangeCycle(true)}>
                     更改循環數目
                   </StyledButton>
@@ -110,7 +110,7 @@ const PreGameDiv = () => {
                   >
                     輸出結果
                   </StyledButton>
-                </>
+                </React.Fragment>
               ) : (
                 <StyledButton
                   onClick={() => {
@@ -135,7 +135,7 @@ const PreGameDiv = () => {
         </ContentBody>
       </ContentBackground>
 
-      <>
+      <React.Fragment>
         <Modal
           visible={showChangeCycle}
           onOk={(e) => handleOK(e)}
@@ -152,8 +152,8 @@ const PreGameDiv = () => {
             </Form.Item>
           </Form>
         </Modal>
-      </>
-    </>
+      </React.Fragment>
+    </React.Fragment>
   );
 };
 

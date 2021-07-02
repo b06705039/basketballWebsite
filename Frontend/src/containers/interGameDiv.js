@@ -84,18 +84,16 @@ const InterGameDiv = () => {
 
 
     return(
-        <>
+        <React.Fragment>
             <ContentBackground className="ant-layout-content" >
                 <ContentBody className="site-layout-content">
                    <TopDiv>
                         <Title>複賽安排</Title>
                         <ButtonDiv style={{"justifyContent": editable?" space-between":"flex-end"}}>
-                            { editable? (<>
+                            { editable? (<React.Fragment>
                                                 <StyledButton onClick={()=>setShowChangeTeamNum(true)}>更改複賽隊伍數目</StyledButton>
-                                                <StyledButton onClick={()=>{
-                                                    saveResult()
-                                                }}>輸出結果</StyledButton>
-                                        </>):(
+                                                <StyledButton onClick={()=>{saveResult()}}>輸出結果</StyledButton>
+                                        </React.Fragment>):(
                                                 <StyledButton onClick={()=>{setEditable(true)}}>更動複賽</StyledButton>
                                         )
                             }
@@ -113,7 +111,7 @@ const InterGameDiv = () => {
                 </ContentBody>
             </ContentBackground>
 
-            <>
+            <React.Fragment>
                 <Modal 
                 visible = { showChangeTeamNum }
                 onOk = { () =>{
@@ -147,8 +145,8 @@ const InterGameDiv = () => {
                             </Form.Item>
                     </Form>
                 </Modal>
-            </>
-        </>
+            </React.Fragment>
+        </React.Fragment>
     )
 }
 

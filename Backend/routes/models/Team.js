@@ -264,7 +264,7 @@ Team.prototype.getInterGame = async function(){
     FROM teamInfo
     LEFT JOIN userInfo ON 
         userInfo.user_id = teamInfo.user_id
-    WHERE teamInfo.session_interGame <> 'out';`;
+    WHERE teamInfo.session_interGame </React.Fragment> 'out';`;
 
     try {
         return (await db.execute(SQL, {}));

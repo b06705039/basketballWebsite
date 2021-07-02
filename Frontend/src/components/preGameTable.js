@@ -88,7 +88,6 @@ const EditableCell = ({
 };
 
 const PreGameTable = () => {
-    s
     const [ columns, setColumns ] = useState(PreGameCol)
     const { preGameTable, setPreGameTable } = usePreGame()
 
@@ -124,7 +123,7 @@ const PreGameTable = () => {
   });
 
   return (
-    <>
+    <React.Fragment>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
@@ -132,7 +131,7 @@ const PreGameTable = () => {
         dataSource={preGameTable}
         columns={Columns}
       />
-    </>
+    </React.Fragment>
   );
 };
 

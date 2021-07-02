@@ -51,7 +51,7 @@ export const UserEditor = () => {
   return onEdit === undefined ? (
     <Spin size="large" style={{ marginTop: 30 }} />
   ) : (
-    <>
+    <React.Fragment>
       <Card title="個人資訊" style={{ width: 550, margin: 25 }} bordered={true}>
         <Form {...layout} name="basic">
           <Form.Item label="使用者名稱" name="username" labelAlign="left">
@@ -145,6 +145,6 @@ export const UserEditor = () => {
       <Table type="teams" />
       <Table type="recorders" />
       <Table type="matches" /> */}
-    </>
+    </React.Fragment>
   );
 };

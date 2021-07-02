@@ -43,14 +43,14 @@ export default function LoginModel(props) {
         setUserInfo(msg);
         props.setVisible(false);
         setShowWarn(false);
-      } catch {
+      } catch(e) {
         setShowWarn(true);
       }
     } else {
       try {
         await User.SendRemindEmail(emailRef.current.props.value);
         setShowWarn(false);
-      } catch {
+      } catch(e) {
         setShowWarn(true);
       }
     }
@@ -84,7 +84,7 @@ export default function LoginModel(props) {
       >
         <Form {...formItemLayout} style={{ textAlign: "center" }} form={form}>
           {showForgetPw ? (
-            <>
+            <React.Fragment>
               <h2 style={{ textAlign: "center" }}>寄密碼到您的信箱</h2>
               <h4
                 style={{
@@ -98,9 +98,9 @@ export default function LoginModel(props) {
               <Form.Item name="email" label="Email">
                 <Input ref={emailRef} />
               </Form.Item>
-            </>
+            </React.Fragment>
           ) : (
-            <>
+            <React.Fragment>
               <h2 style={{ textAlign: "center" }}>登入</h2>
               <h4
                 style={{
@@ -137,7 +137,7 @@ export default function LoginModel(props) {
                   Forgot password?
                 </a>
               </Form.Item>
-            </>
+            </React.Fragment>
           )}
         </Form>
       </Modal>

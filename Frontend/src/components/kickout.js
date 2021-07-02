@@ -63,7 +63,7 @@ const Kickout = () => {
   }, [mapDict, interTeamNum])
 
   return (
-    <>
+    <React.Fragment>
       <StyledKickout
         src={"/img/interGame" + interTeamNum.toString() + ".png"}
         preview={false}
@@ -77,7 +77,7 @@ const Kickout = () => {
               </StyledGroupTeam>)
             )}
         </BottomDiv>
-    </>
+    </React.Fragment>
   );
 };
 

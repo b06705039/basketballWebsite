@@ -15,17 +15,15 @@ const CycleDiv = styled.div`
 
 
 const Cycles = () => {
-  const { mapDict } = usePreGame();
 
     const { mapDict, editable } = usePreGame()
     const { id } = usePages()
     
-    console.log("in cycle: ", editable)
 
     return (
         <CycleDiv>
             { (id!=='administer' && editable)?
-                <><p>未發布預賽</p></>:
+                <React.Fragment><p>未發布預賽</p></React.Fragment>:
                 mapDict && Object.entries(mapDict).map((sessionObject, index)=>{
                     if(Object.keys(sessionObject[1]).length ===3){
                         return <Acycle3 key={index} groupSession={sessionObject[0]} data={sessionObject[1]} />

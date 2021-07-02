@@ -29,13 +29,13 @@ const List_component = ({titleName, dataSource, catagoryColName, contentColName,
 // - createtime
 
   return (
-    <>
+    <React.Fragment>
         <Divider orientation="left">{titleName}</Divider>
             <List
             bordered
             dataSource={dataSource}
             renderItem={anews => (
-                <>
+                <React.Fragment>
                   <StyledItem>
                       <div>
                         {anews.createtime.slice(0,10)}
@@ -45,10 +45,10 @@ const List_component = ({titleName, dataSource, catagoryColName, contentColName,
                       {edit && <StyledButton onClick={()=>generateModal(anews['post_id'])}>刪除</StyledButton>}
                   </StyledItem>
                   
-                </>
+                </React.Fragment>
             )}
             />
-    </>
+    </React.Fragment>
   );
 }
 

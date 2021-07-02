@@ -124,7 +124,7 @@ const InterGameTable = () => {
   });
 
   return (
-    <>
+    <React.Fragment>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
@@ -132,7 +132,7 @@ const InterGameTable = () => {
         dataSource={interGameTable}
         columns={Columns}
       />
-    </>
+    </React.Fragment>
   );
 };
 
