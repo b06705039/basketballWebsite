@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import { pagesMenu } from "./pagesMenu";
 import { CheckToken } from "../axios";
 
-const defId = "administer";
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const {
   News,
@@ -17,7 +16,7 @@ const {
   Checkteam,
   GameResult,
   SchedulerRead,
-  UserEditor
+  UserEditor,
 } = pagesMenu();
 
 // 找到相對應頁面，改後面的component
@@ -40,11 +39,12 @@ const zhPage = {
 };
 const idPage = {
   public: [
-    "main", 
-    "scheduleRead", 
-    "gameResult", 
-    // "adminInfo", 
-    "contact"],
+    "main",
+    "scheduleRead",
+    "gameResult",
+    // "adminInfo",
+    "contact",
+  ],
   administer: [
     "main",
     "schedule",
@@ -75,7 +75,7 @@ const userForm = {
 
 export function PagesProvider({ children }) {
   const [userInfo, setUserInfo] = useState(userForm);
-  const [id, setId] = useState(defId);
+  const [id, setId] = useState(userForm.adim);
   const [pageList, setPageList] = useState(idPage[id]);
   const [zhPageList, setZhPageList] = useState(
     pageList.map((page) => zhPage[page])
@@ -86,24 +86,32 @@ export function PagesProvider({ children }) {
     setUserInfo(userForm);
     localStorage.removeItem("userInfo");
   };
-  console.log(curPage)
-  useEffect(async () => {
-    const storageUserInfo = localStorage.getItem("userInfo");
-    try {
-      const getUserInfo = await CheckToken(storageUserInfo);
-      if (
-        (JSON.stringify(getUserInfo) === "{}") |
-        (typeof getUserInfo === "undefined")
-      ) {
+
+  useEffect(() => {
+    async function getData() {
+      const storageUserInfo = localStorage.getItem("userInfo");
+      try {
+        const getUserInfo = await CheckToken(storageUserInfo);
+        if (
+          (JSON.stringify(getUserInfo) === "{}") |
+          (typeof getUserInfo === "undefined")
+        ) {
+          setUserInfo(() => userForm);
+        } else {
+          setUserInfo(() => getUserInfo);
+        }
+      } catch (err) {
         setUserInfo(() => userForm);
-      } else {
-        setUserInfo(() => getUserInfo);
+        localStorage.removeItem("userInfo");
       }
-    } catch (err) {
-      setUserInfo(() => userForm);
-      localStorage.removeItem("userInfo");
     }
+
+    getData();
   }, []);
+
+  useEffect(() => {
+    setId(() => userInfo.admin);
+  }, [userInfo]);
 
   useEffect(() => {
     const updateId = userInfo["adim"];

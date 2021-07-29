@@ -21,7 +21,6 @@ const GameCol = [
 const EditableContext = React.createContext(null);
 
 const EditableRow = ({ index, ...props }) => {
-  console.log("in interGameTable, EditableRow: ", index, props)
   const [form] = Form.useForm();
   return (
     <Form form={form} component={false}>
@@ -70,35 +69,34 @@ const EditableCell = ({
   let childNode = children;
 
   if (editable) {
-      childNode = editing? (
-          <Form.Item
-            style={{ margin: 0 }}
-            name={dataIndex}>
-              <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-          </Form.Item>
-      ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{ paddingRight: 24 }}
-            onClick={toggleEdit}>
-              {children}
-          </div>
-      );
-    }
-    return <td {...restProps}>{childNode}</td>;
+    childNode = editing ? (
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
+    ) : (
+      <div
+        className="editable-cell-value-wrap"
+        style={{ paddingRight: 24 }}
+        onClick={toggleEdit}
+      >
+        {children}
+      </div>
+    );
+  }
+  return <td {...restProps}>{childNode}</td>;
 };
 
 const InterGameTable = () => {
   const [columns] = useState(GameCol);
   const { interGameTable, setInterGameTable } = useInterGame();
 
-    const handleSave = (row) => {
-        const newData = JSON.parse(JSON.stringify(interGameTable))
-        const index = newData.findIndex((item) => row.key === item.key);
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setInterGameTable(()=>newData);
-    };
+  const handleSave = (row) => {
+    const newData = JSON.parse(JSON.stringify(interGameTable));
+    const index = newData.findIndex((item) => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, { ...item, ...row });
+    setInterGameTable(() => newData);
+  };
 
   const components = {
     body: {

@@ -1,6 +1,6 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import 'antd/dist/antd.css';
-import { Table, Input, Form } from 'antd';
+import React, { useContext, useState, useEffect, useRef } from "react";
+import "antd/dist/antd.css";
+import { Table, Input, Form } from "antd";
 const EditableContext = React.createContext(null);
 
 const EditableRow = ({ index, ...props }) => {
@@ -45,7 +45,7 @@ const EditableCell = ({
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
-      console.log('Save failed:', errInfo);
+      console.log("Save failed:", errInfo);
     }
   };
 
@@ -83,87 +83,83 @@ const EditableCell = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-
-
 class EditableTable extends React.Component {
-    constructor(props) {
-      super(props);
-      this.columns = [
+  constructor(props) {
+    super(props);
+    this.columns = [
+      {
+        title: "name",
+        dataIndex: "name",
+        width: "30%",
+        editable: true,
+      },
+      {
+        title: "age",
+        dataIndex: "age",
+      },
+    ];
+    this.state = {
+      dataSource: [
         {
-          title: 'name',
-          dataIndex: 'name',
-          width: '30%',
-          editable: true,
+          key: "0",
+          name: "Edward King 0",
         },
         {
-          title: 'age',
-          dataIndex: 'age',
-        }
-      ];
-      this.state = {
-        dataSource: [
-          {
-            key: '0',
-            name: 'Edward King 0',
-          },
-          {
-            key: '1',
-            name: 'Edward King 1',
-          },
-        ],
-        count: 2,
-      };
-    }
-  
-    
-    handleSave = (row) => {
-      const newData = [...this.state.dataSource];
-      const index = newData.findIndex((item) => row.key === item.key);
-      const item = newData[index];
-      newData.splice(index, 1, { ...item, ...row });
-      this.setState({
-        dataSource: newData,
-      });
+          key: "1",
+          name: "Edward King 1",
+        },
+      ],
+      count: 2,
     };
-  
-    render() {
-      const { dataSource } = this.state;
-      const components = {
-        body: {
-          row: EditableRow,
-          cell: EditableCell,
-        },
-      };
-      const columns = this.columns.map((col) => {
-        if (!col.editable) {
-          return col;
-        }
-  
-        return {
-          ...col,
-          onCell: (record) => ({
-            record,
-            editable: col.editable,
-            dataIndex: col.dataIndex,
-            title: col.title,
-            handleSave: this.handleSave,
-          }),
-        };
-      });
-      return (
-        <div>
-          
-          <Table
-            components={components}
-            rowClassName={() => 'editable-row'}
-            bordered
-            dataSource={dataSource}
-            columns={columns}
-          />
-        </div>
-      );
-    }
   }
+
+  handleSave = (row) => {
+    const newData = [...this.state.dataSource];
+    const index = newData.findIndex((item) => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, { ...item, ...row });
+    this.setState({
+      dataSource: newData,
+    });
+  };
+
+  render() {
+    const { dataSource } = this.state;
+    const components = {
+      body: {
+        row: EditableRow,
+        cell: EditableCell,
+      },
+    };
+    const columns = this.columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+
+      return {
+        ...col,
+        onCell: (record) => ({
+          record,
+          editable: col.editable,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          handleSave: this.handleSave,
+        }),
+      };
+    });
+    return (
+      <div>
+        <Table
+          components={components}
+          rowClassName={() => "editable-row"}
+          bordered
+          dataSource={dataSource}
+          columns={columns}
+        />
+      </div>
+    );
+  }
+}
 
 // const Default = () => {
 //     return(
@@ -175,7 +171,4 @@ class EditableTable extends React.Component {
 //     )
 // }
 
-export default EditableTable
-
-
-
+export default EditableTable;

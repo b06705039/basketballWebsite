@@ -30,7 +30,6 @@ const PreGamgeProvider = ({ children }) => {
     try {
       const stage = "preGame";
       const ifStage = await Match.CheckIfStage(stage);
-      console.log("in usePreGame, ifStage: ", ifStage);
       setEditable(() => (ifStage ? false : true));
     } catch (err) {
       console.log("in preGame, checkIfStage false");
@@ -46,7 +45,7 @@ const PreGamgeProvider = ({ children }) => {
       } else {
         console.log("in preGame, error with the team number");
       }
-    } catch(e) {
+    } catch (e) {
       console.log("in preGame, Signup teams count is below 3");
     }
   }, [preGameTable]);
@@ -55,7 +54,6 @@ const PreGamgeProvider = ({ children }) => {
     setTimeout(() => {
       let updateDict = cycleDict();
       Object.entries(preGameTable).forEach((team, index) => {
-        console.log("team", index, team);
         const teamSessionGroup = team[1].session[0];
         if (teamSessionGroup in updateDict && team[1].session !== "--") {
           updateDict[teamSessionGroup][team[1].session] = {
@@ -65,7 +63,6 @@ const PreGamgeProvider = ({ children }) => {
           };
         }
       });
-      console.log("in usePreGame updateDict", updateDict, cycle3, cycle4);
 
       setMapDict(() => updateDict);
     }, 500);
@@ -75,7 +72,6 @@ const PreGamgeProvider = ({ children }) => {
     let dict = {};
     // A = 65
     for (let i = 0; i < parseInt(cycle3) + parseInt(cycle4); i++) {
-      console.log("in usepreGame, generate cycleDict", cycle3, cycle4);
       let alphaChar = String.fromCharCode(65 + i);
       let ACycleDict = {};
       for (let j = 0; j < 3; j++) {
@@ -117,37 +113,44 @@ const PreGamgeProvider = ({ children }) => {
     }, (secondsToGo + 1) * 1000);
   };
 
-    const saveResult = async() => {
+  const saveResult = async () => {
+    await Object.entries(preGameTable).map((team) => {
+      const res = Team.UpdateSession(
+        "session_preGame",
+        team[1].key,
+        team[1].session
+      );
+    });
 
-        await Object.entries(preGameTable).map(( team ) => {
-            const res = Team.UpdateSession('session_preGame', team[1].key, team[1].session)
-        })
-
-        const teamSessionFill = await Team.CheckFillSession('session_preGame')
-        if ( teamSessionFill ) {
-            const havePreGame = await Match.CheckIfStage('preGame')
-            if( havePreGame ){
-                await Match.DeleteSession('preGame')
-            }
-            Object.entries(mapDict).map((sessionGroup, index)=>{
-                let teams = Object.entries(sessionGroup[1])
-                for (let i=0;i<teams.length;i++){
-                    for (let j=i+1;j<teams.length;j++){
-                        if(i !== j){
-                            const res = Match.Create( teams[i][1].key, teams[j][1].key, 'preGame', sessionGroup[0] )
-                        }
-                    }
-                }
-            })
-            generateModal('result')
-            return
-        }else{
-            await Match.DeleteSession('preGame')
-            generateModal('not fill session yet')
-            return
-        }
+    const teamSessionFill = await Team.CheckFillSession("session_preGame");
+    if (teamSessionFill) {
+      const havePreGame = await Match.CheckIfStage("preGame");
+      if (havePreGame) {
+        await Match.DeleteSession("preGame");
       }
-
+      Object.entries(mapDict).map((sessionGroup, index) => {
+        let teams = Object.entries(sessionGroup[1]);
+        for (let i = 0; i < teams.length; i++) {
+          for (let j = i + 1; j < teams.length; j++) {
+            if (i !== j) {
+              const res = Match.Create(
+                teams[i][1].key,
+                teams[j][1].key,
+                "preGame",
+                sessionGroup[0]
+              );
+            }
+          }
+        }
+      });
+      generateModal("result");
+      return;
+    } else {
+      await Match.DeleteSession("preGame");
+      generateModal("not fill session yet");
+      return;
+    }
+  };
 
   const value = {
     preGameTable,

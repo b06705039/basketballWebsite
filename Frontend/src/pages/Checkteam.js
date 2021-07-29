@@ -7,7 +7,6 @@ const { Option } = Select;
 
 async function callAsync(func) {
   var x = await func();
-  console.log(x);
   return x;
 }
 
@@ -237,7 +236,6 @@ class EditableTable extends React.Component {
     let team_id = row.team_id;
     let status = row.status;
     let result = await Team.UpdatePaid(team_id, status);
-    console.log(result);
     if (result.info.includes("[Error]")) {
       message.info("更新失敗!");
     } else {
@@ -266,9 +264,7 @@ class EditableTable extends React.Component {
   handleVisible = (key) => {
     const dataSource = [...this.state.dataSource];
     const index = dataSource.findIndex((item) => key === item.key);
-    console.log(index);
     let team_id = dataSource[index].team_id;
-    console.log(team_id);
     this.setState({ team_id, visible: !this.state.visible });
   };
 

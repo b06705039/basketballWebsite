@@ -22,7 +22,6 @@ const { Header, Footer } = Layout;
 
 function Temp() {
   const { zhPageList } = usePages();
-  console.log(usePages());
   const { user_id, adim } = usePages().userInfo;
   const { RecordTeam, UserEditor } = pagesMenu();
   return (

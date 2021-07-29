@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
-import { Form, Input, Select, Typography, Button, Modal } from 'antd'
-import styled from 'styled-components'
-import { Post } from '../axios'
+import React, { useState, useRef } from "react";
+import { Form, Input, Select, Typography, Button, Modal } from "antd";
+import styled from "styled-components";
+import { Post } from "../axios";
 
 const { Option } = Select;
 
@@ -36,12 +36,12 @@ const ButtonDiv = styled.div`
   width: 225px;
 `;
 const StyledButton = styled(Button)`
-    height: 33px;
-    background-color: #6b9abb;
-    border-radius: 10px;
-    float: right;
-    display: flex;
-`
+  height: 33px;
+  background-color: #6b9abb;
+  border-radius: 10px;
+  float: right;
+  display: flex;
+`;
 
 const layout = {
   labelCol: {
@@ -53,133 +53,166 @@ const layout = {
 };
 
 const PostNews = () => {
+  const [createType, setCreateType] = useState("news");
+  const title_cateRef = useRef();
+  const title_contentRef = useRef();
+  const urlRef = useRef();
+  const [form] = Form.useForm();
 
-    const [ createType, setCreateType ] = useState('news')
-    const title_cateRef = useRef()
-    const title_contentRef = useRef()
-    const urlRef = useRef()
-    const [ form ] = Form.useForm()
+  const [image, setImage] = useState(null);
 
-
-    const postNews = async() => {
-      try {
-        if (createType === "news") {
-          Post.Create(
-            createType,
-            title_cateRef.current.props.value,
-            title_contentRef.current.props.value,
-            urlRef.current.props.value
-          );
-        } else {
-          Post.Create(
-            createType,
-            "圖片",
-            "圖片",
-            urlRef.current.props.value
-          );
-        }
-        form.resetFields();
-      } catch (err) {
-        throw err;
+  const postNews = async () => {
+    try {
+      if (createType === "news") {
+        Post.Create(
+          createType,
+          title_cateRef.current.props.value,
+          title_contentRef.current.props.value,
+          urlRef.current.props.value
+        );
+      } else {
+        Post.Create(createType, "圖片", "圖片", urlRef.current.props.value);
       }
+      form.resetFields();
+    } catch (err) {
+      throw err;
     }
+  };
 
-    
-    const generateModal = () => {
-        Modal.success({
-            title: '成功',
-            content: '成功新增消息'
-        })
-    }
+  const generateModal = () => {
+    Modal.success({
+      title: "成功",
+      content: "成功新增消息",
+    });
+  };
 
-    return(
-        <ContentBackground className="ant-layout-content" style={{ height: '1000px'}}>
-            <ContentBody className="site-layout-content" style={{ padding: '0 50px'}}>
-                <StyledForm {...layout} form={form} name="basic">
-                    <TopDiv>
-                        <Title>首頁編輯/更新</Title>
-                        <ButtonDiv >
-                            <StyledButton onClick={()=>postNews()}>發布消息</StyledButton>
-                        </ButtonDiv>
-                    </TopDiv>
-                    <Form.Item label="更新類型" 
-                                name="type" 
-                                labelAlign="left"
-                                rules={[
-                                    {
-                                      required: true,
-                                      message: "Please select a type!",
-                                    }
-                                  ]}>
-                        <Select
-                            showSearch
-                            style={{ width: 200 }}
-                            placeholder="Choose a type"
-                            optionFilterProp="children"
-                            onChange={(e)=>setCreateType(()=>e)}
-                        >
-                            <Option value="news_image">大圖上傳</Option>
-                            <Option value="news">發布消息</Option>
-                        </Select>
-                    </Form.Item>
-                    {createType==='news' && (
-                        <React.Fragment>
-                            <Form.Item label="消息分類" 
-                                        name="title_category" 
-                                        labelAlign="left"
-                                        rules={[
-                                            {
-                                              required: true,
-                                              message: "Please select a category!",
-                                            }
-                                          ]}>
-                                <Select
-                                    showSearch
-                                    style={{ width: 200 }}
-                                    ref={title_cateRef}
-                                    placeholder="Select a category"
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) =>
-                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                    }
-                                >
-                                    <Option value="報名">報名</Option>
-                                    <Option value="賽程">賽程</Option>
-                                    <Option value="消息">消息</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item label="標題" 
-                                        name="title_content" 
-                                        labelAlign="left"
-                                        rules={[
-                                            {
-                                              required: true,
-                                              message: "Please input title!",
-                                            }
-                                          ]}>
-                                    <Input ref={title_contentRef} />
-                            </Form.Item>
-                        </React.Fragment>
-                    )}
-                    
-                    <Form.Item label="連結" 
-                                name="url" 
-                                labelAlign="left"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please input an url!",
-                                        type: 'url'
-                                    }
-                                  ]}>
-                            <Input ref={urlRef} />
-                    </Form.Item>
-                    
-                </StyledForm>
-            </ContentBody>
-        </ContentBackground>
-    )
-}
+  // const handleInputChange = (e) => {
+  //   console.log(e.target.files[0]);
+  //   setImage(() => e.target.files[0]);
+  // };
 
+  // const handleUpload = () => {
+  //   async function uploadImg() {
+  //     let form = new FormData();
+  //     form.append("image", image);
+  //     console.log("in postNews form", form);
+  //     const res = await generateImgurToken(form);
 
-export default PostNews
+  //     console.log("in postNews upload data response", res);
+  //   }
+  //   uploadImg();
+  // };
+
+  return (
+    <ContentBackground
+      className="ant-layout-content"
+      style={{ height: "1000px" }}
+    >
+      <ContentBody
+        className="site-layout-content"
+        style={{ padding: "0 50px" }}
+      >
+        <StyledForm {...layout} form={form} name="basic">
+          <TopDiv>
+            <Title>首頁編輯/更新</Title>
+            <ButtonDiv>
+              <StyledButton onClick={() => postNews()}>發布消息</StyledButton>
+            </ButtonDiv>
+          </TopDiv>
+          <Form.Item
+            label="更新類型"
+            name="type"
+            labelAlign="left"
+            rules={[
+              {
+                required: true,
+                message: "Please select a type!",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              style={{ width: 200 }}
+              placeholder="Choose a type"
+              optionFilterProp="children"
+              onChange={(e) => setCreateType(() => e)}
+            >
+              <Option value="news_image">大圖上傳</Option>
+              <Option value="news">發布消息</Option>
+            </Select>
+          </Form.Item>
+          {createType === "news" && (
+            <React.Fragment>
+              <Form.Item
+                label="消息分類"
+                name="title_category"
+                labelAlign="left"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a category!",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  style={{ width: 200 }}
+                  ref={title_cateRef}
+                  placeholder="Select a category"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  <Option value="報名">報名</Option>
+                  <Option value="賽程">賽程</Option>
+                  <Option value="消息">消息</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="標題"
+                name="title_content"
+                labelAlign="left"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input title!",
+                  },
+                ]}
+              >
+                <Input ref={title_contentRef} />
+              </Form.Item>
+            </React.Fragment>
+          )}
+
+          <Form.Item
+            label="連結"
+            name="url"
+            labelAlign="left"
+            rules={[
+              {
+                required: true,
+                message: "Please input an url!",
+                type: "url",
+              },
+            ]}
+          >
+            <Input ref={urlRef} />
+          </Form.Item>
+
+          {/* <input type="file" onChange={handleInputChange} /> */}
+          {/* <button onClick={handleUpload}>upload</button> */}
+        </StyledForm>
+      </ContentBody>
+    </ContentBackground>
+  );
+};
+
+export default PostNews;
+
+// name: EvaLiao88
+// clientId: aed7e217758f183
+// clientSecret: 0e86eba457d69a0cc37ad8ba8469f8377cae625e
+// refreshToken: 99788b2f0daa6d5edc42854715b6585c61f50c96
