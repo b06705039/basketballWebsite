@@ -856,6 +856,7 @@ export const Record = {
         data: { match_id, team_id },
         headers: { Authorization: token },
       });
+      return response;
     } catch (err) {
       return `[Error][Record][CreateTeamRecord]`;
     }
@@ -863,44 +864,3 @@ export const Record = {
 };
 
 export { doLogin, doSignup };
-
-// export const generateImgurToken = async (formData) => {
-//   //   formData.append("refresh_token", "99788b2f0daa6d5edc42854715b6585c61f50c96");
-//   //   formData.append("client_id", "aed7e217758f183");
-//   //   formData.append("client_secret", "0e86eba457d69a0cc37ad8ba8469f8377cae625e");
-//   //   formData.append("grant_type", "refresh_token");
-
-//   try {
-//     let response = await axios({
-//       method: "POST",
-//       url: "https://api.imgur.com/oauth2/token",
-//       data: {
-//         refresh_token: "99788b2f0daa6d5edc42854715b6585c61f50c96",
-//         client_id: "aed7e217758f183",
-//         client_secret: "54261fab168e86e2fd04fea523ddc086a3713f55",
-//         grant_type: "refresh_token",
-//       },
-//     });
-//     return response;
-//   } catch (e) {
-//     console.log("axios, generateImgurToken", e);
-//   }
-// };
-
-// export const upload = async (formData) => {
-//   try {
-//     let response = await axios({
-//       method: "POST",
-//       url: "https://api.imgur.com/3/image",
-//       data: formData,
-//       headers: {
-//         Authorization: "Client-ID aed7e217758f183",
-//       },
-//       mimeType: "multipart/form-data",
-//     });
-
-//     return response;
-//   } catch (err) {
-//     console.log("fail to upload image");
-//   }
-// };

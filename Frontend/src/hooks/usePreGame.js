@@ -15,25 +15,31 @@ const PreGamgeProvider = ({ children }) => {
   const [cycle4, setCycle4] = useState(0);
   const [mapDict, setMapDict] = useState({});
 
-  useEffect(async () => {
-    const preGameData = await Team.GetALLTeam();
-    let newData = [];
-    Object.entries(preGameData).forEach((data) =>
-      newData.push({
-        key: data[1].team_id,
-        name: data[1].name,
-        session: data[1].session_preGame,
-      })
-    );
-    setPreGameTable(newData);
+  console.log("preGame: ", preGameTable);
+  console.log("mapDict: ", mapDict);
 
-    try {
-      const stage = "preGame";
-      const ifStage = await Match.CheckIfStage(stage);
-      setEditable(() => (ifStage ? false : true));
-    } catch (err) {
-      console.log("in preGame, checkIfStage false");
+  useEffect(() => {
+    async function effect() {
+      const preGameData = await Team.GetALLTeam();
+      let newData = [];
+      Object.entries(preGameData).forEach((data) =>
+        newData.push({
+          key: data[1].team_id,
+          name: data[1].name,
+          session: data[1].session_preGame,
+        })
+      );
+      setPreGameTable(newData);
+
+      try {
+        const stage = "preGame";
+        const ifStage = await Match.CheckIfStage(stage);
+        setEditable(() => (ifStage ? false : true));
+      } catch (err) {
+        console.log("in preGame, checkIfStage false");
+      }
     }
+    effect();
   }, []);
 
   useEffect(() => {
