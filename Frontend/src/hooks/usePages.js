@@ -6,6 +6,7 @@ import { CheckToken } from "../axios";
 const {
   News,
   PreGame,
+  PreGamePage,
   Default,
   Try,
   Scheduler,
@@ -29,7 +30,7 @@ const zhPage = {
   contact: ["聯絡資訊", UserEditor],
   main: ["首頁", News],
   teamInfo: ["球隊資訊", Try],
-  preGame: ["安排預賽賽程", PreGame],
+  preGame: ["安排預賽賽程", PreGamePage],
   interGame: ["安排複賽循環", InterGame],
   annouce: ["發布消息", PostNews],
   inChargeGame: ["負責賽事", InChargeGame],

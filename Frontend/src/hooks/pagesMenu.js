@@ -1,6 +1,7 @@
 import News from "../pages/news";
 import Default from "../pages/default";
 import PreGame from "../pages/preGame";
+import PreGamePage from "../pages/preGamePage";
 import Scheduler from "../pages/scheduler";
 import SchedulerRead from "../pages/scheduler_readonly";
 import Timer from "../pages/Timer";
@@ -18,6 +19,7 @@ export const pagesMenu = () => {
   return {
     News,
     PreGame,
+    PreGamePage,
     Default,
     Try,
     Scheduler,

@@ -1,12 +1,12 @@
-import React, { useState, useRef } from 'react'
-import styled from 'styled-components'
-import { Select } from 'antd'
-import Cycles from '../components/Cycles'
-import Kickout from '../components/kickout'
-import Table from '../components/table'
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { Select } from "antd";
+import Cycles from "../components/Cycles";
+import Kickout from "../components/kickout";
+import Table from "../components/table";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import PreGameProvider from '../hooks/usePreGame'
-import InterGameProvider from '../hooks/useInterGame'
+import PreGameProvider from "../hooks/usePreGame_context";
+import InterGameProvider from "../hooks/useInterGame";
 const { Option } = Select;
 
 const ContentBackground = styled.div`
@@ -30,27 +30,28 @@ const StyledH1 = styled.h1`
 `;
 
 const GameResult = () => {
+  const map2dict = {
+    場次結果: <Table type="matches"></Table>,
+    預賽: (
+      <PreGameProvider>
+        <StyledH1>預賽循環</StyledH1>
+        <Cycles />
+      </PreGameProvider>
+    ),
+    複賽: (
+      <InterGameProvider>
+        <StyledH1>複賽循環</StyledH1>
+        <Kickout />
+      </InterGameProvider>
+    ),
+    隊伍: <Table type="teams"></Table>,
+  };
 
-    const map2dict = {
-        "場次結果":(<Table type="matches"></Table>),
-        "預賽":(<PreGameProvider>
-                    <StyledH1>預賽循環</StyledH1>
-                    <Cycles />
-                </PreGameProvider>),
-        "複賽":(<InterGameProvider>
-                    <StyledH1>複賽循環</StyledH1>
-                    <Kickout />
-                </InterGameProvider>),
-        "隊伍":(<Table type="teams"></Table>)
-    }
+  const [subComponent, setSubComponent] = useState(map2dict["複賽"]);
 
-    const [ subComponent, setSubComponent ] = useState(map2dict["複賽"])
-
-
-    function handleChange(value) {
-        setSubComponent(()=>map2dict[value])
-    }
-
+  function handleChange(value) {
+    setSubComponent(() => map2dict[value]);
+  }
 
   return (
     <ContentBackground
@@ -74,14 +75,19 @@ const GameResult = () => {
             ))}
           </StyledSelect>
 
-                    <Switch>
-                        {Object.entries(map2dict).map((Aroute,index)=>(
-                            <Route key={index} path={"/比賽結果/"+Aroute[0]} component={Aroute[1][0]} />))}
-                    </Switch>
+          <Switch>
+            {Object.entries(map2dict).map((Aroute, index) => (
+              <Route
+                key={index}
+                path={"/比賽結果/" + Aroute[0]}
+                component={Aroute[1][0]}
+              />
+            ))}
+          </Switch>
         </Router>
       </ContentBody>
     </ContentBackground>
-  )
-}
+  );
+};
 
 export default GameResult;

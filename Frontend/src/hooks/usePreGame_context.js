@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Modal } from "antd";
 import { Team, Match } from "../axios";
 
+const PreGameData = React.createContext();
+
 export const usePreGame = () => {
+  return useContext(PreGameData);
+};
+
+const PreGamgeProvider = ({ children }) => {
   const [preGameTable, setPreGameTable] = useState([]);
   const [editable, setEditable] = useState(true);
   const [cycle3, setCycle3] = useState(0);
@@ -10,7 +16,6 @@ export const usePreGame = () => {
   const [mapDict, setMapDict] = useState({});
 
   useEffect(() => {
-    // initial
     async function effect() {
       const preGameData = await Team.GetALLTeam();
       let newData = [];
@@ -24,26 +29,29 @@ export const usePreGame = () => {
       setPreGameTable(newData);
 
       try {
-        // initial Editable
         const stage = "preGame";
         const ifStage = await Match.CheckIfStage(stage);
         setEditable(() => (ifStage ? false : true));
-
-        // initial cycle3, 4
-        let totalCycle = preGameData.length;
-        if (totalCycle - (totalCycle % 3) * 4 >= 0) {
-          setCycle3((totalCycle - (totalCycle % 3) * 4) / 3);
-          setCycle4(totalCycle % 3);
-        } else {
-          console.log("in preGame, error with the team number");
-        }
       } catch (err) {
-        console.log("in preGame, initial false");
+        console.log("in preGame, checkIfStage false");
       }
     }
-
     effect();
   }, []);
+
+  useEffect(() => {
+    try {
+      let totalCycle = preGameTable.length;
+      if (totalCycle - (totalCycle % 3) * 4 >= 0) {
+        setCycle3((totalCycle - (totalCycle % 3) * 4) / 3);
+        setCycle4(totalCycle % 3);
+      } else {
+        console.log("in preGame, error with the team number");
+      }
+    } catch (e) {
+      console.log("in preGame, Signup teams count is below 3");
+    }
+  }, [preGameTable]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -147,14 +155,23 @@ export const usePreGame = () => {
     }
   };
 
-  return {
-    saveResult,
-    setCycle3,
-    setCycle4,
-    editable,
-    setEditable,
+  const value = {
     preGameTable,
     setPreGameTable,
+    cycle3,
+    setCycle3,
+    cycle4,
+    setCycle4,
     mapDict,
+    setMapDict,
+    // cycleDict,
+    saveResult,
+    editable,
+    setEditable,
+    generateModal,
   };
+
+  return <PreGameData.Provider value={value}>{children}</PreGameData.Provider>;
 };
+
+export default PreGamgeProvider;

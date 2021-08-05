@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ACycle from "./drawLots/aCycle";
-import { usePreGame } from "../hooks/usePreGame";
+import { usePreGame } from "../hooks/usePreGame_context";
 import { usePages } from "../hooks/usePages";
 
 const CycleDiv = styled.div`
@@ -11,8 +11,8 @@ const CycleDiv = styled.div`
   justify-content: center;
 `;
 
-const Cycles = () => {
-  const { mapDict, editable } = usePreGame();
+const Cycles = ({ mapDict, editable }) => {
+  // const { mapDict, editable } = usePreGame();
   const { id } = usePages();
 
   return (
@@ -24,7 +24,6 @@ const Cycles = () => {
       ) : (
         mapDict &&
         Object.entries(mapDict).map((sessionObject, index) => {
-          console.log("cycles:", sessionObject[1]);
           return (
             <ACycle
               key={index}

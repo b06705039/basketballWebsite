@@ -1,10 +1,9 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-// import PreGameTable from "../components/preGameTable";
+import { Button, Form, Input, Modal } from "antd";
+import { usePreGame } from "../hooks/usePreGame";
 import DrawLotsTable from "../components/drawLots/drawLotsTable";
 import Cycles from "../components/Cycles";
-import { usePreGame } from "../hooks/usePreGame_context";
-import { Form, Input, Modal, Button } from "antd";
 
 const ContentBackground = styled.div`
   height: 1000px;
@@ -64,8 +63,7 @@ const formItemLayout = {
     },
   },
 };
-
-const PreGameDiv = () => {
+const PreGamePage = () => {
   const {
     saveResult,
     setCycle3,
@@ -74,6 +72,7 @@ const PreGameDiv = () => {
     setEditable,
     preGameTable,
     setPreGameTable,
+    mapDict,
   } = usePreGame();
 
   const [showChangeCycle, setShowChangeCycle] = useState(false);
@@ -141,7 +140,7 @@ const PreGameDiv = () => {
               </LeftBlock>
             )}
             <RightBlock>
-              <Cycles />
+              <Cycles mapDict={mapDict} editable={editable} />
             </RightBlock>
           </BottomDiv>
         </ContentBody>
@@ -169,4 +168,4 @@ const PreGameDiv = () => {
   );
 };
 
-export default PreGameDiv;
+export default PreGamePage;

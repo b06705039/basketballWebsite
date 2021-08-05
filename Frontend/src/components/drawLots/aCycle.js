@@ -57,8 +57,6 @@ const ACycle = (props) => {
     margin-top: ${cycleNum === 3 ? "20px" : "10px"};
   `;
 
-  console.log("in cycle3", cycleNum, data);
-
   return (
     <>
       {cycleNum === 3 ? (
