@@ -1,6 +1,6 @@
 import News from "../pages/news";
 import Default from "../pages/default";
-import PreGame from "../pages/preGame";
+// import PreGame from "../pages/preGame";
 import PreGamePage from "../pages/preGamePage";
 import Scheduler from "../pages/scheduler";
 import SchedulerRead from "../pages/scheduler_readonly";
@@ -12,13 +12,11 @@ import PostNews from "../pages/postNews";
 import InChargeGame from "../pages/inChargeGame";
 import RecordTeam from "../pages/recordTeam";
 import Checkteam from "../pages/Checkteam";
-import GameResult from "../pages/gameResult";
-// import <pageName> ...
+// import GameResult from "../pages/gameResult";
 
 export const pagesMenu = () => {
   return {
     News,
-    PreGame,
     PreGamePage,
     Default,
     Try,
@@ -30,7 +28,7 @@ export const pagesMenu = () => {
     InChargeGame,
     RecordTeam,
     Checkteam,
-    GameResult,
+    // GameResult,
     SchedulerRead,
     // pageNmae
   };

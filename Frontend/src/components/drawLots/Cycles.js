@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import ACycle from "./drawLots/aCycle";
-import { usePreGame } from "../hooks/usePreGame_context";
-import { usePages } from "../hooks/usePages";
+import ACycle from "./aCycle";
+// import { usePreGame } from "../hooks/usePreGame_context";
+import { usePages } from "../../hooks/usePages";
 
 const CycleDiv = styled.div`
   display: inline-flex;

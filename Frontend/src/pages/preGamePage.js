@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Button, Form, Input, Modal } from "antd";
 import { usePreGame } from "../hooks/usePreGame";
 import DrawLotsTable from "../components/drawLots/drawLotsTable";
-import Cycles from "../components/Cycles";
+import Cycles from "../components/drawLots/Cycles";
 
 const ContentBackground = styled.div`
   height: 1000px;

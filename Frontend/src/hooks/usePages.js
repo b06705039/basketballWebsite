@@ -5,7 +5,7 @@ import { CheckToken } from "../axios";
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const {
   News,
-  PreGame,
+  // PreGame,
   PreGamePage,
   Default,
   Try,
@@ -15,7 +15,7 @@ const {
   PostNews,
   InChargeGame,
   Checkteam,
-  GameResult,
+  // GameResult,
   SchedulerRead,
   UserEditor,
 } = pagesMenu();
@@ -25,7 +25,7 @@ const zhPage = {
   news: ["最新消息", News],
   schedule: ["賽程時間表", Scheduler],
   scheduleRead: ["賽程時間表", SchedulerRead],
-  gameResult: ["比賽結果", GameResult],
+  gameResult: ["比賽結果", Default],
   adminInfo: ["主辦介紹", Default],
   contact: ["聯絡資訊", UserEditor],
   main: ["首頁", News],
