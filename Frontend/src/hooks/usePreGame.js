@@ -15,9 +15,6 @@ const PreGamgeProvider = ({ children }) => {
   const [cycle4, setCycle4] = useState(0);
   const [mapDict, setMapDict] = useState({});
 
-  console.log("preGame: ", preGameTable);
-  console.log("mapDict: ", mapDict);
-
   useEffect(() => {
     async function effect() {
       const preGameData = await Team.GetALLTeam();
