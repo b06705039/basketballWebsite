@@ -5,17 +5,15 @@ import { CheckToken } from "../axios";
 // 加入下面這行 const { ..., pageName } = pagesMenu()
 const {
   News,
-  // PreGame,
   PreGamePage,
   Default,
   Try,
   Scheduler,
   Timer,
-  InterGame,
+  InterGamePage,
   PostNews,
   InChargeGame,
   Checkteam,
-  // GameResult,
   SchedulerRead,
   UserEditor,
 } = pagesMenu();
@@ -31,7 +29,7 @@ const zhPage = {
   main: ["首頁", News],
   teamInfo: ["球隊資訊", Try],
   preGame: ["安排預賽賽程", PreGamePage],
-  interGame: ["安排複賽循環", InterGame],
+  interGame: ["安排複賽循環", InterGamePage],
   annouce: ["發布消息", PostNews],
   inChargeGame: ["負責賽事", InChargeGame],
   register: ["報名", Default],

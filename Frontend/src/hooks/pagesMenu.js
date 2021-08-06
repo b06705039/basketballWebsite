@@ -1,18 +1,16 @@
 import News from "../pages/news";
 import Default from "../pages/default";
-// import PreGame from "../pages/preGame";
 import PreGamePage from "../pages/preGamePage";
+import InterGamePage from "../pages/interGamePage";
 import Scheduler from "../pages/scheduler";
 import SchedulerRead from "../pages/scheduler_readonly";
 import Timer from "../pages/Timer";
 import Try from "../pages/tryTable";
-import InterGame from "../pages/interGame";
 import { UserEditor } from "../pages/editor";
 import PostNews from "../pages/postNews";
 import InChargeGame from "../pages/inChargeGame";
 import RecordTeam from "../pages/recordTeam";
 import Checkteam from "../pages/Checkteam";
-// import GameResult from "../pages/gameResult";
 
 export const pagesMenu = () => {
   return {
@@ -23,13 +21,11 @@ export const pagesMenu = () => {
     Scheduler,
     Timer,
     UserEditor,
-    InterGame,
+    InterGamePage,
     PostNews,
     InChargeGame,
     RecordTeam,
     Checkteam,
-    // GameResult,
     SchedulerRead,
-    // pageNmae
   };
 };

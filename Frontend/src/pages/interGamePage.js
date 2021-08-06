@@ -66,7 +66,7 @@ const formItemLayout = {
   },
 };
 
-const InterGameDiv = () => {
+const InterGamePage = () => {
   const [showChangeTeamNum, setShowChangeTeamNum] = useState(false);
   const TeamNumRef = useRef();
   const [form] = Form.useForm();
@@ -77,6 +77,8 @@ const InterGameDiv = () => {
     saveResult,
     editable,
     setEditable,
+    mapDict,
+    interTeamNum,
   } = useInterGame();
 
   const RightBlock = styled.div`
@@ -130,7 +132,7 @@ const InterGameDiv = () => {
               </LeftBlock>
             )}
             <RightBlock>
-              <Kickout />
+              <Kickout mapDict={mapDict} interTeamNum={interTeamNum} />
             </RightBlock>
           </BottomDiv>
         </ContentBody>
@@ -172,4 +174,4 @@ const InterGameDiv = () => {
   );
 };
 
-export default InterGameDiv;
+export default InterGamePage;
