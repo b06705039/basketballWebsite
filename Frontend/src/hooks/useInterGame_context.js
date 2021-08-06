@@ -1,58 +1,41 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Team, Match } from "../axios";
 import { Modal } from "antd";
 
+const InterGameData = React.createContext();
+
 export const useInterGame = () => {
+  return useContext(InterGameData);
+};
+
+const InterGameProvider = ({ children }) => {
   const [interGameTable, setInterGameTable] = useState([]);
   const [interTeamNum, setInterTeamNum] = useState(8);
   const [editable, setEditable] = useState(false);
   const [mapDict, setMapDict] = useState({});
   let matchCount = 0;
 
-  useEffect(() => {
-    (async () => {
-      const interGameData = await Team.GetInterGame();
-      let newData = [];
-      Object.entries(interGameData).forEach((data) =>
-        newData.push({
-          key: data[1].team_id,
-          name: data[1].name,
-          session: data[1].session_interGame,
-        })
-      );
-      setInterGameTable(newData);
-      setInterTeamNum(newData.length);
+  useEffect(async () => {
+    const interGameData = await Team.GetInterGame();
+    let newData = [];
+    Object.entries(interGameData).forEach((data) =>
+      newData.push({
+        key: data[1].team_id,
+        name: data[1].name,
+        session: data[1].session_interGame,
+      })
+    );
+    setInterGameTable(newData);
+    setInterTeamNum(newData.length);
 
-      try {
-        const stage = "interGame";
-        const ifStage = await Match.CheckIfStage(stage);
-        setEditable(() => (ifStage ? false : true));
-      } catch (err) {
-        console.log("in preGame, checkIfStage false");
-      }
-    })();
+    try {
+      const stage = "interGame";
+      const ifStage = await Match.CheckIfStage(stage);
+      setEditable(() => (ifStage ? false : true));
+    } catch (err) {
+      console.log("in preGame, checkIfStage false");
+    }
   }, []);
-  //   useEffect(async () => {
-  //     const interGameData = await Team.GetInterGame();
-  //     let newData = [];
-  //     Object.entries(interGameData).forEach((data) =>
-  //       newData.push({
-  //         key: data[1].team_id,
-  //         name: data[1].name,
-  //         session: data[1].session_interGame,
-  //       })
-  //     );
-  //     setInterGameTable(newData);
-  //     setInterTeamNum(newData.length);
-
-  //     try {
-  //       const stage = "interGame";
-  //       const ifStage = await Match.CheckIfStage(stage);
-  //       setEditable(() => (ifStage ? false : true));
-  //     } catch (err) {
-  //       console.log("in preGame, checkIfStage false");
-  //     }
-  //   }, []);
 
   const generateModal = (action) => {
     let secondsToGo = 5;
@@ -159,7 +142,7 @@ export const useInterGame = () => {
     }
   };
 
-  return {
+  const value = {
     interGameTable,
     setInterGameTable,
     interTeamNum,
@@ -170,4 +153,10 @@ export const useInterGame = () => {
     editable,
     setEditable,
   };
+
+  return (
+    <InterGameData.Provider value={value}>{children}</InterGameData.Provider>
+  );
 };
+
+export default InterGameProvider;

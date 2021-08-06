@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { Button, Select, Form, Modal } from "antd";
 import DrawLotsTable from "../components/drawLots/drawLotsTable";
 import Kickout from "../components/drawLots/kickout";
-import { useInterGame } from "../hooks/useInterGame_context";
+import { useInterGame } from "../hooks/useInterGame";
+
 const { Option } = Select;
 
 const ContentBackground = styled.div`
@@ -76,8 +77,6 @@ const InterGameDiv = () => {
     saveResult,
     editable,
     setEditable,
-    mapDict,
-    interTeamNum,
   } = useInterGame();
 
   const RightBlock = styled.div`
@@ -131,7 +130,7 @@ const InterGameDiv = () => {
               </LeftBlock>
             )}
             <RightBlock>
-              <Kickout mapDict={mapDict} interTeamNum={interTeamNum} />
+              <Kickout />
             </RightBlock>
           </BottomDiv>
         </ContentBody>

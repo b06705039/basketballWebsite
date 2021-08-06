@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import "antd/dist/antd.css";
 import { Table, Input, Form } from "antd";
-import { useInterGame } from "../hooks/useInterGame";
+import { useInterGame } from "../hooks/useInterGame_context";
 
 const GameCol = [
   {

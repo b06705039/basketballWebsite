@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Image } from "antd";
 import styled from "styled-components";
-import { useInterGame } from "../hooks/useInterGame";
 
 const StyledKickout = styled(Image)`
   width: 100%;
@@ -26,8 +25,7 @@ const StyledGroupTeam = styled.div`
 const StyleP = styled.div`
   display: flex;
   width: min-content;
-  
-`
+`;
 
 const groupTeamFunc = (num) => {
   let newGroup = Array(4);
@@ -39,19 +37,18 @@ const groupTeamFunc = (num) => {
   return newGroup;
 };
 
-const Kickout = () => {
-  const { mapDict, interTeamNum } = useInterGame();
+const Kickout = ({ mapDict, interTeamNum }) => {
   const [renderDict, setRenderDict] = useState(handleRenderDict());
 
   function handleRenderDict() {
-    const mapDictArr = Object.entries(mapDict)
-    const numArr = groupTeamFunc(interTeamNum)
-    let acumNum = 0
-    let newMapDict = []
-    for(let i=0;i<4;i++){
-      newMapDict[i] = []
-      for(let j=acumNum;j<acumNum+numArr[i];j++){
-        newMapDict[i].push(mapDictArr[j])
+    const mapDictArr = Object.entries(mapDict);
+    const numArr = groupTeamFunc(interTeamNum);
+    let acumNum = 0;
+    let newMapDict = [];
+    for (let i = 0; i < 4; i++) {
+      newMapDict[i] = [];
+      for (let j = acumNum; j < acumNum + numArr[i]; j++) {
+        newMapDict[i].push(mapDictArr[j]);
       }
       acumNum += numArr[i];
     }
@@ -59,8 +56,8 @@ const Kickout = () => {
   }
 
   useEffect(() => {
-    setRenderDict(()=>handleRenderDict())
-  }, [mapDict, interTeamNum])
+    setRenderDict(() => handleRenderDict());
+  }, [mapDict, interTeamNum]);
 
   return (
     <React.Fragment>
@@ -69,14 +66,14 @@ const Kickout = () => {
         preview={false}
       />
       <BottomDiv>
-        {/* {Object.entries(mapDict).map((item,index)=><p key={index}>{item[1].name || item[1].session}</p>)} */}
-
-            {renderDict.map((group,index1)=>
-              (<StyledGroupTeam>
-                {group.map((team,index2)=> <StyleP key={index2}>{team[1].name || team[1].session}</StyleP>)}
-              </StyledGroupTeam>)
-            )}
-        </BottomDiv>
+        {renderDict.map((group, index1) => (
+          <StyledGroupTeam>
+            {group.map((team, index2) => (
+              <StyleP key={index2}>{team[1].name || team[1].session}</StyleP>
+            ))}
+          </StyledGroupTeam>
+        ))}
+      </BottomDiv>
     </React.Fragment>
   );
 };

@@ -5,7 +5,7 @@ import Cycles from "../components/drawLots/Cycles";
 import Kickout from "../components/kickout";
 import Table from "../components/table";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import InterGameProvider from "../hooks/useInterGame";
+import InterGameProvider from "../hooks/useInterGame_context";
 const { Option } = Select;
 
 const ContentBackground = styled.div`
