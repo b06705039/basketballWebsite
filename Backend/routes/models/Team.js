@@ -10,17 +10,17 @@ class Team {
   }
 
   static async IsVaildTeamID(id) {
-    if(id===null)return true
-    
-    const SQL = `SELECT team_id FROM teamInfo WHERE team_id = ${id}`
-    console.log("check team id: ", id, SQL)
-    let check = await db.execute( SQL );
+    if (id === null) return true;
+
+    const SQL = `SELECT team_id FROM teamInfo WHERE team_id = ${id}`;
+    console.log("check team id: ", id, SQL);
+    let check = await db.execute(SQL);
     return check.length === 0 ? false : true;
   }
 }
 
 Team.prototype.create = async function (name, department) {
-  console.log("in team: ", name, department)
+  console.log("in team: ", name, department);
   const TAG = "[TeamCreate]";
   const logger = new Logger();
   if (this.token.adim !== "team") {
@@ -225,7 +225,7 @@ Team.prototype.getALL = async function () {
     );
     return exception.PermissionError("Permission Deny", "have no access");
   }
-///
+  ///
   const SQL = `SELECT 
             ${config.AdimLevel[this.token.adim] >= 1 ? "team_id, status," : ""}
             userInfo.username AS owner,
@@ -245,16 +245,20 @@ Team.prototype.getALL = async function () {
   }
 };
 
-Team.prototype.getInterGame = async function(){
-    const TAG = `[TeamGetPreGame]`
-    const logger = new Logger();
-    if (config.AdimLevel[this.token.adim] < 1) {
-        logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-        return exception.PermissionError('Permission Deny', 'have no access');
-    }
+Team.prototype.getInterGame = async function () {
+  console.log("in models, getInterGame");
+  const TAG = `[TeamGetPreGame]`;
+  const logger = new Logger();
+  if (config.AdimLevel[this.token.adim] < 1) {
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
+  }
 
-    const SQL = `SELECT 
-        ${(config.AdimLevel[this.token.adim] >= 2) ? "team_id, status," : ""}
+  const SQL = `SELECT 
+        ${config.AdimLevel[this.token.adim] >= 2 ? "team_id, status," : ""}
         userInfo.username AS owner,
         userInfo.department AS ownerDepartment,
         userInfo.email AS email,
@@ -264,16 +268,15 @@ Team.prototype.getInterGame = async function(){
     FROM teamInfo
     LEFT JOIN userInfo ON 
         userInfo.user_id = teamInfo.user_id
-    WHERE teamInfo.session_interGame </React.Fragment> 'out';`;
+    WHERE teamInfo.session_interGame IS NOT NULL;`;
 
-    try {
-        return (await db.execute(SQL, {}));
-    } catch (err) {
-        logger.error(TAG, `Execute MYSQL Failed.`);
-        throw exception.BadRequestError('MYSQL Error', '' + err);
-    }
-
-}
+  try {
+    return await db.execute(SQL, {});
+  } catch (err) {
+    logger.error(TAG, `Execute MYSQL Failed.`);
+    throw exception.BadRequestError("MYSQL Error", "" + err);
+  }
+};
 
 Team.prototype.update = async function (name, department) {
   const TAG = "[TeamUpdate]";
@@ -312,7 +315,7 @@ Team.prototype.update = async function (name, department) {
       "BAD_REQUEST",
       `Department(${department}) is not valid.`
     );
-}
+  }
 
   const isUniqueNameAndDeparment = await (async () => {
     const SQL = `
@@ -353,10 +356,7 @@ Team.prototype.updatePaid = async function (team_id, status) {
   const TAG = "[TeamUpdate]";
   const logger = new Logger();
   if (this.token.adim !== "administer") {
-    logger.error(
-      TAG,
-      `Team (${this.token.adim}) has no access to ${TAG}.`
-    );
+    logger.error(TAG, `Team (${this.token.adim}) has no access to ${TAG}.`);
     return exception.PermissionError("Permission Deny", "have no access");
   }
 
@@ -365,8 +365,9 @@ Team.prototype.updatePaid = async function (team_id, status) {
     return exception.PermissionError("Permission Deny", "Have no access");
   }
 
-
-  const SQL = `UPDATE teamInfo SET status=${db.escape(status)} WHERE team_id=${team_id};`;
+  const SQL = `UPDATE teamInfo SET status=${db.escape(
+    status
+  )} WHERE team_id=${team_id};`;
   try {
     await db.execute(SQL, {});
     return { info: `Update team ${team_id} Success` };
@@ -376,55 +377,59 @@ Team.prototype.updatePaid = async function (team_id, status) {
   }
 };
 
-
-Team.prototype.updateSession = async function(sessionType, id, teamSession){
-    
+Team.prototype.updateSession = async function (sessionType, id, teamSession) {
   const TAG = "[TeamUpdateSession]";
   if (config.AdimLevel[this.token.adim] < 2) {
-      logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-      return exception.PermissionError('Permission Deny', 'have no access');
-  }
-  
-  const SQL = `UPDATE teamInfo SET ${sessionType}='${teamSession}' WHERE team_id=${id};`
-  console.log("updateSession: ", id, SQL)
-  try{
-      await db.execute(SQL, {});
-      return { info: `Update session ${id} Success`};
-  }catch (err){
-      logger.error(TAG, `Execute MYSQL Failed.`);
-      throw exception.BadRequestError('MYSQL Error', '' + err);
-  }
-}
-
-Team.prototype.checkFillSession = async function( sessionType ){
-  const TAG = "[CheckFillSession]"
-  if (config.AdimLevel[this.token.adim] < 2) {
-    logger.error(TAG, `Adiminister (${this.token.adim}) has no access to ${TAG}.`);
-    return exception.PermissionError('Permission Deny', 'have no access');
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
   }
 
-  const SQL = `SELECT * FROM teamInfo WHERE ${sessionType}='--';`
-  try{
-    const countNull = await db.execute(SQL, {});
-    return countNull.length===0? true:false;
+  const SQL = `UPDATE teamInfo SET ${sessionType}='${teamSession}' WHERE team_id=${id};`;
+  console.log("updateSession: ", id, SQL);
+  try {
+    await db.execute(SQL, {});
+    return { info: `Update session ${id} Success` };
   } catch (err) {
-    throw err
+    logger.error(TAG, `Execute MYSQL Failed.`);
+    throw exception.BadRequestError("MYSQL Error", "" + err);
   }
-}
+};
 
-Team.prototype.GetTeamIDbyUser = async function(user_id) {
-  const TAG = "[getTeamIDbyUser]"
-  if (config.AdimLevel[this.token.adim] < 1){
+Team.prototype.checkFillSession = async function (sessionType) {
+  const TAG = "[CheckFillSession]";
+  if (config.AdimLevel[this.token.adim] < 2) {
+    logger.error(
+      TAG,
+      `Adiminister (${this.token.adim}) has no access to ${TAG}.`
+    );
+    return exception.PermissionError("Permission Deny", "have no access");
+  }
+
+  const SQL = `SELECT * FROM teamInfo WHERE ${sessionType}='--';`;
+  try {
+    const countNull = await db.execute(SQL, {});
+    return countNull.length === 0 ? true : false;
+  } catch (err) {
+    throw err;
+  }
+};
+
+Team.prototype.GetTeamIDbyUser = async function (user_id) {
+  const TAG = "[getTeamIDbyUser]";
+  if (config.AdimLevel[this.token.adim] < 1) {
     logger.error(TAG, `Public (${this.token.adim}) has no access to ${TAG}.`);
-    return exception.PermissionError('Permission Deny', 'have no access');
+    return exception.PermissionError("Permission Deny", "have no access");
   }
-  const SQL = `SELECT team_id FROM teamInfo WHERE user_id=${user_id};`
-  try{
+  const SQL = `SELECT team_id FROM teamInfo WHERE user_id=${user_id};`;
+  try {
     const result = await db.execute(SQL, {});
-    return result[0]['team_id']
-  } catch(err){
-    throw err
+    return result[0]["team_id"];
+  } catch (err) {
+    throw err;
   }
-}
+};
 
 module.exports = Team;

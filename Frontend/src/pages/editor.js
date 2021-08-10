@@ -4,6 +4,7 @@ import DepartmentInfo from "../department.json";
 import { Form, Input, Button, Typography, Select, Spin, Card } from "antd";
 import Table from "../components/table";
 import { usePages } from "../hooks/usePages";
+import styled from "styled-components";
 const { Text } = Typography;
 const { Option } = Select;
 const layout = {
@@ -21,6 +22,14 @@ const tailLayout = {
   },
 };
 
+const ContentBackground = styled.div`
+  height: 100vh;
+  padding: 50px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 export const UserEditor = () => {
   const { userInfo, id } = usePages();
   const [username, setUsername] = useState("");
@@ -29,29 +38,29 @@ export const UserEditor = () => {
   const [department, setDepartment] = useState("ME");
   const [onEdit, setEditMode] = useState();
 
-  useEffect(async() => {
-      let response = {}
-      if(id==='public'){
-        console.log("into id===public")
-        response = await User.GetAccountByID(1);
-        console.log("into id===public, response: ", response)
-      }else{
-        console.log("into id!==public", userInfo.user_id)
-        response = await User.GetAccountByID(userInfo.user_id);
-        console.log("into id!==public, response: ", response)
-      }
-      setUsername(response.username);
-      setAccount(response.account);
-      setEmail(response.email);
-      setDepartment(response.department);
-      setEditMode(false);
+  useEffect(async () => {
+    let response = {};
+    if (id === "public") {
+      console.log("into id===public");
+      response = await User.GetAccountByID(1);
+      console.log("into id===public, response: ", response);
+    } else {
+      console.log("into id!==public", userInfo.user_id);
+      response = await User.GetAccountByID(userInfo.user_id);
+      console.log("into id!==public, response: ", response);
+    }
+    setUsername(response.username);
+    setAccount(response.account);
+    setEmail(response.email);
+    setDepartment(response.department);
+    setEditMode(false);
   }, []);
-
 
   return onEdit === undefined ? (
     <Spin size="large" style={{ marginTop: 30 }} />
   ) : (
-    <React.Fragment>
+    <ContentBackground>
+      {/* <ContentBody> */}
       <Card title="個人資訊" style={{ width: 550, margin: 25 }} bordered={true}>
         <Form {...layout} name="basic">
           <Form.Item label="使用者名稱" name="username" labelAlign="left">
@@ -126,18 +135,25 @@ export const UserEditor = () => {
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            {id!=='public' && <Button
-                                type="primary"
-                                htmlType="submit"
-                                onClick={() => {
-                                  if (onEdit)
-                                    (async () =>
-                                      await User.Update(account, username, email, department))();
-                                  setEditMode((mode) => !mode);
-                                }}
-                              >
-                                {onEdit ? "Submit" : "Edit"}
-                              </Button>}
+            {id !== "public" && (
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                  if (onEdit)
+                    (async () =>
+                      await User.Update(
+                        account,
+                        username,
+                        email,
+                        department
+                      ))();
+                  setEditMode((mode) => !mode);
+                }}
+              >
+                {onEdit ? "Submit" : "Edit"}
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Card>
@@ -145,6 +161,7 @@ export const UserEditor = () => {
       <Table type="teams" />
       <Table type="recorders" />
       <Table type="matches" /> */}
-    </React.Fragment>
+      {/* </ContentBody> */}
+    </ContentBackground>
   );
 };

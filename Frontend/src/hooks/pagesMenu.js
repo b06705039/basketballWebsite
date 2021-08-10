@@ -10,6 +10,7 @@ import { UserEditor } from "../pages/editor";
 import PostNews from "../pages/postNews";
 import InChargeGame from "../pages/inChargeGame";
 import RecordTeam from "../pages/recordTeam";
+import RecordPlayer from "../pages/recordPlayer";
 import Checkteam from "../pages/Checkteam";
 
 export const pagesMenu = () => {
@@ -25,6 +26,7 @@ export const pagesMenu = () => {
     PostNews,
     InChargeGame,
     RecordTeam,
+    RecordPlayer,
     Checkteam,
     SchedulerRead,
   };

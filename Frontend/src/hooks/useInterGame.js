@@ -32,27 +32,8 @@ export const useInterGame = () => {
       }
     })();
   }, []);
-  //   useEffect(async () => {
-  //     const interGameData = await Team.GetInterGame();
-  //     let newData = [];
-  //     Object.entries(interGameData).forEach((data) =>
-  //       newData.push({
-  //         key: data[1].team_id,
-  //         name: data[1].name,
-  //         session: data[1].session_interGame,
-  //       })
-  //     );
-  //     setInterGameTable(newData);
-  //     setInterTeamNum(newData.length);
 
-  //     try {
-  //       const stage = "interGame";
-  //       const ifStage = await Match.CheckIfStage(stage);
-  //       setEditable(() => (ifStage ? false : true));
-  //     } catch (err) {
-  //       console.log("in preGame, checkIfStage false");
-  //     }
-  //   }, []);
+  console.log("interGame hook: ", interTeamNum);
 
   const generateModal = (action) => {
     let secondsToGo = 5;
