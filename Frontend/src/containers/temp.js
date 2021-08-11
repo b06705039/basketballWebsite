@@ -23,7 +23,7 @@ const { Header, Footer } = Layout;
 function Temp() {
   const { zhPageList } = usePages();
   const { user_id, adim } = usePages().userInfo;
-  const { RecordTeam, UserEditor } = pagesMenu();
+  const { RecordTeam, UserEditor, RecordPlayer } = pagesMenu();
   return (
     <Router>
       <Layout className="layout">
@@ -43,7 +43,8 @@ function Temp() {
             <Route key={index} path={"/" + page[0]} component={page[1]} />
           ))}
           <Route exact path="/profile" component={UserEditor} />
-          <Route exact path="/recordTeam" component={RecordTeam} />
+          <Route path="/recordTeam/:aMatch" component={RecordTeam} />
+          <Route path="/recordPlayer/:data" component={RecordPlayer} />
         </Switch>
         <Footer style={{ textAlign: "center" }}>
           Online Basketball Web design by{" "}

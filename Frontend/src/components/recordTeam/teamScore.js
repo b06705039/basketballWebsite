@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBasketballBall } from "@fortawesome/free-solid-svg-icons";
 import StopWatch from "./stopWatch";
 import QuarterDiv from "./quarterDiv";
-import UseTeamScore from "./useTeamScore";
+import UseTeamScore from "../../hooks/useTeamScore";
 import MemberFoul from "./memberFoul";
 
 const TeamScoreDiv = styled.div`
@@ -80,6 +79,7 @@ const StyledH3 = styled.h3`
 `;
 
 const TeamScore = ({ aMatch, teamId, session, homeBall, setHomeBall }) => {
+  console.log("in teamScore1: ", aMatch, teamId, session);
   const {
     teamInfo,
     totalScore,
@@ -92,6 +92,14 @@ const TeamScore = ({ aMatch, teamId, session, homeBall, setHomeBall }) => {
     stopWatch,
     setStopWatch,
   } = UseTeamScore({ aMatch, teamId, session });
+
+  console.log(
+    "in teamScore2: ",
+    teamInfo,
+    totalScore,
+    quarterScore,
+    quarterFoul
+  );
 
   return (
     <>

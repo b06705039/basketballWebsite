@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const useTeamScore = ({ aMatch, teamId, session }) => {
-  console.log("useTeamScore:", aMatch, teamId, session);
   const saveKey = `${aMatch.match_id}-${teamId}`;
   const [teamInfo, setTeamInfo] = useState({});
   const [quarterScore, setQuarterScore] = useState([]);
@@ -9,6 +8,8 @@ const useTeamScore = ({ aMatch, teamId, session }) => {
   const [quarterFoul, setQuarterFoul] = useState([]);
   const [membersFoul, setMembersFoul] = useState({});
   const [stopWatch, setStopWatch] = useState([]);
+
+  console.log("in useTeamScore: ", aMatch, teamId, session);
 
   useEffect(() => {
     let updateTeamInfo = JSON.parse(
@@ -39,7 +40,7 @@ const useTeamScore = ({ aMatch, teamId, session }) => {
           name: "隊伍一",
           type: "Home",
         };
-      } else if (teamId === 6) {
+      } else if (teamId === 7) {
         updateTeamInfo = {
           name: "隊伍二",
           type: "Away",
@@ -124,18 +125,14 @@ const useTeamScore = ({ aMatch, teamId, session }) => {
   useMemo(() => {
     let updateQuarterScore = [];
     let updateQuarterFoul = [];
-    console.log("in session effect:", quarterScore, updateQuarterScore);
     if (session !== 1) {
       updateQuarterScore = [...quarterScore];
       updateQuarterFoul = [...quarterFoul];
-      console.log("in session effect:", updateQuarterScore);
       updateQuarterScore[session - 1] = 0;
       updateQuarterFoul[session - 1] = 0;
-      console.log("in session effect:", updateQuarterScore);
       setQuarterScore(() => updateQuarterScore);
       setQuarterFoul(() => updateQuarterFoul);
     }
-    console.log("in session effect:", updateQuarterScore);
   }, [session]);
 
   const value = {

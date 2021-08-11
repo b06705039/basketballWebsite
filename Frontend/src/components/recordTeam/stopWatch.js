@@ -28,7 +28,7 @@ const StopWatch = ({ arr, setArr }) => {
     setArr(() => updateArr);
   };
 
-  return (
+  return StopWatch ? (
     <TeamStopWatch>
       <StyledH3>暫停</StyledH3>
       <StopWatchSubDiv>
@@ -55,6 +55,8 @@ const StopWatch = ({ arr, setArr }) => {
         })}
       </StopWatchSubDiv>
     </TeamStopWatch>
+  ) : (
+    <></>
   );
 };
 

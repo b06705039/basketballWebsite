@@ -43,7 +43,7 @@ const InChargeGame = () => {
                 </div>
                 <div></div>
                 <Link to={"/"}>球員名單確認</Link>
-                <Link to={"/recordTeam"}>紀錄台</Link>
+                <Link to={"/recordTeam/" + JSON.stringify(aMatch)}>紀錄台</Link>
                 <Link to={"/"}>A隊球員紀錄表</Link>
                 <Link to={"/"}>B隊球員紀錄表</Link>
               </List.Item>

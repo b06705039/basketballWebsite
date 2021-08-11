@@ -65,13 +65,15 @@ const DivideLine = styled.div`
   display: flex;
 `;
 
-const RecordTeam = () => {
-  const aMatch = {
-    match_id: 100,
-    home: 5,
-    away: 6,
-    recorder: "紀錄員1",
-  };
+const RecordTeam = (props) => {
+  console.log("in recordTeam: ", JSON.parse(props.match.params.aMatch));
+  // const aMatch = {
+  //   match_id: 100,
+  //   home: 5,
+  //   away: 6,
+  //   recorder: "紀錄員1",
+  // };
+  const aMatch = JSON.parse(props.match.params.aMatch);
 
   // teamInfo, from aMatch, and should got other data from backend
   const [session, setSession] = useState();
