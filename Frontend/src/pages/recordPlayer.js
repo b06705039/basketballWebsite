@@ -26,17 +26,6 @@ const InputDiv = styled.div`
   margin: 10px;
 `;
 
-// const StyledButton = styled(Button)`
-//   height: 25px;
-//   width: 80px;
-//   background-color: #bfbfbf;
-//   border-radius: 10px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   margin: 10px;
-// `;
-
 const buttonDict = {
   num: "球員背號",
   steal: "抄截",
