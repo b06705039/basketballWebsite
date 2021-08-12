@@ -111,7 +111,7 @@ const RecordTeam = (props) => {
         <ScoreDiv>
           <LeftTeam>
             <TeamScore
-              teamId={aMatch.home}
+              teamType={"home"}
               aMatch={aMatch}
               session={session}
               homeBall={homeBall}
@@ -121,7 +121,7 @@ const RecordTeam = (props) => {
           <DivideLine />
           <RightTeam>
             <TeamScore
-              teamId={aMatch.away}
+              teamType={"away"}
               aMatch={aMatch}
               session={session}
               homeBall={homeBall}

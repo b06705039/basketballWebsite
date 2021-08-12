@@ -78,8 +78,8 @@ const StyledH3 = styled.h3`
   margin: 0 10px 0 0;
 `;
 
-const TeamScore = ({ aMatch, teamId, session, homeBall, setHomeBall }) => {
-  console.log("in teamScore1: ", aMatch, teamId, session);
+const TeamScore = ({ aMatch, teamType, session, homeBall, setHomeBall }) => {
+  console.log("in teamScore1: ", aMatch, teamType, session);
   const {
     teamInfo,
     totalScore,
@@ -91,15 +91,7 @@ const TeamScore = ({ aMatch, teamId, session, homeBall, setHomeBall }) => {
     setMembersFoul,
     stopWatch,
     setStopWatch,
-  } = UseTeamScore({ aMatch, teamId, session });
-
-  console.log(
-    "in teamScore2: ",
-    teamInfo,
-    totalScore,
-    quarterScore,
-    quarterFoul
-  );
+  } = UseTeamScore({ aMatch, teamType, session });
 
   return (
     <>
@@ -121,13 +113,13 @@ const TeamScore = ({ aMatch, teamId, session, homeBall, setHomeBall }) => {
 
           <TeamBall>
             <StyledH3>{teamInfo.name}</StyledH3>
-            {teamInfo.type === "Home" && homeBall && (
+            {teamInfo.type === "home" && homeBall && (
               <BasketballIcon
                 icon={faBasketballBall}
                 onClick={() => setHomeBall(() => (homeBall ? false : true))}
               />
             )}
-            {teamInfo.type === "Away" && !homeBall && (
+            {teamInfo.type === "away" && !homeBall && (
               <BasketballIcon
                 icon={faBasketballBall}
                 onClick={() => setHomeBall(() => (homeBall ? false : true))}

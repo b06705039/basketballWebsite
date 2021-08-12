@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 
-const useTeamScore = ({ aMatch, teamId, session }) => {
+const useTeamScore = ({ aMatch, teamType, session }) => {
+  const teamId = aMatch[teamType];
   const saveKey = `${aMatch.match_id}-${teamId}`;
   const [teamInfo, setTeamInfo] = useState({});
   const [quarterScore, setQuarterScore] = useState([]);
@@ -9,7 +10,7 @@ const useTeamScore = ({ aMatch, teamId, session }) => {
   const [membersFoul, setMembersFoul] = useState({});
   const [stopWatch, setStopWatch] = useState([]);
 
-  console.log("in useTeamScore: ", aMatch, teamId, session);
+  console.log("in useTeamScore: ", aMatch, teamId, session, saveKey);
 
   useEffect(() => {
     let updateTeamInfo = JSON.parse(
@@ -35,15 +36,15 @@ const useTeamScore = ({ aMatch, teamId, session }) => {
       !updateStopWatch
     ) {
       // get teamInfo using team_id
-      if (teamId === 5) {
+      if (teamType === "home") {
         updateTeamInfo = {
           name: "隊伍一",
-          type: "Home",
+          type: "home",
         };
-      } else if (teamId === 7) {
+      } else if (teamType === "away") {
         updateTeamInfo = {
           name: "隊伍二",
-          type: "Away",
+          type: "away",
         };
       } //temp
 
