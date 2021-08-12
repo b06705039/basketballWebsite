@@ -22,7 +22,7 @@ const ContentStyled = styled.div`
 `;
 
 const StyledImage = styled(Image)`
-  height: 600px;ㄋ
+  height: 600px;
   display: inline-block;
   z-index: 0;
 `;
