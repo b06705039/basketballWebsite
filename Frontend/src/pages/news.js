@@ -22,8 +22,7 @@ const ContentStyled = styled.div`
 `;
 
 const StyledImage = styled(Image)`
-  height: 100%;
-  width: 100%;
+  height: 600px;ㄋ
   display: inline-block;
   z-index: 0;
 `;
@@ -93,7 +92,7 @@ export default function News() {
               )}
             </Divider>
           )}
-          <Carousel autoplay={false}>
+          <Carousel autoplay={true}>
             {images.map((image, index) => {
               return (
                 <ContentStyled key={index}>

@@ -43,14 +43,14 @@ export default function LoginModel(props) {
         setUserInfo(msg);
         props.setVisible(false);
         setShowWarn(false);
-      } catch(e) {
+      } catch (e) {
         setShowWarn(true);
       }
     } else {
       try {
         await User.SendRemindEmail(emailRef.current.props.value);
         setShowWarn(false);
-      } catch(e) {
+      } catch (e) {
         setShowWarn(true);
       }
     }
@@ -130,8 +130,8 @@ export default function LoginModel(props) {
 
               <Form.Item>
                 <a
+                  aria-hidden={true}
                   style={{ float: "right" }}
-                  href="/#"
                   onClick={handleForgotPw}
                 >
                   Forgot password?

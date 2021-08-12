@@ -46,9 +46,9 @@ const idPage = {
   ],
   administer: [
     "main",
-    "schedule",
     "preGame",
     "interGame",
+    "schedule",
     "annouce",
     "Checkteam",
   ],

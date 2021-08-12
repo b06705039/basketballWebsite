@@ -51,9 +51,6 @@ const useTeamScore = ({ aMatch, teamType, session }) => {
       // get member list using teamInfo
       const tempMemberList = [1, 2, 3, 4, 5]; //temp
       // memberFoul format
-      tempMemberList.map((member, index) => {
-        updateMembersFoul[member] = 0;
-      });
 
       updateQuarterScore = Array(4).fill(-1);
       updateQuarterScore[0] = 0;
